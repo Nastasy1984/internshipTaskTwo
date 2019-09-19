@@ -36,28 +36,17 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	
-	
-
-	//WORKS return the list with all users
+	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public List<User> getUsersList() {
         return userService.getAllAsList();
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+      
 
-	//WORKS finds user by id and produces data of user in JSON format
-	@GetMapping(value ="/find-user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
+	//DONE finds user by id and produces data of user in JSON format
+	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public User findUserById(@PathVariable ("id") Integer id) {
 		//TODO change to normal message about mistake

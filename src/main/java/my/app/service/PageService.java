@@ -23,25 +23,19 @@ import my.app.model.User;
 //this service sends JSON request from page controller to user controller and send it's response to page controller
 @Component
 public class PageService {
-
-
+	//TODO сделать внедрение в виде бина?
+	CloseableHttpClient client = HttpClients.createDefault();
 
 	public List<User> getUsersList(){
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/users");
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
-			//TODO delete! for checking
-			System.out.println(response);
-			System.out.println(ContentType.getOrDefault(response.getEntity()).getMimeType());
-
 			String string = EntityUtils.toString(response.getEntity());
-			System.out.println(string);
 			StringReader reader = new StringReader(string);
 	        ObjectMapper mapper = new ObjectMapper();
 	        User[] usersArr = mapper.readValue(reader, User[].class);
 	        List<User> users = Arrays.asList(usersArr);
-	        System.out.println(users.toString());
 	        return users;
 			
 		} catch (ClientProtocolException e) {
@@ -57,6 +51,33 @@ public class PageService {
 		}
         return null;
 	}
+	
+	public User getUserById(Integer id) {
+		String URI = "http://localhost:8080/SpringRest/user/" + id;
+		HttpGet httpGet = new HttpGet(URI);
+		try {
+			CloseableHttpResponse response = client.execute(httpGet);
+			String string = EntityUtils.toString(response.getEntity());
+			StringReader reader = new StringReader(string);
+	        ObjectMapper mapper = new ObjectMapper();
+	        User user = mapper.readValue(reader, User.class);
+	        return user;
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 	//TODO delete! for checking
 	public static void main(String[] args) {

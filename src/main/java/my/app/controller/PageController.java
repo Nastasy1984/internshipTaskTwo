@@ -1,12 +1,10 @@
 package my.app.controller;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -44,7 +42,7 @@ public class PageController {
         return "findUser";
     }
 	
-	//sending to the jsp page findUser
+	//DONE WORKS providing the list of all users
 	@GetMapping("/show-all-users")
     public ModelAndView showUsersList() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -52,4 +50,14 @@ public class PageController {
 		modelAndView.setViewName("user");
         return modelAndView;
     }
+	
+	//DONE finding user by id
+	@GetMapping("/find-user/{id:\\d+}")
+    public ModelAndView findUserById(@PathVariable ("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", pageService.getUserById(id));
+		modelAndView.setViewName("searchResult");
+        return modelAndView;
+    }
+	
 }
