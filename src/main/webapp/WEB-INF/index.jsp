@@ -20,7 +20,7 @@
 		<div id="welcomeActions">
 		<hr noshade size="2" color="#4682B4" />
 			<div class="action">
-				<a href="/SpringRest/users">Show all users</a>
+				<a href="/SpringRest/show-all-users">Show all users</a>
 			</div>
 			<div class="action">
 				<a href="/SpringRest/add-new-user">Add new user</a>

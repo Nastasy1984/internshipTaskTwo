@@ -1,12 +1,14 @@
 package my.app.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+
 
 import my.app.service.PageService;
 
@@ -40,5 +42,14 @@ public class PageController {
 	@GetMapping("/find-user")
     public String findUserPage() {
         return "findUser";
+    }
+	
+	//sending to the jsp page findUser
+	@GetMapping("/show-all-users")
+    public ModelAndView showUsersList() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("usersList", pageService.getUsersList());
+		modelAndView.setViewName("user");
+        return modelAndView;
     }
 }

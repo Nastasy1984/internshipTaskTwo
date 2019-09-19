@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-//часть аннотаций пока убрала они нужны будут для работы с базой
+
 //@Entity
 @JsonAutoDetect
 public class User {
