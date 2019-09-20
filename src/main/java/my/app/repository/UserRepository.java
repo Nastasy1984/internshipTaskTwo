@@ -6,7 +6,7 @@ import java.util.Map;
 import my.app.model.User;
 
 public interface UserRepository {
-    void save(User user);
+    boolean save(User user);
     
     void delete(User user);
     

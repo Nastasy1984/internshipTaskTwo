@@ -2,8 +2,6 @@ package my.app.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.ui.Model;
 
 import my.app.controller.exception.ResourceNotFoundException;
 import my.app.model.User;
@@ -39,6 +36,7 @@ public class UserController {
 
 	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<User> getUsersList() {
         return userService.getAllAsList();
@@ -48,6 +46,7 @@ public class UserController {
 
 	//DONE finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
 	@ResponseBody
     public List <User> findUserById(@PathVariable ("id") Integer id) {
 		//TODO change to normal message about mistake
@@ -61,6 +60,7 @@ public class UserController {
 	
 	//WORKS finds user by last name and produces data of user in JSON format
 	@GetMapping(value ="/user/{ln:\\D+}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		//TODO change to normal message about mistake
@@ -76,14 +76,17 @@ public class UserController {
     }
 	
 	//getting data of user in JSON format and adding user to the users list
-    @PostMapping(value ="/add-new-user", consumes = {"application/json"})
+    @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public User addNewUser(@RequestBody User user) {
-        if (user!=null) {
-        	userService.save(user);
+    public User addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
+    		@RequestParam(value="lastName", required=true) String lastName) {
+        if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
+        	User user = new User (firstName,lastName);
+        	User user2 = userService.save(user);
+        	return user2;
         }
-        return user;
+        return null;
     }
 	
     //getting data of user in JSON format and updating user in the users list

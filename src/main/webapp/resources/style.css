@@ -74,6 +74,13 @@ div.h2{
     margin-right: auto;
     margin-left: auto;
 }
+.successString{
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    color: #C70039;
+    margin-bottom: 10px;
+}
 #center{	
 	text-align: center
 }

@@ -17,6 +17,9 @@
 <body>
 <div class="layout">
 	<h1>Users</h1>
+	<div class="successString">
+		${successString}
+	</div>
 	<table>
 		<tr>
 			<th>Id</th>

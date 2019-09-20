@@ -32,21 +32,23 @@ public class UserRepositoryImpl implements UserRepository{
 	}
 
 	@Override
-	public void save(User user) {
-		if (user.getId() == 0) {
-		//imitation of generating new id (maximum id + 1)
-			Set<Integer> setKeySet = users.keySet();
-			int max = 0;
-			//looking for maximum id in users
-			for (Integer key: setKeySet) {
-				if (key > max) {
-					max = key;
-				}
+	public boolean save(User user) {
+
+		// imitation of generating new id (maximum id + 1)
+		Set<Integer> setKeySet = users.keySet();
+		System.out.println(setKeySet.toString());
+		Integer max = 0;
+		// looking for maximum id in users
+		for (Integer key : setKeySet) {
+			if (key.intValue() > max.intValue()) {
+				max = key;
+				System.out.println("HERE2");
 			}
-			int newId = max + 1;
-			user.setId(newId);
 		}
-		users.put(user.getId(),user);
+		Integer newId = max + 1;
+		user.setId(newId);
+		users.put(user.getId(), user);
+		return true;
 	}
 
 	@Override

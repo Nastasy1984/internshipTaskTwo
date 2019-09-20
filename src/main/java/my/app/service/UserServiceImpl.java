@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import my.app.model.User;
 import my.app.repository.UserRepository;
-import my.app.repository.UserRepositoryImpl;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -24,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public void save(User user) {
-		if(user!=null) {
-			userRepository.save(user);
+	public User save(User user) {
+		boolean isSaved = userRepository.save(user);
+		if (isSaved) {
+			return user;
 		}
+			return null;
 	}
 
 	@Override
