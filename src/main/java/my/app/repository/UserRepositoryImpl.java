@@ -36,13 +36,11 @@ public class UserRepositoryImpl implements UserRepository{
 
 		// imitation of generating new id (maximum id + 1)
 		Set<Integer> setKeySet = users.keySet();
-		System.out.println(setKeySet.toString());
 		Integer max = 0;
 		// looking for maximum id in users
 		for (Integer key : setKeySet) {
 			if (key.intValue() > max.intValue()) {
 				max = key;
-				System.out.println("HERE2");
 			}
 		}
 		Integer newId = max + 1;

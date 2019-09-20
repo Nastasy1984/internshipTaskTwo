@@ -46,11 +46,13 @@ public class UserController {
 
 	//DONE finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
 	@ResponseBody
     public List <User> findUserById(@PathVariable ("id") Integer id) {
-		//TODO change to normal message about mistake
 		if ((id==null) || (!userService.getAll().containsKey(id))){
+			throw new ResourceNotFoundException();
+		}
+		User user = userService.getById(id);
+		if (user==null) {
 			throw new ResourceNotFoundException();
 		}
 		List<User> resultList = new ArrayList<User>();
@@ -62,16 +64,10 @@ public class UserController {
 	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
-		//TODO change to normal message about mistake
-		//if ((lastName==null) || (lastName.equals(""))){
-		//	throw new ResourceNotFoundException();
-		//}
-		//TODO change to normal message about mistake
 		List <User> users = userService.getByLastName(lastName);
 		if (users.size()==0) {
 			throw new ResourceNotFoundException();
 		}
-
 		return userService.getByLastName(lastName);
     }
 	

@@ -63,27 +63,32 @@ public class PageController {
 	
 	//DONE WORKS finding user by id
 	@GetMapping("/find-user/{id:\\d+}")
-    public ModelAndView findUserById(@PathVariable ("id") String id) {
+    public ModelAndView findUserById(@PathVariable ("id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView();
-		if (!(Integer.valueOf(id) instanceof Integer)) {
-			System.out.println("HERE1");
+		List <User> users = pageService.getUserById(id);
+		
+		if (users==null) {
+			String failString = "Failed to find user with last name " + id;
+			modelAndView.setViewName("findUser");
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
+	
+		modelAndView.addObject("users", pageService.getUserById(id));
+		modelAndView.setViewName("searchResult");
+        return modelAndView;
+    }
+	
+	//DONE WORKS finding user by id
+		@GetMapping("/find-user/{id:\\D+}")
+	    public ModelAndView findUserByIdWrongInput(@PathVariable ("id") String wrongId) {
+			ModelAndView modelAndView = new ModelAndView();
 			String failString = "Please enter number to the id field ";
 			modelAndView.setViewName("findUser");
 			modelAndView.addObject("failString", failString);
-	        return modelAndView;
-		}
-		List <User> users = pageService.getUserById(Integer.valueOf(id));
-		if (!users.isEmpty()) {
-		modelAndView.addObject("users", pageService.getUserById(Integer.valueOf(id)));
-		modelAndView.setViewName("searchResult");
-		}
-		else {
-			String failString = "Failed to find user with id " + id;
-			modelAndView.setViewName("findUser");
-			modelAndView.addObject("failString", failString);
-		}
-        return modelAndView;
-    }
+		    return modelAndView;
+	    }
+	
 	
 	//DONE WORKS finding user by id
 	@GetMapping("/find-user-by-last-name")
@@ -103,7 +108,6 @@ public class PageController {
 		
 	//DONE getting parameters of user and adding user to the users list 
 	//sending to the page with user
-	//TODO Exeptions
     @PostMapping(value ="/add-new-user")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody

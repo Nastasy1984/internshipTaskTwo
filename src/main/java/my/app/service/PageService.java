@@ -17,7 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -68,9 +67,10 @@ public class PageService {
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 			String string = EntityUtils.toString(response.getEntity());
-			//TODO delete
-			System.out.println("WE GOT STRING IN PS");
-			System.out.println(string);
+			int respCode = response.getStatusLine().getStatusCode();
+			if (respCode != 200) {
+				return null;
+			}
 			
 			//CloseableHttpResponse response = instance.execute(new HttpGet("http://www.google.com"));
 			//assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
@@ -112,9 +112,6 @@ public class PageService {
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 			int respCode = response.getStatusLine().getStatusCode();
-			//TODO delete
-			System.out.println("RESPONSE CODE");
-			System.out.println(respCode);
 			if (respCode != 200) {
 				return null;
 			}
@@ -140,7 +137,6 @@ public class PageService {
 	}
 	
 	//DONE WORKS 
-	//TODO Exeptions
 	public User addUser(String firstName, String lastName) {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
@@ -151,26 +147,10 @@ public class PageService {
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			try {
 				CloseableHttpResponse response = client.execute(httpPost);
-				//TODO delete
-				System.out.println(response.toString());
 				String string = EntityUtils.toString(response.getEntity());
-				
-				//TODO delete we got wrong type "text/html"
-				String contentMimeType = ContentType.getOrDefault(response.getEntity()).getMimeType();
-				System.out.println("PESP TYPE");
-				System.out.println(contentMimeType);
-				
-				//TODO delete
-				System.out.println("WE GOT");
-				System.out.println(string);
-				
 				StringReader reader = new StringReader(string);
 		        ObjectMapper mapper = new ObjectMapper();
 		        User userAdded = mapper.readValue(reader, User.class);
-		        
-				//TODO delete
-				System.out.println(userAdded.toString());
-				
 		        return userAdded;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
