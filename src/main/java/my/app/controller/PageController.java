@@ -88,13 +88,13 @@ public class PageController {
 
     	if ((firstName==null) || (lastName==null) || (lastName.equals("")) || (firstName.equals(""))) {
     		modelAndView.setViewName("addNewUser");
-    		String failString = "All fields in form must be correctly filled";
+    		String failString = "All fields in the form must be filled";
     		modelAndView.addObject("failString", failString);
     		return modelAndView;
     	}
     	//saving the user by pageService
     	User user = pageService.addUser(firstName, lastName);
-    	String successString = "User " + user.getLastName() + " " + user.getFirstName() + " was added successfully";
+    	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
     	//redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		modelAndView.addObject("successString", successString);

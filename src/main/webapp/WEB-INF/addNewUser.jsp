@@ -23,6 +23,19 @@
 		<br>
 		<input class="submit" type="submit" value="Add user">
 	</form>
-</div>
+
+		<hr noshade size="2" color="#4682B4" />
+		<div class="action">
+			<a href="/SpringRest/show-all-users">Show all users</a>
+		</div>
+		<div class="action">
+			<a href="/SpringRest/find-user">Find user</a>
+		</div>
+		<div class="action">
+			<a href="/SpringRest/">To the main page</a>
+		</div>
+		<hr noshade size="2" color="#4682B4" />
+
+	</div>
 </body>
 </html>
