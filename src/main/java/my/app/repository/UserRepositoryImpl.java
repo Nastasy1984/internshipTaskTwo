@@ -77,15 +77,5 @@ public class UserRepositoryImpl implements UserRepository{
 			return resultList;
 		}
 		return null;
-	};
-	
-	/*simple checking
-	public static void main(String[] args) {
-		UserRepositoryImpl aImpl = new UserRepositoryImpl();
-		List<User> myList = aImpl.getByLastName("Averina");
-		for (User user : myList) {
-			System.out.println(user);
-		}
 	}
-	*/
 }

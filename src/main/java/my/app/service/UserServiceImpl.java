@@ -21,7 +21,6 @@ public class UserServiceImpl implements UserService {
 		this.userRepository = userRepository;
 	}
 
-
 	@Override
 	public User save(User user) {
 		boolean isSaved = userRepository.save(user);
@@ -70,15 +69,4 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
-	/*
-	//simple checking
-	public static void main(String[] args) {
-		UserServiceImpl aImpl = new UserServiceImpl(new UserRepositoryImpl()); 		
-		List<User> myList = aImpl.getByLastName("Borisov");
-		for (User user : myList) {
-			System.out.println(user);
-		}
-	}
-	*/
-
 }

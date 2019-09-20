@@ -23,10 +23,8 @@ import my.app.model.User;
 import my.app.service.UserService;
 
 @RestController
-//@Controller
 public class UserController {
 	
-	//private UserService userService = new UserServiceImpl();
 	private UserService userService;
 	
 	@Autowired
@@ -100,11 +98,13 @@ public class UserController {
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String delete(@PathVariable("id") Integer id) {
-        if ((id > 0) && (userService.getById(id) != null)){
+    public void delete(@PathVariable("id") Integer id) {
+    	User user = userService.getById(id);
+        if ((id > 0) && (user != null)){
         	userService.deleteById(id);
-        	return "Deleted";
         }
-        return "Failed to delete";
+        else {
+        	throw new ResourceNotFoundException();
+        }
     }
 }

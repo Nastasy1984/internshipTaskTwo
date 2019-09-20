@@ -109,3 +109,9 @@ hr{
     margin-right: auto;
     margin-left: auto;
 }
+.update{
+	color: #4682B4;
+}
+.delete{
+    color: #C70039;
+}

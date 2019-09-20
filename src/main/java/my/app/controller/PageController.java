@@ -1,17 +1,15 @@
 package my.app.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.persistence.Id;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -74,7 +72,7 @@ public class PageController {
 			return modelAndView;
 		}
 	
-		modelAndView.addObject("users", pageService.getUserById(id));
+		modelAndView.addObject("users", users);
 		modelAndView.setViewName("searchResult");
         return modelAndView;
     }
@@ -106,7 +104,7 @@ public class PageController {
         return modelAndView;
     }
 		
-	//DONE getting parameters of user and adding user to the users list 
+	//DONE WORKS getting parameters of user and adding user to the users list 
 	//sending to the page with user
     @PostMapping(value ="/add-new-user")
     @ResponseStatus(HttpStatus.CREATED)
@@ -130,5 +128,26 @@ public class PageController {
 		modelAndView.setViewName("user");
         return modelAndView;
     }
-	
+   
+    //DONE deleting user 
+    @GetMapping(value ="/delete/{id:\\d+}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ModelAndView deleteUser(@PathVariable ("id") Integer id) {
+    	ModelAndView modelAndView = new ModelAndView();
+    	
+    	int respCode = pageService.deleteUser(id);
+		if (respCode == 200) {
+			String successString = "User with id " + id + " was deleted successfully";
+			modelAndView.addObject("successString", successString);
+		}
+		else {
+			String failString = "Failed to delete user with id " + id;
+			modelAndView.addObject("successString", failString);
+		}
+    	modelAndView.addObject("usersList", pageService.getUsersList());
+		modelAndView.setViewName("user");
+        return modelAndView;
+    }
+    
 }

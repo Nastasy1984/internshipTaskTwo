@@ -13,6 +13,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -72,8 +73,6 @@ public class PageService {
 				return null;
 			}
 			
-			//CloseableHttpResponse response = instance.execute(new HttpGet("http://www.google.com"));
-			//assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
 			StringReader reader = new StringReader(string);
 	        ObjectMapper mapper = new ObjectMapper();
 	        
@@ -169,6 +168,33 @@ public class PageService {
 		}
 		return null;
 	}
+	
+	public int deleteUser(Integer id) {
+		CloseableHttpClient client = HttpClients.createDefault();
+		String url = "http://localhost:8080/SpringRest/user/" + id;
+		HttpDelete httpDelete = new HttpDelete(url);
+		try {
+			CloseableHttpResponse response = client.execute(httpDelete);
+			int respCode = response.getStatusLine().getStatusCode();
+			System.out.println("GOT RESP CODE");
+			System.out.println(respCode);
+			return respCode;
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	
 	
 	
 	//TODO delete
