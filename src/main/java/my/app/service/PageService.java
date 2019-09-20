@@ -61,28 +61,15 @@ public class PageService {
 	
 	public List<User> getUserById(Integer id) {
 		String URI = "http://localhost:8080/SpringRest/user/" + id;
-		//TODO delete uri is normal http://localhost:8080/SpringRest/user?lastName=Averina
-		System.out.println(URI.toString());
-		
 		HttpGet httpGet = new HttpGet(URI);
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
-			
-			//TODO delete
-			System.out.println(response.toString());
-			
 			String string = EntityUtils.toString(response.getEntity());
-			
-			//TODO delete
-			System.out.println("WE GOT");
-			System.out.println(string);
 			StringReader reader = new StringReader(string);
 	        ObjectMapper mapper = new ObjectMapper();
 	        
 	        User[] usersArr = mapper.readValue(reader, User[].class);
 	        List<User> users = Arrays.asList(usersArr);
-	        //TODO delete
-	        System.out.println(users.toString());
 	        return users;
 			
 		} catch (ClientProtocolException e) {
@@ -151,7 +138,7 @@ public class PageService {
 	}
 	
 	
-	
+	//TODO delete
 	public static void main(String[] args) {
 		PageService aPageService = new PageService();
 		aPageService.getUserByLastName("Averina");

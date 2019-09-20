@@ -17,7 +17,7 @@
 		<h1>Find user</h1>
 
 		<div class="h2">
-			<h2>Find user by id</h2>
+			<h2>Find user by id:</h2>
 		</div>
 <%-- <form action="/SpringRest/find-user" method="GET"> --%>
 <%-- instead of this we just make JS function that create new url with adding user's id --%>
@@ -37,7 +37,7 @@
 		</form>
 		<hr noshade size="2" color ="#4682B4"/>
 		<div class="h2">
-			<h2>Find user by last name</h2>
+			<h2>Find user by last name:</h2>
 		</div>
 
 		<form action="/SpringRest/find-user-by-last-name" method="GET">
