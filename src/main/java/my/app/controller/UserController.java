@@ -1,5 +1,6 @@
 package my.app.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,16 +49,18 @@ public class UserController {
 	//DONE finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-    public User findUserById(@PathVariable ("id") Integer id) {
+    public List <User> findUserById(@PathVariable ("id") Integer id) {
 		//TODO change to normal message about mistake
 		if ((id==null) || (!userService.getAll().containsKey(id))){
 			throw new ResourceNotFoundException();
 		}
-		return userService.getById(id);
+		List<User> resultList = new ArrayList<User>();
+		resultList.add(userService.getById(id));
+		return resultList;
     }
 	
 	//WORKS finds user by last name and produces data of user in JSON format
-	@GetMapping(value ="/find-user-by-last-name", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(value ="/user/{ln:\\D+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		//TODO change to normal message about mistake
@@ -68,6 +71,7 @@ public class UserController {
 		if (userService.getByLastName(lastName).size()==0) {
 			throw new ResourceNotFoundException();
 		}
+
 		return userService.getByLastName(lastName);
     }
 	

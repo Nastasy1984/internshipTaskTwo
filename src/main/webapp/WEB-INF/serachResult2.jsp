@@ -23,14 +23,12 @@
 				<th>First Name</th>
 				<th>Last Name</th>
 			</tr>
-			<%-- getting attribute usersList from model --%>
-			<c:forEach var="user" items="${users}">
-				<tr>
-					<td>${user.id}</td>
-					<td>${user.firstName}</td>
-					<td>${user.lastName}</td>
-				</tr>
-			</c:forEach>
+			<%-- getting attribute user from model --%>
+			<tr>
+				<td>${user.id}</td>
+				<td>${user.firstName}</td>
+				<td>${user.lastName}</td>
+			</tr>
 		</table>
 		<br> <br>
 		<div class="action">
@@ -40,7 +38,7 @@
 			<a href="/SpringRest/find-user">Find user</a>
 		</div>
 		<div class="action">
-			<a href="/SpringRest/show-all-users">Show list of users</a>
+			<a href="/SpringRest/">Show list of users</a>
 		</div>
 	</div>
 </body>
