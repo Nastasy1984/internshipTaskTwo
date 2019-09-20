@@ -13,6 +13,9 @@
 <body>
 <div class="layout">
 	<h1>Add new user</h1>
+	<div class="resultString">
+		${failString}
+	</div>
 	<form action="/SpringRest/add-new-user" method="POST">
 		<label>First name</label> <input type="text" name="firstName">
 		<br>

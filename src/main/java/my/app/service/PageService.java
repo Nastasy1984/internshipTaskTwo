@@ -126,7 +126,8 @@ public class PageService {
 		return null;
 	}
 	
-	
+	//DONE WORKS 
+	//TODO Exeptions
 	public User addUser(String firstName, String lastName) {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");

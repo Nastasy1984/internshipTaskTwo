@@ -84,10 +84,17 @@ public class PageController {
     @ResponseBody
     public ModelAndView addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
     		@RequestParam(value="lastName", required=true) String lastName) {
-        //saving the user by pageService
+    	ModelAndView modelAndView = new ModelAndView();
+
+    	if ((firstName==null) || (lastName==null) || (lastName.equals("")) || (firstName.equals(""))) {
+    		modelAndView.setViewName("addNewUser");
+    		String failString = "All fields in form must be correctly filled";
+    		modelAndView.addObject("failString", failString);
+    		return modelAndView;
+    	}
+    	//saving the user by pageService
     	User user = pageService.addUser(firstName, lastName);
     	String successString = "User " + user.getLastName() + " " + user.getFirstName() + " was added successfully";
-    	ModelAndView modelAndView = new ModelAndView();
     	//redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		modelAndView.addObject("successString", successString);
