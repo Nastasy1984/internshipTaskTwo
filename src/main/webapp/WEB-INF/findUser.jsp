@@ -15,7 +15,9 @@
 <body>
 	<div class="layout">
 		<h1>Find user</h1>
-
+	<div class="resultString">
+		${failString}
+	</div>
 		<div class="h2">
 			<h2>Find user by id:</h2>
 		</div>

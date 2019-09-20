@@ -1,5 +1,8 @@
 package my.app.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Id;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +63,25 @@ public class PageController {
 	
 	//DONE WORKS finding user by id
 	@GetMapping("/find-user/{id:\\d+}")
-    public ModelAndView findUserById(@PathVariable ("id") Integer id) {
+    public ModelAndView findUserById(@PathVariable ("id") String id) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("users", pageService.getUserById(id));
+		if (!(Integer.valueOf(id) instanceof Integer)) {
+			System.out.println("HERE1");
+			String failString = "Please enter number to the id field ";
+			modelAndView.setViewName("findUser");
+			modelAndView.addObject("failString", failString);
+	        return modelAndView;
+		}
+		List <User> users = pageService.getUserById(Integer.valueOf(id));
+		if (!users.isEmpty()) {
+		modelAndView.addObject("users", pageService.getUserById(Integer.valueOf(id)));
 		modelAndView.setViewName("searchResult");
+		}
+		else {
+			String failString = "Failed to find user with id " + id;
+			modelAndView.setViewName("findUser");
+			modelAndView.addObject("failString", failString);
+		}
         return modelAndView;
     }
 	
@@ -71,7 +89,14 @@ public class PageController {
 	@GetMapping("/find-user-by-last-name")
     public ModelAndView findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("users", pageService.getUserByLastName(lastName));
+		List <User> usersList = pageService.getUserByLastName(lastName);
+		if (usersList==null) {
+			String failString = "Failed to find user with last name " + lastName;
+			modelAndView.setViewName("findUser");
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
+		modelAndView.addObject("users", usersList);
 		modelAndView.setViewName("searchResult");
         return modelAndView;
     }

@@ -68,6 +68,12 @@ public class PageService {
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 			String string = EntityUtils.toString(response.getEntity());
+			//TODO delete
+			System.out.println("WE GOT STRING IN PS");
+			System.out.println(string);
+			
+			//CloseableHttpResponse response = instance.execute(new HttpGet("http://www.google.com"));
+			//assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
 			StringReader reader = new StringReader(string);
 	        ObjectMapper mapper = new ObjectMapper();
 	        
@@ -92,7 +98,7 @@ public class PageService {
 	//DONE WORKS
 	public List<User> getUserByLastName(String lastName) {
 		CloseableHttpClient client = HttpClients.createDefault();
-		String url = "http://localhost:8080/SpringRest/user/" + lastName;
+		String url = "http://localhost:8080/SpringRest/userln/";
 		HttpGet httpGet = new HttpGet(url);
 	    URI uri;
 		try {
@@ -105,6 +111,13 @@ public class PageService {
 	    		
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
+			int respCode = response.getStatusLine().getStatusCode();
+			//TODO delete
+			System.out.println("RESPONSE CODE");
+			System.out.println(respCode);
+			if (respCode != 200) {
+				return null;
+			}
 			String string = EntityUtils.toString(response.getEntity());
 			StringReader reader = new StringReader(string);
 	        ObjectMapper mapper = new ObjectMapper();

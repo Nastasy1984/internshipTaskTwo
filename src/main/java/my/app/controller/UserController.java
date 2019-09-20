@@ -59,16 +59,16 @@ public class UserController {
     }
 	
 	//WORKS finds user by last name and produces data of user in JSON format
-	@GetMapping(value ="/user/{ln:\\D+}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
+	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		//TODO change to normal message about mistake
-		if ((lastName==null) || (lastName.equals(""))){
-			throw new ResourceNotFoundException();
-		}
+		//if ((lastName==null) || (lastName.equals(""))){
+		//	throw new ResourceNotFoundException();
+		//}
 		//TODO change to normal message about mistake
-		if (userService.getByLastName(lastName).size()==0) {
+		List <User> users = userService.getByLastName(lastName);
+		if (users.size()==0) {
 			throw new ResourceNotFoundException();
 		}
 
