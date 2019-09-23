@@ -54,6 +54,14 @@ public class UserRepositoryImpl implements UserRepository{
 		if (user == null) {
 			return false;
 		}
+		/*
+		User oldUser = getById(user.getId());
+		if (user.getFirstName().equals("")) {
+			user.setFirstName(oldUser.getFirstName());
+		}
+		if (user.getLastName().equals("")) {
+			user.setLastName(oldUser.getLastName());
+		}*/
 		users.put(user.getId(), user);
 		return true;
 	}

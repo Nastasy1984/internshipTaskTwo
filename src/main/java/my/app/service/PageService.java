@@ -214,8 +214,9 @@ public class PageService {
 
 		HttpPut httpPut = new HttpPut(url);
 
-		try {
-		
+		try {	
+			httpPut.setHeader("Accept","application/json");
+			httpPut.setHeader("Content-type","application/json");
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPut.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPut);

@@ -46,7 +46,6 @@ public class UserController {
     }
     
       
-
 	//DONE WORKS finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
@@ -69,10 +68,11 @@ public class UserController {
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		List <User> users = userService.getByLastName(lastName);
 		if (users.size()==0) {
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("There are no user with last name " + lastName + " in the user's list");
 		}
 		return userService.getByLastName(lastName);
     }
+	
 	
 	//DONE WORKS getting data of user in JSON format and adding user to the users list
     @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -89,7 +89,22 @@ public class UserController {
     }
     
   //DONE getting data of user and updating user in the users list
-    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.TEXT_PLAIN_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public User updateUser(@PathVariable ("id") Integer id, @RequestBody User user) {
+    	
+    	if ((user!=null)){
+			User userUpdated = userService.update(user);
+			return userUpdated;  
+        }
+        return null;
+    }
+    
+   
+    /*
+    //DONE getting data of user and updating user in the users list
+    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public User updateUser(@PathVariable ("id") Integer id, @RequestBody String userString) {
@@ -109,6 +124,9 @@ public class UserController {
         return null;
     }
     
+    
+    */
+    
     /*
   //DOes NOT WORK WHY??? getting data of user and updating user in the users list
     @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -127,7 +145,6 @@ public class UserController {
     }
     */
 
-    
     //DONE WORKS getting id and deleting user
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
