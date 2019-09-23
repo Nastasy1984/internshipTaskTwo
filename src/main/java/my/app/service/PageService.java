@@ -2,6 +2,7 @@ package my.app.service;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,14 +17,18 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import my.app.model.User;
@@ -176,8 +181,6 @@ public class PageService {
 		try {
 			CloseableHttpResponse response = client.execute(httpDelete);
 			int respCode = response.getStatusLine().getStatusCode();
-			System.out.println("GOT RESP CODE");
-			System.out.println(respCode);
 			return respCode;
 			
 		} catch (ClientProtocolException e) {
@@ -195,14 +198,36 @@ public class PageService {
 	}
 	
 	
-	
-	
-	//TODO delete
-	public static void main(String[] args) {
-		PageService aPageService = new PageService();
-		//aPageService.getUserByLastName("Averina");
-		aPageService.addUser("Kot", "Kotov");
+	public User updateUser(Integer id, String firstName, String lastName) {
+		CloseableHttpClient client = HttpClients.createDefault();
+		String url = "http://localhost:8080/SpringRest/user/" + id;
+		
+		User userGotten = new User (firstName, lastName);
+		userGotten.setId(id);
+		StringWriter writer = new StringWriter();
+		ObjectMapper mapperToJson = new ObjectMapper();
+		try {
+			mapperToJson.writeValue(writer, userGotten);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		HttpPut httpPut = new HttpPut(url);
+
+		try {
+		
+			StringEntity stringEntity = new StringEntity(writer.toString());
+			httpPut.setEntity(stringEntity);
+			CloseableHttpResponse response = client.execute(httpPut);
+			String string = EntityUtils.toString(response.getEntity());
+			StringReader reader = new StringReader(string);
+		    ObjectMapper mapperFromJson = new ObjectMapper();
+		    User userUpdated = mapperFromJson.readValue(reader, User.class);
+		    return userUpdated;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return null;
 	}
-	
 	
 }

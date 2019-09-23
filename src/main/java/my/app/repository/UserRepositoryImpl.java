@@ -48,6 +48,16 @@ public class UserRepositoryImpl implements UserRepository{
 		users.put(user.getId(), user);
 		return true;
 	}
+	
+	@Override
+	public boolean update(User user) {
+		if (user == null) {
+			return false;
+		}
+		users.put(user.getId(), user);
+		return true;
+	}
+	
 
 	@Override
 	public void delete(User user) {

@@ -23,6 +23,7 @@
 				<th>Id</th>
 				<th>First Name</th>
 				<th>Last Name</th>
+				<th>Update</th>
 				<th>Delete</th>
 			</tr>
 			<%-- getting attribute usersList from model --%>
@@ -31,6 +32,7 @@
 					<td>${user.id}</td>
 					<td>${user.firstName}</td>
 					<td>${user.lastName}</td>
+					<td><a href="/SpringRest/update/${user.id}"class="update">Update</a></td>
 					<td><a href="/SpringRest/delete/${user.id}"class="delete">Delete</a></td>
 				</tr>
 			</c:forEach>

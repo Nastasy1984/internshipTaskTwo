@@ -1,5 +1,7 @@
 package my.app.controller;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -42,7 +47,7 @@ public class UserController {
     
       
 
-	//DONE finds user by id and produces data of user in JSON format
+	//DONE WORKS finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List <User> findUserById(@PathVariable ("id") Integer id) {
@@ -58,7 +63,7 @@ public class UserController {
 		return resultList;
     }
 	
-	//WORKS finds user by last name and produces data of user in JSON format
+	//DONE WORKS finds user by last name and produces data of user in JSON format
 	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
@@ -69,7 +74,7 @@ public class UserController {
 		return userService.getByLastName(lastName);
     }
 	
-	//getting data of user in JSON format and adding user to the users list
+	//DONE WORKS getting data of user in JSON format and adding user to the users list
     @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -77,24 +82,53 @@ public class UserController {
     		@RequestParam(value="lastName", required=true) String lastName) {
         if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
         	User user = new User (firstName,lastName);
-        	User user2 = userService.save(user);
-        	return user2;
+        	User userSaved = userService.save(user);
+        	return userSaved;
         }
         return null;
     }
-	
-    //getting data of user in JSON format and updating user in the users list
-    @PutMapping(value = "/user/{id:\\d+}", consumes = {"application/json"})
+    
+  //DONE getting data of user and updating user in the users list
+    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.TEXT_PLAIN_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public User update(@PathVariable( "id" ) Integer id, @RequestBody User user) {
-        if (id > 0) {
-        	userService.save(user);
+    public User updateUser(@PathVariable ("id") Integer id, @RequestBody String userString) {
+    	
+    	if ((userString!=null)){
+    		StringReader reader = new StringReader(userString);
+	        ObjectMapper mapperFromJson = new ObjectMapper();
+	        User user;
+			try {
+				user = mapperFromJson.readValue(reader, User.class);
+				User userUpdated = userService.update(user);
+	        	return userUpdated;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
         }
-        return user;
+        return null;
     }
-	
-    //getting id and deleting user
+    
+    /*
+  //DOes NOT WORK WHY??? getting data of user and updating user in the users list
+    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public User updateUser(@PathVariable ("id") Integer id, @RequestBody User user) {
+
+    	
+    	if ((user!=null)){
+	        	User userUpdated = userService.update(user);
+
+	        	return userUpdated;
+	        
+        }
+        return null;
+    }
+    */
+
+    
+    //DONE WORKS getting id and deleting user
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

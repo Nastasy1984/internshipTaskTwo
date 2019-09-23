@@ -3,6 +3,8 @@ package my.app.controller;
 
 import java.util.List;
 
+import javax.persistence.Id;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -105,7 +107,7 @@ public class PageController {
     }
 		
 	//DONE WORKS getting parameters of user and adding user to the users list 
-	//sending to the page with user
+	//sending to the page with users
     @PostMapping(value ="/add-new-user")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -149,5 +151,44 @@ public class PageController {
 		modelAndView.setViewName("user");
         return modelAndView;
     }
+    
+	//DONE WORKS sending to the user\s updating page
+	@GetMapping(value ="/update/{id:\\d+}")
+    public ModelAndView updateUserPage(@PathVariable ("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("updateUser");
+		modelAndView.addObject("id", id);
+		List <User> users = pageService.getUserById(id);
+		modelAndView.addObject("user", users.get(0));
+        return modelAndView;
+    }
+	
+	
+	//DONE getting parameters of user and updating user in the users list 
+	//sending to the page with users
+    @PostMapping(value ="/update-user")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ModelAndView updateUser(@RequestParam(value="id") Integer id, @RequestParam(value="firstName") String firstName, 
+    		@RequestParam(value="lastName") String lastName) {
+    	ModelAndView modelAndView = new ModelAndView();
+    	if ((lastName.equals("")) && (firstName.equals(""))) {
+    		modelAndView.setViewName("updateUser");
+    		modelAndView.addObject("id", id);
+    		String failString = "At least one field in the form must be filled";
+    		modelAndView.addObject("failString", failString);
+    		return modelAndView;
+    	}
+    	//saving new user's data  by pageService
+    	User user = pageService.updateUser(id, firstName, lastName);	
+    	
+    	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
+    	//redirect to the list with all users
+		modelAndView.addObject("usersList", pageService.getUsersList());
+		modelAndView.addObject("successString", successString);
+		modelAndView.setViewName("user");
+        return modelAndView;
+    }
+	
     
 }

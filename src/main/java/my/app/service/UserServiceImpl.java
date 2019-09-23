@@ -31,6 +31,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User update(User user) {
+		boolean isUpdated = userRepository.update(user);
+		if (isUpdated) {
+			return user;
+		}
+			return null;
+	}
+	
+	
+	@Override
 	public void delete(User user) {
 		if(user!=null) {
 			userRepository.delete(user);

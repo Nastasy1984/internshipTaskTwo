@@ -15,4 +15,6 @@ public interface UserRepository {
     User getById(Integer id);
     
     List<User> getByLastName(String lastName);
+    
+    boolean update(User user);
 }
