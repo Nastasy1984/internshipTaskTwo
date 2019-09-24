@@ -21,6 +21,8 @@
 		<br>
 		<label>Last name</label> <input type="text" name="lastName"> 
 		<br>
+		<label>E-mail</label> <input type="text" name="eMail"> 
+		<br>
 		<input class="submit" type="submit" value="Add user">
 	</form>
 

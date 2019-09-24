@@ -147,12 +147,13 @@ public class PageService {
 	}
 	
 	//DONE WORKS 
-	public User addUser(String firstName, String lastName) {
+	public User addUser(String firstName, String lastName, String eMail) {
 		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    params.add(new BasicNameValuePair("firstName", firstName));
 	    params.add(new BasicNameValuePair("lastName", lastName));
+	    params.add(new BasicNameValuePair("eMail", eMail));
 	    try {
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			try {
@@ -190,12 +191,14 @@ public class PageService {
 	}
 	
 	
-	public User updateUser(Integer id, String firstName, String lastName) {
+	public User updateUser(Integer id, String firstName, String lastName, String eMail) {
 		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
 		
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
+		userGotten.seteMail(eMail);
+		
 		StringWriter writer = new StringWriter();
 		try {
 			mapper.writeValue(writer, userGotten);

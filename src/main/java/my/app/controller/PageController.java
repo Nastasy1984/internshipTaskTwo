@@ -102,17 +102,20 @@ public class PageController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ModelAndView addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
-    		@RequestParam(value="lastName", required=true) String lastName) {
+    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="lastName", required=false) String eMail) {
     	ModelAndView modelAndView = new ModelAndView();
 
     	if ((firstName==null) || (lastName==null) || (lastName.equals("")) || (firstName.equals(""))) {
     		modelAndView.setViewName("addNewUser");
-    		String failString = "All fields in the form must be filled";
+    		String failString = "First name and last name are obligatory fields";
     		modelAndView.addObject("failString", failString);
     		return modelAndView;
     	}
+    	if (eMail==null) {
+    		eMail = "";
+    	}
     	//saving the user by pageService
-    	User user = pageService.addUser(firstName, lastName);
+    	User user = pageService.addUser(firstName, lastName, eMail);
     	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
     	//redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
@@ -159,18 +162,18 @@ public class PageController {
     @PostMapping(value ="/update-user")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ModelAndView updateUser(@RequestParam(value="id") Integer id, @RequestParam(value="firstName") String firstName, 
-    		@RequestParam(value="lastName") String lastName) {
+    public ModelAndView updateUser(@RequestParam(value="id") Integer id, @RequestParam(value="firstName", required=false) String firstName, 
+    		@RequestParam(value="lastName", required=false) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
     	ModelAndView modelAndView = new ModelAndView();
-    	if ((lastName.equals("")) && (firstName.equals(""))) {
+    	if ((lastName.equals("")) && (firstName.equals("")) && (eMail.equals(""))) {
     		modelAndView.setViewName("updateUser");
     		modelAndView.addObject("id", id);
     		String failString = "At least one field in the form must be filled";
     		modelAndView.addObject("failString", failString);
     		return modelAndView;
     	}
-    	//saving new user's data  by pageService
-    	User user = pageService.updateUser(id, firstName, lastName);	
+
+    	User user = pageService.updateUser(id, firstName, lastName, eMail);	
     	
     	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
     	//redirect to the list with all users

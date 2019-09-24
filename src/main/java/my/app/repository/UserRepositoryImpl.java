@@ -19,12 +19,16 @@ public class UserRepositoryImpl implements UserRepository{
 		//creating 3 users for probe
 		User user1 = new User("Anya","Averina");
 		user1.setId(1);
+		user1.seteMail("averina@tom.com");
 		User user2 = new User("Boris","Borisov");
 		user2.setId(2);
+		user2.seteMail("borisov@tom.com");
 		User user3 = new User("Viktor","Viktorov");
 		user3.setId(3);
+		user3.seteMail("viktorov@tom.com");
 		User user4 = new User("Gvidon","Gvidonov");
 		user4.setId(4);
+		user4.seteMail("gvidonov@tom.com");
 		this.users.put(user1.getId(), user1);
 		this.users.put(user2.getId(), user2);
 		this.users.put(user3.getId(), user3);
@@ -54,14 +58,6 @@ public class UserRepositoryImpl implements UserRepository{
 		if (user == null) {
 			return false;
 		}
-		/*
-		User oldUser = getById(user.getId());
-		if (user.getFirstName().equals("")) {
-			user.setFirstName(oldUser.getFirstName());
-		}
-		if (user.getLastName().equals("")) {
-			user.setLastName(oldUser.getLastName());
-		}*/
 		users.put(user.getId(), user);
 		return true;
 	}

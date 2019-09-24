@@ -23,6 +23,8 @@
 		<br>
 		<label>Last name</label> <input type="text" name="lastName" value="${user.lastName}"> 
 		<br>
+		<label>E-mail</label> <input type="text" name="eMail" value="${user.eMail}"> 
+		<br>
 		<input class="submit" type="submit" value="Update user">
 	</form>
 

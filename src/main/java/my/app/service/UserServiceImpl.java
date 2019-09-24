@@ -13,7 +13,6 @@ import my.app.repository.UserRepository;
 @Component
 public class UserServiceImpl implements UserService {
 	
-	//private UserRepository userRepository = new UserRepositoryImpl();
 	private UserRepository userRepository;
 
 	@Autowired
