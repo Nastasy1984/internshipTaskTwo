@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -22,9 +24,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,16 +37,44 @@ import my.app.model.User;
 @Component
 public class PageService {
 
+	private ObjectMapper mapper;
+	private CloseableHttpClient client;
+	
+	@Autowired
+	public PageService(ObjectMapper mapper, CloseableHttpClient client) {
+		this.mapper = mapper;
+		this.client = client;
+	}
+	
+	public ObjectMapper getMapper() {
+		return mapper;
+	}
 
+	public void setMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	public CloseableHttpClient getClient() {
+		return client;
+	}
+
+	public void setClient(CloseableHttpClient client) {
+		this.client = client;
+	}
+	
+    @PreDestroy
+    public void cleanUp() throws Exception {
+    	client.close();
+    }
+	
 	//DONE WORKS
 	public List<User> getUsersList(){
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/users");
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 			String string = EntityUtils.toString(response.getEntity());
 			StringReader reader = new StringReader(string);
-	        ObjectMapper mapper = new ObjectMapper();
 	        User[] usersArr = mapper.readValue(reader, User[].class);
 	        List<User> users = Arrays.asList(usersArr);
 	        return users;
@@ -55,17 +85,17 @@ public class PageService {
 			e.printStackTrace();
 		}
 		
-		try {
+		/*try {
 			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
         return null;
 	}
 	
 	//DONE WORKS
 	public List<User> getUserById(Integer id) {
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
 		HttpGet httpGet = new HttpGet(url);
 		try {
@@ -77,8 +107,6 @@ public class PageService {
 			}
 			
 			StringReader reader = new StringReader(string);
-	        ObjectMapper mapper = new ObjectMapper();
-	        
 	        User[] usersArr = mapper.readValue(reader, User[].class);
 	        List<User> users = Arrays.asList(usersArr);
 	        return users;
@@ -89,17 +117,18 @@ public class PageService {
 			e.printStackTrace();
 		}
 		
-		try {
+		/*try {
 			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 	
+		catch (IOException e) {
+				e.printStackTrace();
+		}*/
 		return null;
 	}
 	
 	//DONE WORKS
 	public List<User> getUserByLastName(String lastName) {
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/userln/";
 		HttpGet httpGet = new HttpGet(url);
 	    URI uri;
@@ -119,7 +148,6 @@ public class PageService {
 			}
 			String string = EntityUtils.toString(response.getEntity());
 			StringReader reader = new StringReader(string);
-	        ObjectMapper mapper = new ObjectMapper();
 	        User[] usersArr = mapper.readValue(reader, User[].class);
 	        List<User> users = Arrays.asList(usersArr);
 	        return users;
@@ -130,17 +158,17 @@ public class PageService {
 			e.printStackTrace();
 		}
 		
-		try {
+		/*try {
 			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return null;
 	}
 	
 	//DONE WORKS 
 	public User addUser(String firstName, String lastName) {
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    params.add(new BasicNameValuePair("firstName", firstName));
@@ -151,7 +179,6 @@ public class PageService {
 				CloseableHttpResponse response = client.execute(httpPost);
 				String string = EntityUtils.toString(response.getEntity());
 				StringReader reader = new StringReader(string);
-		        ObjectMapper mapper = new ObjectMapper();
 		        User userAdded = mapper.readValue(reader, User.class);
 		        return userAdded;
 			} catch (ClientProtocolException e) {
@@ -162,18 +189,17 @@ public class PageService {
 		} catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
-
 	    
-		try {
+		/*try {
 			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return null;
 	}
 	
 	public int deleteUser(Integer id) {
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
 		HttpDelete httpDelete = new HttpDelete(url);
 		try {
@@ -187,25 +213,24 @@ public class PageService {
 			e.printStackTrace();
 		}
 		
-		try {
+		/*try {
 			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return 0;
 	}
 	
 	
 	public User updateUser(Integer id, String firstName, String lastName) {
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
 		
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		StringWriter writer = new StringWriter();
-		ObjectMapper mapperToJson = new ObjectMapper();
 		try {
-			mapperToJson.writeValue(writer, userGotten);
+			mapper.writeValue(writer, userGotten);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -220,12 +245,17 @@ public class PageService {
 			CloseableHttpResponse response = client.execute(httpPut);
 			String string = EntityUtils.toString(response.getEntity());
 			StringReader reader = new StringReader(string);
-		    ObjectMapper mapperFromJson = new ObjectMapper();
-		    User userUpdated = mapperFromJson.readValue(reader, User.class);
+		    User userUpdated = mapper.readValue(reader, User.class);
 		    return userUpdated;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
+		/*try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
 		return null;
 	}
 	

@@ -1,7 +1,5 @@
 package my.app.controller;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,7 +32,8 @@ public class UserController {
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-
+	
+	
 	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
@@ -45,7 +42,6 @@ public class UserController {
         return userService.getAllAsList();
     }
     
-      
 	//DONE WORKS finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
@@ -72,7 +68,6 @@ public class UserController {
 		}
 		return userService.getByLastName(lastName);
     }
-	
 	
 	//DONE WORKS getting data of user in JSON format and adding user to the users list
     @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -105,7 +100,6 @@ public class UserController {
         return null;
     }
     
-   
     /*
     //DONE getting data of user and updating user in the users list
     @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -127,8 +121,6 @@ public class UserController {
         }
         return null;
     }
-    
-    
     */
     
     /*
@@ -138,12 +130,10 @@ public class UserController {
     @ResponseBody
     public User updateUser(@PathVariable ("id") Integer id, @RequestBody User user) {
 
-    	
     	if ((user!=null)){
 	        	User userUpdated = userService.update(user);
 
 	        	return userUpdated;
-	        
         }
         return null;
     }
