@@ -33,7 +33,6 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	
 	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
@@ -68,7 +67,7 @@ public class UserController {
 		}
 		return userService.getByLastName(lastName);
     }
-	
+
 	//DONE WORKS getting data of user in JSON format and adding user to the users list
     @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -88,7 +87,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public User updateUser(@PathVariable ("id") Integer id, @RequestBody User user) {
-    	
+    	if (id==null){
+            throw new ResourceNotFoundException("Id is null!");
+    	}
     	if ((user!=null)){
 			User userUpdated = userService.update(user);
 			if (userUpdated==null) {
@@ -100,56 +101,21 @@ public class UserController {
         return null;
     }
     
-    /*
-    //DONE getting data of user and updating user in the users list
-    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public User updateUser(@PathVariable ("id") Integer id, @RequestBody String userString) {
-    	
-    	if ((userString!=null)){
-    		StringReader reader = new StringReader(userString);
-	        ObjectMapper mapperFromJson = new ObjectMapper();
-	        User user;
-			try {
-				user = mapperFromJson.readValue(reader, User.class);
-				User userUpdated = userService.update(user);
-	        	return userUpdated;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  
-        }
-        return null;
-    }
-    */
-    
-    /*
-  //DOes NOT WORK WHY??? getting data of user and updating user in the users list
-    @PutMapping(value = "/user/{id:\\d+}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public User updateUser(@PathVariable ("id") Integer id, @RequestBody User user) {
-
-    	if ((user!=null)){
-	        	User userUpdated = userService.update(user);
-
-	        	return userUpdated;
-        }
-        return null;
-    }
-    */
-
     //DONE WORKS getting id and deleting user
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void delete(@PathVariable("id") Integer id) {
+    	if (id==null){
+            throw new ResourceNotFoundException("Id is null!");
+    	}
+    	//Checking if there is a user with this id in out list of users
     	User user = userService.getById(id);
-        if ((id > 0) && (user != null)){
+        if (user != null){
         	userService.deleteById(id);
         }
         else {
-        	throw new ResourceNotFoundException();
+        	throw new ResourceNotFoundException("There are no user with id " + id + " in the user's list");
         }
     }
 }

@@ -66,10 +66,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getById(Integer id) {
-		if(id > 0) {
-			return userRepository.getById(id);
-		}
-		return null;
+		return userRepository.getById(id);
 	}
 
 	@Override

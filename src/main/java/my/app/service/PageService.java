@@ -73,9 +73,7 @@ public class PageService {
 		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/users");
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
-			String string = EntityUtils.toString(response.getEntity());
-			StringReader reader = new StringReader(string);
-	        User[] usersArr = mapper.readValue(reader, User[].class);
+	        User[] usersArr = mapper.readValue(response.getEntity().getContent(), User[].class);
 	        List<User> users = Arrays.asList(usersArr);
 	        return users;
 			
@@ -84,12 +82,6 @@ public class PageService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
         return null;
 	}
 	
@@ -116,13 +108,6 @@ public class PageService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*try {
-			client.close();
-		} 	
-		catch (IOException e) {
-				e.printStackTrace();
-		}*/
 		return null;
 	}
 	
@@ -157,12 +142,7 @@ public class PageService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		/*try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+
 		return null;
 	}
 	
@@ -177,9 +157,7 @@ public class PageService {
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			try {
 				CloseableHttpResponse response = client.execute(httpPost);
-				String string = EntityUtils.toString(response.getEntity());
-				StringReader reader = new StringReader(string);
-		        User userAdded = mapper.readValue(reader, User.class);
+				User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
 		        return userAdded;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -190,11 +168,6 @@ public class PageService {
 			e2.printStackTrace();
 		}
 	    
-		/*try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 		return null;
 	}
 	
@@ -213,11 +186,6 @@ public class PageService {
 			e.printStackTrace();
 		}
 		
-		/*try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 		return 0;
 	}
 	
@@ -243,19 +211,11 @@ public class PageService {
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPut.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPut);
-			String string = EntityUtils.toString(response.getEntity());
-			StringReader reader = new StringReader(string);
-		    User userUpdated = mapper.readValue(reader, User.class);
+		    User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
 		    return userUpdated;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		/*try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 		return null;
 	}
 	

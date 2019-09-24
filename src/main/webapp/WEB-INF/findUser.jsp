@@ -19,7 +19,7 @@
 		${failString}
 	</div>
 		<div class="h2">
-			<h2>Find user by id:</h2>
+			<h2>Enter user's ID or last Name:</h2>
 		</div>
 <%-- <form action="/SpringRest/find-user" method="GET"> --%>
 <%-- instead of this we just make JS function that create new url with adding user's id --%>
@@ -27,27 +27,18 @@
 		<script type="text/javascript">
 		function myFunction(){
 		    let actionSrc = "/SpringRest/find-user/" + document.getElementsByName("id")[0].value;
-		    let addUserForm = document.getElementById('add_user_form');
-		    addUserForm.action = actionSrc ;
+		    let findUserForm = document.getElementById('find_user_form');
+		    findUserForm.action = actionSrc;
 		}
 		</script>
 
-		<form id = "add_user_form" onsubmit="myFunction()">
-			<label>Id</label> <br> <input type="text" name="id" placeholder="Enter user's ID"> 
+		<form id = "find_user_form" onsubmit="myFunction()">
+			<label>Id or last name</label> <br> <input type="text" name="id" placeholder="User's ID or last Name"> 
 			<br> 
 			<input class="submit" type="submit" value="Find user">
 		</form>
-		<hr noshade size="2" color ="#4682B4"/>
-		<div class="h2">
-			<h2>Find user by last name:</h2>
-		</div>
-
-		<form action="/SpringRest/find-user-by-last-name" method="GET">
-			<label>Last Name</label> <br> <input type="text" name="lastName" placeholder="Enter user's last name"> 
-			<br> 
-			<input class="submit" type="submit" value="Find user">
-		</form>
-			<hr noshade size="2" color="#4682B4" />
+		
+	<hr noshade size="2" color="#4682B4" />
 	<div class="action">
 		<a href="/SpringRest/add-new-user">Add new user</a>
 	</div>

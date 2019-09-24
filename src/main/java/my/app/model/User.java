@@ -41,7 +41,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

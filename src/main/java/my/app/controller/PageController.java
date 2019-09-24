@@ -1,14 +1,10 @@
 package my.app.controller;
 
-
 import java.util.List;
-
-import javax.persistence.Id;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,10 +64,7 @@ public class PageController {
 		List <User> users = pageService.getUserById(id);
 		
 		if (users==null) {
-			String failString = "Failed to find user with last name " + id;
-			modelAndView.setViewName("findUser");
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
+			return failedSearch(id.toString());
 		}
 	
 		modelAndView.addObject("users", users);
@@ -79,33 +72,30 @@ public class PageController {
         return modelAndView;
     }
 	
-	//DONE WORKS finding user by id
-		@GetMapping("/find-user/{id:\\D+}")
-	    public ModelAndView findUserByIdWrongInput(@PathVariable ("id") String wrongId) {
-			ModelAndView modelAndView = new ModelAndView();
-			String failString = "Please enter number to the id field ";
-			modelAndView.setViewName("findUser");
-			modelAndView.addObject("failString", failString);
-		    return modelAndView;
-	    }
 	
-	
-	//DONE WORKS finding user by id
-	@GetMapping("/find-user-by-last-name")
-    public ModelAndView findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
+	@GetMapping("/find-user/{lastName:\\D+}")
+    public ModelAndView findUserByLastName(@PathVariable ("lastName") String lastName) {
 		ModelAndView modelAndView = new ModelAndView();
 		List <User> usersList = pageService.getUserByLastName(lastName);
+		
 		if (usersList==null) {
-			String failString = "Failed to find user with last name " + lastName;
-			modelAndView.setViewName("findUser");
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
+			return failedSearch(lastName);
 		}
+		
 		modelAndView.addObject("users", usersList);
 		modelAndView.setViewName("searchResult");
         return modelAndView;
     }
-		
+	
+	
+	public ModelAndView failedSearch(String userString) {
+		ModelAndView modelAndView = new ModelAndView();
+		String failString = "Failed to find user " + userString;
+		modelAndView.setViewName("findUser");
+		modelAndView.addObject("failString", failString);
+		return modelAndView;
+    }
+
 	//DONE WORKS getting parameters of user and adding user to the users list 
 	//sending to the page with users
     @PostMapping(value ="/add-new-user")
@@ -190,5 +180,33 @@ public class PageController {
         return modelAndView;
     }
 	
-    
+	/*
+	
+	//DONE WORKS finding user by id
+	@GetMapping("/find-user/{id:\\D+}")
+	public ModelAndView findUserByIdWrongInput(@PathVariable("id") String wrongId) {
+		ModelAndView modelAndView = new ModelAndView();
+		String failString = "Please enter number to the id field ";
+		modelAndView.setViewName("findUser");
+		modelAndView.addObject("failString", failString);
+		return modelAndView;
+	}
+	
+	
+	//DONE WORKS finding user by id
+	@GetMapping("/find-user-by-last-name")
+    public ModelAndView findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
+		ModelAndView modelAndView = new ModelAndView();
+		List <User> usersList = pageService.getUserByLastName(lastName);
+		if (usersList==null) {
+			String failString = "Failed to find user with last name " + lastName;
+			modelAndView.setViewName("findUser");
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
+		modelAndView.addObject("users", usersList);
+		modelAndView.setViewName("searchResult");
+        return modelAndView;
+    }*/
+		
 }
