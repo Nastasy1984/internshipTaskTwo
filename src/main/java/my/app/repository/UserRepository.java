@@ -10,9 +10,11 @@ public interface UserRepository {
     
     void delete(User user);
     
-    Map<Integer, User> getAll();
+    List <User> getAll();
 	
     User getById(Integer id);
+    
+    boolean containsId(Integer id);
     
     List<User> getByLastName(String lastName);
     

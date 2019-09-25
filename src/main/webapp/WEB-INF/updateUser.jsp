@@ -19,11 +19,11 @@
 	<form action="/SpringRest/update-user" method="POST">
 	<%-- Hidden field for sending user's id --%>
 		<input type="hidden" name="id" value="${id}">
-		<label>First name</label> <input type="text" name="firstName" value="${user.firstName}">
+		<label>First name</label> <br><input type="text" name="firstName" value="${user.firstName}">
 		<br>
-		<label>Last name</label> <input type="text" name="lastName" value="${user.lastName}"> 
+		<label>Last name</label> <br><input type="text" name="lastName" value="${user.lastName}"> 
 		<br>
-		<label>E-mail</label> <input type="text" name="eMail" value="${user.eMail}"> 
+		<label>E-mail</label> <br><input type="text" name="eMail" value="${user.eMail}"> 
 		<br>
 		<input class="submit" type="submit" value="Update user">
 	</form>

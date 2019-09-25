@@ -48,21 +48,24 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteById(Integer id) {
-		if(id > 0) {
+		if(id!=null) {
 			userRepository.delete(getById(id));
 		}
 	}
 	
 	@Override
-	public Map<Integer, User> getAll() {
-		return userRepository.getAll();
+	public boolean containsId(Integer id) {
+		if(id!=null) {
+			return userRepository.containsId(id);
+		}
+		return false;
 	}
 	
 	@Override
 	public List<User> getAllAsList() {
-		return new ArrayList<User>(userRepository.getAll().values());
+		return userRepository.getAll();
 	}
-
+	
 	@Override
 	public User getById(Integer id) {
 		return userRepository.getById(id);

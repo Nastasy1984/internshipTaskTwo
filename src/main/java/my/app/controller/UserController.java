@@ -45,7 +45,7 @@ public class UserController {
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
     public List <User> findUserById(@PathVariable ("id") Integer id) {
-		if ((id==null) || (!userService.getAll().containsKey(id))){
+		if ((id==null) || (!userService.containsId(id))){
 			throw new ResourceNotFoundException();
 		}
 		User user = userService.getById(id);

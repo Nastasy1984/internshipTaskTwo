@@ -12,9 +12,9 @@ public interface UserService {
     
     void delete(User user);
     
-    Map<Integer, User> getAll();
-	
     User getById(Integer id);
+    
+    boolean containsId(Integer id);
     
     List<User> getByLastName(String lastName);
     

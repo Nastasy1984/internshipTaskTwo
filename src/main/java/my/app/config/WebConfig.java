@@ -1,5 +1,7 @@
 package my.app.config;
 
+import javax.sql.DataSource;
+
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,5 +41,16 @@ public class WebConfig {
     public CloseableHttpClient closeableHttpClient() {
         return HttpClients.createDefault();
     }
+    
+    @Bean
+    public DataSource postgreSQLDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/users");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("Novgorod14");
+        return dataSource;
+    }
+    
     
 }

@@ -17,11 +17,11 @@
 		${failString}
 	</div>
 	<form action="/SpringRest/add-new-user" method="POST">
-		<label>First name</label> <input type="text" name="firstName">
+		<label>First name</label><br> <input type="text" name="firstName">
 		<br>
-		<label>Last name</label> <input type="text" name="lastName"> 
+		<label>Last name</label> <br><input type="text" name="lastName"> 
 		<br>
-		<label>E-mail</label> <input type="text" name="eMail"> 
+		<label>E-mail</label><br> <input type="text" name="eMail"> 
 		<br>
 		<input class="submit" type="submit" value="Add user">
 	</form>
