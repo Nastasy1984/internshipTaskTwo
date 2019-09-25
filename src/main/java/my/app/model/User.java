@@ -1,12 +1,11 @@
 package my.app.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-//@Entity
 @JsonAutoDetect
 public class User {
 	//@Id
@@ -15,6 +14,9 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private String eMail;
+	private List <String> phoneNumbers;
+	//private LocalDateTime createdOn;
+
 	
 	public User() {
 	}
@@ -23,14 +25,9 @@ public class User {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.eMail = "";
+		this.phoneNumbers = new ArrayList<String>();
 	}
-	
-	public User(String firstName, String lastName, String eMail) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.eMail = eMail;
-	}
-	
+		
 	public Integer getId() {
 		return id;
 	}
@@ -56,6 +53,14 @@ public class User {
 
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
+	}
+
+	public List<String> getPhoneNumbers() {
+		return phoneNumbers;
+	}
+
+	public void setPhoneNumbers(List<String> phoneNumbers) {
+		this.phoneNumbers = phoneNumbers;
 	}
 
 	@Override
@@ -103,7 +108,10 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", eMail=" + eMail + "]";
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", eMail=" + eMail
+				+ ", phoneNumbers=" + phoneNumbers.toString() + "]";
 	}
+
+
 	
 }

@@ -1,10 +1,8 @@
 package my.app.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -24,14 +22,14 @@ public class UserRepositoryImpl implements UserRepository{
 
 	private JdbcTemplate jdbcTemplate;
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private SimpleJdbcInsert simpleJdbcInsert;
+	private SimpleJdbcInsert simpleJdbcInsertToUsers;
+	private SimpleJdbcInsert simpleJdbcInsertToPhoneNumbers;
 	
 	//TODO delete this
 	private Map<Integer,User> users = new HashMap<>();
 	
 	//FIXME change to DB creating
 	public UserRepositoryImpl() {
-		//creating 3 users for probe
 		User user1 = new User("A","A");
 		user1.setId(1);
 		user1.seteMail("a@tom.com");
@@ -49,6 +47,8 @@ public class UserRepositoryImpl implements UserRepository{
 		this.users.put(user3.getId(), user3);
 		this.users.put(user4.getId(), user4);
 	}
+	
+	
 
 	@Autowired
     public void setDataSource(final DataSource dataSource) {
@@ -56,10 +56,11 @@ public class UserRepositoryImpl implements UserRepository{
         final CustomSQLErrorCodeTranslator customSQLErrorCodeTranslator = new CustomSQLErrorCodeTranslator();
         jdbcTemplate.setExceptionTranslator(customSQLErrorCodeTranslator);
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("users");
+        simpleJdbcInsertToUsers = new SimpleJdbcInsert(dataSource).withTableName("users");
+        simpleJdbcInsertToPhoneNumbers = new SimpleJdbcInsert(dataSource).withTableName("phone_numbers");
     }
 
-	
+	/*
 	//FIXME
 	@Override
 	public boolean save(User user) {
@@ -76,7 +77,7 @@ public class UserRepositoryImpl implements UserRepository{
 		user.setId(newId);
 		users.put(user.getId(), user);
 		return true;
-	}
+	}*/
 	
 	//FIXME
 	@Override
@@ -87,20 +88,49 @@ public class UserRepositoryImpl implements UserRepository{
 		users.put(user.getId(), user);
 		return true;
 	}
-	/*
-	//FIXME
-	@Override
-	public boolean containsId(Integer id) {
-		if (users.containsKey(id)){
-			return true;
-		}
-		return false;
+
+    
+	public boolean save(User user) {
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("FIRST_NAME", user.getFirstName());
+        parameters.put("LAST_NAME", user.getLastName());
+        parameters.put("EMAIL", user.geteMail());
+			Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
+					.withTableName("users")
+					.usingColumns("last_name", "first_name", "email")
+					.usingGeneratedKeyColumns("user_id", "created_on")
+	                .executeAndReturnKeyHolder(parameters)
+	                .getKeys();
+			
+			
+			//TODO delete
+			System.out.println(keys.toString());
+			
+		return true;
 	}
+	
+	/*
+	public Todo insert(Todo todo) {
+        Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
+                .withTableName("todo")
+                .usingColumns("id", "task", "done")
+                .usingGeneratedKeyColumns("date_created")
+                .executeAndReturnKeyHolder(Map.of("id", UUID.randomUUID(),
+                        "task", "Drink some coffee",
+                        "done", false))
+                .getKeys();
+
+        todo.setDateCreated(((Timestamp) keys.get("date_created")).toLocalDateTime());
+
 	*/
-	//FIXME
+	
+	
+	//DONE WORKS WITH DB
 	@Override
 	public void delete(User user) {
-		users.remove(user.getId());
+		final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", user.getId());
+		final String DELETE_BY_ID = "DELETE FROM USERS WHERE USER_ID = :id";
+		namedParameterJdbcTemplate.update(DELETE_BY_ID, namedParameters);
 	}
 	
 	//DONE WORKS WITH DB
@@ -138,7 +168,6 @@ public class UserRepositoryImpl implements UserRepository{
 		}
 		return false;
 	}
-	
 	
 	//DONE WORKS WITH DB
 	@Override

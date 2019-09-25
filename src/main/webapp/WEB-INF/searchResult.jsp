@@ -48,7 +48,7 @@
 			<a href="/SpringRest/find-user">Find user</a>
 		</div>
 		<div class="action">
-			<a href="/SpringRest/show-all-users">Show list of users</a>
+			<a href="/SpringRest/show-all-users">Show all users</a>
 		</div>
 		<div class="action">
 			<a href="/SpringRest/">To the main page</a>

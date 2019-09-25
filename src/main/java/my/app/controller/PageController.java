@@ -102,7 +102,7 @@ public class PageController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ModelAndView addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
-    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="lastName", required=false) String eMail) {
+    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
     	ModelAndView modelAndView = new ModelAndView();
 
     	if ((firstName==null) || (lastName==null) || (lastName.equals("")) || (firstName.equals(""))) {

@@ -73,14 +73,13 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public User addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
-    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="e-Mail", required=false) String eMail) {
+    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
         if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
         	User user = new User (firstName, lastName);
         	
         	if (eMail != null) {
         		user.seteMail(eMail);
         	}
-        	
         	User userSaved = userService.save(user);
         	return userSaved;
         }
