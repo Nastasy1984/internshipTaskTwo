@@ -62,7 +62,7 @@ public class UserController {
 	@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		List <User> users = userService.getByLastName(lastName);
-		if (users.size()==0) {
+		if ((users == null) || (users.isEmpty())) {
 			throw new ResourceNotFoundException("There are no user with last name " + lastName + " in the user's list");
 		}
 		return userService.getByLastName(lastName);

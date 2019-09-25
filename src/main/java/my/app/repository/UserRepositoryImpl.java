@@ -103,8 +103,6 @@ public class UserRepositoryImpl implements UserRepository{
 		users.remove(user.getId());
 	}
 	
-	
-	
 	//DONE WORKS WITH DB
 	@Override
     public List<User> getAll() {
@@ -114,38 +112,44 @@ public class UserRepositoryImpl implements UserRepository{
 	//DONE WORKS WITH DB
 	@Override
 	public User getById(Integer id) {
-        final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
-        final String SELECT_BY_ID = "SELECT * FROM USERS WHERE USER_ID = :id";
-        return (User) namedParameterJdbcTemplate.queryForObject(SELECT_BY_ID, namedParameters, new UserRowMapper());
+		if ((id != null) && (id >= 0)) {
+			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
+			final String SELECT_BY_ID = "SELECT * FROM USERS WHERE USER_ID = :id";
+			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_ID, namedParameters, new UserRowMapper());
+			if ((users != null) && (!users.isEmpty())) {
+				return users.get(0);
+			}
+		}
+		return null;
 	}
 	
 	
 	//DONE WORKS WITH DB
 	@Override
 	public boolean containsId(Integer id) {
-		final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
-		final String COUNT_BY_ID = "SELECT COUNT(*) FROM public.users WHERE USER_ID = :id";
-		Integer countUsersInteger = 0;
-		countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
-		if (countUsersInteger > 0) {
-			return true;
+		if ((id != null) && (id >= 0)) {
+			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
+			final String COUNT_BY_ID = "SELECT COUNT(*) FROM public.users WHERE USER_ID = :id";
+			Integer countUsersInteger = 0;
+			countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
+			if (countUsersInteger > 0) {
+				return true;
+			}
 		}
 		return false;
 	}
 	
 	
-	//FIXME
+	//DONE WORKS WITH DB
 	@Override
 	public List<User> getByLastName(String lastName) {
 		if (lastName != null) {
-			List<User> listValuesList = new ArrayList<User>(users.values());
-			List<User> resultList = new ArrayList<User>();
-			for (User user: listValuesList) {
-				if (user.getLastName().equals(lastName)){
-					resultList.add(user);
-				}
+			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("lastName", lastName);
+			final String SELECT_BY_LAST_NAME = "SELECT * FROM USERS WHERE LAST_NAME = :lastName";
+			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters, new UserRowMapper());
+			if ((users != null) && (!users.isEmpty())) {
+				return users;
 			}
-			return resultList;
 		}
 		return null;
 	}
