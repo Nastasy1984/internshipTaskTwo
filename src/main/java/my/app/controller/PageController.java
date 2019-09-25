@@ -114,6 +114,15 @@ public class PageController {
     	if (eMail==null) {
     		eMail = "";
     	}
+    	
+    	if ((!eMail.contains("@")) && (!eMail.equals(""))) {
+    		modelAndView.setViewName("addNewUser");
+    		String failString = "Wrong E-mail. E-mail must contain @";
+    		modelAndView.addObject("failString", failString);
+    		return modelAndView;
+    	};
+    	
+
     	//saving the user by pageService
     	User user = pageService.addUser(firstName, lastName, eMail);
     	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
