@@ -31,8 +31,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(User user) {
-		boolean isUpdated = userRepository.update(user);
-		if (isUpdated) {
+		userRepository.update(user);
+		int id = user.getId();
+		if (userRepository.getById(id).equals(user)) {
 			return user;
 		}
 			return null;

@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -56,40 +57,28 @@ public class UserRepositoryImpl implements UserRepository{
         final CustomSQLErrorCodeTranslator customSQLErrorCodeTranslator = new CustomSQLErrorCodeTranslator();
         jdbcTemplate.setExceptionTranslator(customSQLErrorCodeTranslator);
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        simpleJdbcInsertToUsers = new SimpleJdbcInsert(dataSource).withTableName("users");
-        simpleJdbcInsertToPhoneNumbers = new SimpleJdbcInsert(dataSource).withTableName("phone_numbers");
     }
 
-	/*
-	//FIXME
-	@Override
-	public boolean save(User user) {
-		// imitation of generating new id (maximum id + 1)
-		Set<Integer> setKeySet = users.keySet();
-		Integer max = 0;
-		// looking for maximum id in users
-		for (Integer key : setKeySet) {
-			if (key.intValue() > max.intValue()) {
-				max = key;
-			}
-		}
-		Integer newId = max + 1;
-		user.setId(newId);
-		users.put(user.getId(), user);
-		return true;
-	}*/
 	
 	//FIXME
 	@Override
-	public boolean update(User user) {
-		if (user == null) {
-			return false;
+	public void update(User user) {
+		if (user != null) {
+			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+			mapSqlParameterSource.addValue("id", user.getId());
+			mapSqlParameterSource.addValue("lastName", user.getLastName());
+			mapSqlParameterSource.addValue("firstName", user.getFirstName());
+			mapSqlParameterSource.addValue("eMail", user.geteMail());
+			final SqlParameterSource namedParameters = mapSqlParameterSource;
+			final String UPDATE_BY_ID = "UPDATE USERS SET LAST_NAME = :lastName, FIRST_NAME = :firstName, EMAIL = :eMail WHERE USER_ID = :id";
+			int a = namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
+			System.out.println("HERE");
+			System.out.println(a);
 		}
-		users.put(user.getId(), user);
-		return true;
 	}
 
-    
+	//DONE WORKS WITH DB
+	//Here I use SimpleJDBCInsert just to try it
 	public boolean save(User user) {
 		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
 			final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -112,7 +101,7 @@ public class UserRepositoryImpl implements UserRepository{
 		return false;
 	}
 	
-	//DONE WORKS WITH DB
+	//DONE WORKS WITH DB 
 	@Override
 	public void delete(User user) {
 		final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", user.getId());
