@@ -71,9 +71,7 @@ public class UserRepositoryImpl implements UserRepository{
 			mapSqlParameterSource.addValue("eMail", user.geteMail());
 			final SqlParameterSource namedParameters = mapSqlParameterSource;
 			final String UPDATE_BY_ID = "UPDATE USERS SET LAST_NAME = :lastName, FIRST_NAME = :firstName, EMAIL = :eMail WHERE USER_ID = :id";
-			int a = namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
-			System.out.println("HERE");
-			System.out.println(a);
+			namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
 		}
 	}
 
