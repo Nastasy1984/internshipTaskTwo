@@ -15,9 +15,8 @@ public class User {
 	private String lastName;
 	private String eMail;
 	private List <String> phoneNumbers;
-	//private LocalDateTime createdOn;
+	private LocalDateTime createdOn;
 
-	
 	public User() {
 	}
 	
@@ -53,6 +52,15 @@ public class User {
 
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
+	}
+
+	
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(LocalDateTime createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public List<String> getPhoneNumbers() {

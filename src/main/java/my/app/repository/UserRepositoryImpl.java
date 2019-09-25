@@ -91,39 +91,26 @@ public class UserRepositoryImpl implements UserRepository{
 
     
 	public boolean save(User user) {
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("FIRST_NAME", user.getFirstName());
-        parameters.put("LAST_NAME", user.getLastName());
-        parameters.put("EMAIL", user.geteMail());
-			Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
-					.withTableName("users")
-					.usingColumns("last_name", "first_name", "email")
-					.usingGeneratedKeyColumns("user_id", "created_on")
-	                .executeAndReturnKeyHolder(parameters)
-	                .getKeys();
-			
-			
-			//TODO delete
-			System.out.println(keys.toString());
-			
-		return true;
+		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
+			final Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("FIRST_NAME", user.getFirstName());
+			parameters.put("LAST_NAME", user.getLastName());
+			parameters.put("EMAIL", user.geteMail());
+			/*
+			 * Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
+			 * .withTableName("users") .usingColumns("last_name", "first_name", "email")
+			 * .usingGeneratedKeyColumns("user_id", "created_on")
+			 * .executeAndReturnKeyHolder(parameters) .getKeys();
+			 */
+			new SimpleJdbcInsert(this.jdbcTemplate).withTableName("users")
+					.usingColumns("last_name", "first_name", "email").usingGeneratedKeyColumns("user_id", "created_on")
+					.executeAndReturnKeyHolder(parameters).getKeys();
+
+			/* System.out.println(keys.toString()); */
+			return true;
+		}
+		return false;
 	}
-	
-	/*
-	public Todo insert(Todo todo) {
-        Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
-                .withTableName("todo")
-                .usingColumns("id", "task", "done")
-                .usingGeneratedKeyColumns("date_created")
-                .executeAndReturnKeyHolder(Map.of("id", UUID.randomUUID(),
-                        "task", "Drink some coffee",
-                        "done", false))
-                .getKeys();
-
-        todo.setDateCreated(((Timestamp) keys.get("date_created")).toLocalDateTime());
-
-	*/
-	
 	
 	//DONE WORKS WITH DB
 	@Override
