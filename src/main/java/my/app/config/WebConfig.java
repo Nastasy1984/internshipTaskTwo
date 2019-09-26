@@ -46,9 +46,8 @@ public class WebConfig {
         javaTimeModule.addSerializer(LocalDateTime.class, new Serializer());
         javaTimeModule.addDeserializer(LocalDateTime.class, new Deserializer());
         objectMapper.registerModule(javaTimeModule);
-        //objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);*/
-        return new ObjectMapper();
+    	return new ObjectMapper();
     }
     
     @Bean
@@ -65,6 +64,8 @@ public class WebConfig {
         dataSource.setPassword("Novgorod14");
         return dataSource;
     }
+    
+    
     
     
 }

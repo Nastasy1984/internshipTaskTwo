@@ -3,6 +3,7 @@
 
 <%-- Including class from jstl library to the jsp page --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +12,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Search result</title>
 
-
+<%-- Declaration of variable --%>
+<%! java.time.format.DateTimeFormatter formater = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); %>
 </head>
 
 <body>
@@ -24,7 +26,7 @@
 				<th>First Name</th>
 				<th>Last Name</th>
 				<th>E-Mail</th>
-				<th>created</th>
+				<th>Created</th>
 				<th>Update</th>
 				<th>Delete</th>
 			</tr>
@@ -35,7 +37,9 @@
 					<td>${user.firstName}</td>
 					<td>${user.lastName}</td>
 					<td>${user.eMail}</td>
-					<td>${user.createdOn}</td>
+
+					<%-- <td>${localDateTimeFormat.parse(user.createdOn)}</td>--%>
+					<td>${user.createdOn.format(formatter)}</td>
 					<td><a href="/SpringRest/update/${user.id}"class="update">Update</a></td>
 					<td><a href="/SpringRest/delete/${user.id}"class="delete">Delete</a></td>
 				</tr>

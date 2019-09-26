@@ -37,7 +37,7 @@
 				<td>${user.firstName}</td>
 				<td>${user.lastName}</td>
 				<td>${user.eMail}</td>
-				<td>${user.createdOn}</td>
+				<td>${user.createdOn.format(formatter)}</td>
 				<td><a href="/SpringRest/update/${user.id}"class="update">Update</a></td>
 				<td><a href="/SpringRest/delete/${user.id}"class="delete">Delete</a></td>
 			</tr>

@@ -1,7 +1,10 @@
 package my.app.controller;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.apache.taglibs.standard.tag.common.fmt.FormatDateSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -48,11 +51,17 @@ public class PageController {
         return "findUser";
     }
 	
+	private void formateDates(ModelAndView modelAndView) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		modelAndView.addObject("formatter", formatter);
+	}
+	
 	//DONE WORKS providing the list of all users
 	@GetMapping("/show-all-users")
     public ModelAndView showUsersList() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("usersList", pageService.getUsersList());
+		formateDates(modelAndView);
 		modelAndView.setViewName("user");
         return modelAndView;
     }
@@ -68,6 +77,7 @@ public class PageController {
 		}
 	
 		modelAndView.addObject("users", users);
+		formateDates(modelAndView);
 		modelAndView.setViewName("searchResult");
         return modelAndView;
     }
@@ -84,6 +94,7 @@ public class PageController {
 		
 		modelAndView.addObject("users", usersList);
 		modelAndView.setViewName("searchResult");
+		formateDates(modelAndView);
         return modelAndView;
     }
 	
@@ -129,6 +140,7 @@ public class PageController {
     	//redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		modelAndView.addObject("successString", successString);
+		formateDates(modelAndView);
 		modelAndView.setViewName("user");
         return modelAndView;
     }
@@ -150,6 +162,7 @@ public class PageController {
 			modelAndView.addObject("successString", failString);
 		}
     	modelAndView.addObject("usersList", pageService.getUsersList());
+    	formateDates(modelAndView);
 		modelAndView.setViewName("user");
         return modelAndView;
     }
@@ -188,6 +201,7 @@ public class PageController {
     	//redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		modelAndView.addObject("successString", successString);
+		formateDates(modelAndView);
 		modelAndView.setViewName("user");
         return modelAndView;
     }
