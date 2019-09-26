@@ -1,10 +1,24 @@
 package my.app.model;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
+import my.app.model.serialize.Deserializer;
+import my.app.model.serialize.Serializer;
 
 @JsonAutoDetect
 public class User {
@@ -15,7 +29,12 @@ public class User {
 	private String lastName;
 	private String eMail;
 	private List <String> phoneNumbers;
-	private LocalDateTime createdOn;
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd hh:mm:ss")
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")
+	@JsonSerialize(using = Serializer.class)
+	@JsonDeserialize(using = Deserializer.class)
+	public LocalDateTime createdOn;
 
 	public User() {
 	}
@@ -117,9 +136,9 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", eMail=" + eMail
-				+ ", phoneNumbers=" + phoneNumbers.toString() + "]";
+				+ ", phoneNumbers=" + phoneNumbers + ", createdOn=" + createdOn + "]";
 	}
 
 
-	
+
 }

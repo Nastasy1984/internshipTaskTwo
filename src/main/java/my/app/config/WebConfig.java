@@ -1,5 +1,7 @@
 package my.app.config;
 
+import java.time.LocalDateTime;
+
 import javax.sql.DataSource;
 
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,6 +15,11 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import my.app.model.serialize.Deserializer;
+import my.app.model.serialize.Serializer;
 
 //config class
 @Configuration
@@ -34,6 +41,13 @@ public class WebConfig {
     
     @Bean
     public ObjectMapper objectMapper() {
+    	/*ObjectMapper objectMapper = new ObjectMapper();
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDateTime.class, new Serializer());
+        javaTimeModule.addDeserializer(LocalDateTime.class, new Deserializer());
+        objectMapper.registerModule(javaTimeModule);
+        //objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);*/
         return new ObjectMapper();
     }
     
