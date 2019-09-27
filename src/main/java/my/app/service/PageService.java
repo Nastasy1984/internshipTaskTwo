@@ -150,8 +150,57 @@ public class PageService {
 	
 	//DONE WORKS 
 	public User addUser(String firstName, String lastName, String eMail, List<String> numbers) {
+    	//TODO delete GOT
+    	System.out.println("PS");
 		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
+		
+		
+		//TODO delete comment
+		//from update method
+		User userGotten = new User (firstName, lastName);
+		userGotten.seteMail(eMail);
+		userGotten.setPhoneNumbers(numbers);
+		
+	    //TODO delete NORM
+		System.out.println("PS");
+		System.out.println("User sent");
+		System.out.println(userGotten.toString());
+		
+		StringWriter writer = new StringWriter();
+		try {
+			mapper.writeValue(writer, userGotten);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		try {	
+			httpPost.setHeader("Accept","application/json");
+			httpPost.setHeader("Content-type","application/json");
+			StringEntity stringEntity = new StringEntity(writer.toString());
+			httpPost.setEntity(stringEntity);
+			CloseableHttpResponse response = client.execute(httpPost);
+		    User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
+		    
+		    
+		    //TODO delete NORM
+			System.out.println("PS");
+			System.out.println("User updated");
+			System.out.println(userUpdated.toString());
+			
+			
+		    return userUpdated;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		return null;
+		
+		
+		
+		
+		
+		/*
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    params.add(new BasicNameValuePair("firstName", firstName));
 	    params.add(new BasicNameValuePair("lastName", lastName));
@@ -173,7 +222,7 @@ public class PageService {
 			e2.printStackTrace();
 		}
 	    
-		return null;
+		return null;*/
 	}
 	
 	public int deleteUser(Integer id) {
@@ -227,8 +276,6 @@ public class PageService {
 			e1.printStackTrace();
 		}
 		
-		
-		System.out.println("HERE SENDING NULL");
 		return null;
 	}
 	

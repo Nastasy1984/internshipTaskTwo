@@ -69,21 +69,26 @@ public class UserController {
     }
 
 	//DONE WORKS getting data of user in JSON format and adding user to the users list
-    @PostMapping(value ="/add", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value ="/add", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public User addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
-    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
-        if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
+    public User addNewUser(@RequestBody User user) {
+    	//TODO delete
+    	System.out.println("UC");
+    	System.out.println("User gotten");
+    	System.out.println(user.toString());
+        /*if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
         	User user = new User (firstName, lastName);
         	
         	if (eMail != null) {
         		user.seteMail(eMail);
-        	}
-        	User userSaved = userService.save(user);
+        	}*/
+        	
+    	
+    	User userSaved = userService.save(user);
         	return userSaved;
-        }
-        return null;
+        //}
+        //return null;
     }
     
   //DONE getting data of user and updating user in the users list
