@@ -6,9 +6,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import my.app.model.User;
 //this class helps us to map query results to Java objects
+@Component
 public class UserRowMapper implements RowMapper <User> {
 	@Override
     public User mapRow(final ResultSet rs, final int rowNum) throws SQLException {     

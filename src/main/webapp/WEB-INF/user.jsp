@@ -27,6 +27,7 @@
 			<th>Last Name</th>
 			<th>E-mail</th>
 			<th>Created</th>
+			<th>Phone Numbers</th>
 			<th>Update</th>
 			<th>Delete</th>
 		</tr>
@@ -38,6 +39,7 @@
 				<td>${user.lastName}</td>
 				<td>${user.eMail}</td>
 				<td>${user.createdOn.format(formatter)}</td>
+				<td>${user.phoneNumbers}</td>
 				<td><a href="/SpringRest/update/${user.id}"class="update">Update</a></td>
 				<td><a href="/SpringRest/delete/${user.id}"class="delete">Delete</a></td>
 			</tr>

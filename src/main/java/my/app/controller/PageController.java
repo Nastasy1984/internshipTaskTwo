@@ -1,10 +1,8 @@
 package my.app.controller;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.apache.taglibs.standard.tag.common.fmt.FormatDateSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,218 +19,186 @@ import my.app.service.PageService;
 
 @Controller
 public class PageController {
-	
-	//private UserService userService = new UserServiceImpl();
+
+	// private UserService userService = new UserServiceImpl();
 	private PageService pageService;
-	
+
 	@Autowired
 	public PageController(PageService pageService) {
 		this.pageService = pageService;
 	}
 
-	//sending to the first page
+	// sending to the first page
 	@GetMapping("/")
 	public ModelAndView getWelcomePage() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
-	
-	//sending to the jsp page addNewUser
-	@GetMapping("/add-new-user")
-    public String addNewUserPage() {
-        return "addNewUser";
-    }
 
-	
-	//sending to the jsp page findUser
+	// sending to the jsp page addNewUser
+	@GetMapping("/add-new-user")
+	public String addNewUserPage() {
+		return "addNewUser";
+	}
+
+	// sending to the jsp page findUser
 	@GetMapping("/find-user")
-    public String findUserPage() {
-        return "findUser";
-    }
-	
+	public String findUserPage() {
+		return "findUser";
+	}
+
 	private void formateDates(ModelAndView modelAndView) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		modelAndView.addObject("formatter", formatter);
 	}
-	
-	//DONE WORKS providing the list of all users
+
+	// DONE WORKS providing the list of all users
 	@GetMapping("/show-all-users")
-    public ModelAndView showUsersList() {
+	public ModelAndView showUsersList() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		formateDates(modelAndView);
 		modelAndView.setViewName("user");
-        return modelAndView;
-    }
-	
-	//DONE WORKS finding user by id
+		return modelAndView;
+	}
+
+	// DONE WORKS finding user by id
 	@GetMapping("/find-user/{id:\\d+}")
-    public ModelAndView findUserById(@PathVariable ("id") Integer id) {
+	public ModelAndView findUserById(@PathVariable("id") Integer id) {
 		ModelAndView modelAndView = new ModelAndView();
-		List <User> users = pageService.getUserById(id);
-		
-		if (users==null) {
+		List<User> users = pageService.getUserById(id);
+
+		if (users == null) {
 			return failedSearch(id.toString());
 		}
-	
+
 		modelAndView.addObject("users", users);
 		formateDates(modelAndView);
 		modelAndView.setViewName("searchResult");
-        return modelAndView;
-    }
-	
-	
+		return modelAndView;
+	}
+
 	@GetMapping("/find-user/{lastName:\\D+}")
-    public ModelAndView findUserByLastName(@PathVariable ("lastName") String lastName) {
+	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName) {
 		ModelAndView modelAndView = new ModelAndView();
-		List <User> usersList = pageService.getUserByLastName(lastName);
-		
-		if (usersList==null) {
+		List<User> usersList = pageService.getUserByLastName(lastName);
+
+		if (usersList == null) {
 			return failedSearch(lastName);
 		}
-		
+
 		modelAndView.addObject("users", usersList);
 		modelAndView.setViewName("searchResult");
 		formateDates(modelAndView);
-        return modelAndView;
-    }
-	
-	
-	public ModelAndView failedSearch(String userString) {
+		return modelAndView;
+	}
+
+	private ModelAndView failedSearch(String userString) {
 		ModelAndView modelAndView = new ModelAndView();
 		String failString = "Failed to find user " + userString;
 		modelAndView.setViewName("findUser");
 		modelAndView.addObject("failString", failString);
 		return modelAndView;
-    }
-
-	//DONE WORKS getting parameters of user and adding user to the users list 
-	//sending to the page with users
-    @PostMapping(value ="/add-new-user")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public ModelAndView addNewUser(@RequestParam(value="firstName", required=true) String firstName, 
-    		@RequestParam(value="lastName", required=true) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
-    	ModelAndView modelAndView = new ModelAndView();
-
-    	if ((firstName==null) || (lastName==null) || (lastName.equals("")) || (firstName.equals(""))) {
-    		modelAndView.setViewName("addNewUser");
-    		String failString = "First name and last name are obligatory fields";
-    		modelAndView.addObject("failString", failString);
-    		return modelAndView;
-    	}
-    	if (eMail==null) {
-    		eMail = "";
-    	}
-    	
-    	if ((!eMail.contains("@")) && (!eMail.equals(""))) {
-    		modelAndView.setViewName("addNewUser");
-    		String failString = "Wrong E-mail. E-mail must contain @";
-    		modelAndView.addObject("failString", failString);
-    		return modelAndView;
-    	};
-    	
-
-    	//saving the user by pageService
-    	User user = pageService.addUser(firstName, lastName, eMail);
-    	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
-    	//redirect to the list with all users
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		modelAndView.addObject("successString", successString);
-		formateDates(modelAndView);
-		modelAndView.setViewName("user");
-        return modelAndView;
-    }
-   
-    //DONE deleting user 
-    @GetMapping(value ="/delete/{id:\\d+}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public ModelAndView deleteUser(@PathVariable ("id") Integer id) {
-    	ModelAndView modelAndView = new ModelAndView();
-    	
-    	int respCode = pageService.deleteUser(id);
-		if (respCode == 200) {
-			String successString = "User with id " + id + " was deleted successfully";
-			modelAndView.addObject("successString", successString);
-		}
-		else {
-			String failString = "Failed to delete user with id " + id;
-			modelAndView.addObject("successString", failString);
-		}
-    	modelAndView.addObject("usersList", pageService.getUsersList());
-    	formateDates(modelAndView);
-		modelAndView.setViewName("user");
-        return modelAndView;
-    }
-    
-	//DONE WORKS sending to the user\s updating page
-	@GetMapping(value ="/update/{id:\\d+}")
-    public ModelAndView updateUserPage(@PathVariable ("id") Integer id) {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("updateUser");
-		modelAndView.addObject("id", id);
-		List <User> users = pageService.getUserById(id);
-		modelAndView.addObject("user", users.get(0));
-        return modelAndView;
-    }
-	
-	
-	//DONE getting parameters of user and updating user in the users list 
-	//sending to the page with users
-    @PostMapping(value ="/update-user")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public ModelAndView updateUser(@RequestParam(value="id") Integer id, @RequestParam(value="firstName", required=false) String firstName, 
-    		@RequestParam(value="lastName", required=false) String lastName, @RequestParam(value="eMail", required=false) String eMail) {
-    	ModelAndView modelAndView = new ModelAndView();
-    	if ((lastName.equals("")) && (firstName.equals("")) && (eMail.equals(""))) {
-    		modelAndView.setViewName("updateUser");
-    		modelAndView.addObject("id", id);
-    		String failString = "At least one field in the form must be filled";
-    		modelAndView.addObject("failString", failString);
-    		return modelAndView;
-    	}
-
-    	User user = pageService.updateUser(id, firstName, lastName, eMail);	
-    	
-    	String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
-    	//redirect to the list with all users
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		modelAndView.addObject("successString", successString);
-		formateDates(modelAndView);
-		modelAndView.setViewName("user");
-        return modelAndView;
-    }
-	
-	/*
-	
-	//DONE WORKS finding user by id
-	@GetMapping("/find-user/{id:\\D+}")
-	public ModelAndView findUserByIdWrongInput(@PathVariable("id") String wrongId) {
-		ModelAndView modelAndView = new ModelAndView();
-		String failString = "Please enter number to the id field ";
-		modelAndView.setViewName("findUser");
-		modelAndView.addObject("failString", failString);
-		return modelAndView;
 	}
-	
-	
-	//DONE WORKS finding user by id
-	@GetMapping("/find-user-by-last-name")
-    public ModelAndView findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
+
+	// DONE WORKS getting parameters of user and adding user to the users list
+	// sending to the page with users
+	@PostMapping(value = "/add-new-user")
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public ModelAndView addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
+			@RequestParam(value = "lastName", required = true) String lastName,
+			@RequestParam(value = "eMail", required = false) String eMail) {
 		ModelAndView modelAndView = new ModelAndView();
-		List <User> usersList = pageService.getUserByLastName(lastName);
-		if (usersList==null) {
-			String failString = "Failed to find user with last name " + lastName;
-			modelAndView.setViewName("findUser");
+
+		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
+			modelAndView.setViewName("addNewUser");
+			String failString = "First name and last name are obligatory fields";
 			modelAndView.addObject("failString", failString);
 			return modelAndView;
 		}
-		modelAndView.addObject("users", usersList);
-		modelAndView.setViewName("searchResult");
-        return modelAndView;
-    }*/
-		
+		if (eMail == null) {
+			eMail = "";
+		}
+
+		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
+			modelAndView.setViewName("addNewUser");
+			String failString = "Wrong E-mail. E-mail must contain @";
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
+
+		// saving the user by pageService
+		User user = pageService.addUser(firstName, lastName, eMail);
+		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
+		// redirect to the list with all users
+		modelAndView.addObject("usersList", pageService.getUsersList());
+		modelAndView.addObject("successString", successString);
+		formateDates(modelAndView);
+		modelAndView.setViewName("user");
+		return modelAndView;
+	}
+
+	// DONE deleting user
+	@GetMapping(value = "/delete/{id:\\d+}")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public ModelAndView deleteUser(@PathVariable("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView();
+
+		int respCode = pageService.deleteUser(id);
+		if (respCode == 200) {
+			String successString = "User with id " + id + " was deleted successfully";
+			modelAndView.addObject("successString", successString);
+		} else {
+			String failString = "Failed to delete user with id " + id;
+			modelAndView.addObject("successString", failString);
+		}
+		modelAndView.addObject("usersList", pageService.getUsersList());
+		formateDates(modelAndView);
+		modelAndView.setViewName("user");
+		return modelAndView;
+	}
+
+	// DONE WORKS sending to the user\s updating page
+	@GetMapping(value = "/update/{id:\\d+}")
+	public ModelAndView updateUserPage(@PathVariable("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("updateUser");
+		modelAndView.addObject("id", id);
+		List<User> users = pageService.getUserById(id);
+		modelAndView.addObject("user", users.get(0));
+		return modelAndView;
+	}
+
+	// DONE getting parameters of user and updating user in the users list
+	// sending to the page with users
+	@PostMapping(value = "/update-user")
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public ModelAndView updateUser(@RequestParam(value = "id") Integer id,
+			@RequestParam(value = "firstName", required = false) String firstName,
+			@RequestParam(value = "lastName", required = false) String lastName,
+			@RequestParam(value = "eMail", required = false) String eMail) {
+		ModelAndView modelAndView = new ModelAndView();
+		if ((lastName.equals("")) && (firstName.equals("")) && (eMail.equals(""))) {
+			modelAndView.setViewName("updateUser");
+			modelAndView.addObject("id", id);
+			String failString = "At least one field in the form must be filled";
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
+
+		User user = pageService.updateUser(id, firstName, lastName, eMail);
+
+		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
+		// redirect to the list with all users
+		modelAndView.addObject("usersList", pageService.getUsersList());
+		modelAndView.addObject("successString", successString);
+		formateDates(modelAndView);
+		modelAndView.setViewName("user");
+		return modelAndView;
+	}
+
 }
