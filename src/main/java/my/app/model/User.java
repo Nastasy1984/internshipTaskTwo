@@ -66,7 +66,12 @@ public class User {
 	}
 
 	public void seteMail(String eMail) {
-		this.eMail = eMail;
+		if (eMail == null) {
+			this.eMail = "";
+		}
+		else {
+			this.eMail = eMail;
+		}
 	}
 
 	

@@ -55,7 +55,7 @@ input{
     font-weight: 300;
     border-radius: 4px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 form{
@@ -160,4 +160,7 @@ hr{
 }
 .delete{
     color: #C70039;
+}
+label{
+    color: #327CA2;
 }

@@ -37,6 +37,10 @@ public class UserListExtractor implements ResultSetExtractor<List<User>>{
 				user.setId(id);
 				user.setFirstName(rs.getString("first_name"));
 				user.setLastName(rs.getString("last_name"));
+				/*String eMail = rs.getString("email");
+				if (eMail!=null) {
+					user.seteMail(eMail);
+				}*/
 				user.seteMail(rs.getString("email"));
 		        Timestamp timestamp = (rs.getTimestamp("created_on"));    
 		        LocalDateTime createdOn = timestamp.toLocalDateTime();

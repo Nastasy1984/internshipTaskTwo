@@ -8,7 +8,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
@@ -147,13 +149,15 @@ public class PageService {
 	}
 	
 	//DONE WORKS 
-	public User addUser(String firstName, String lastName, String eMail) {
+	public User addUser(String firstName, String lastName, String eMail, List<String> numbers) {
 		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    params.add(new BasicNameValuePair("firstName", firstName));
 	    params.add(new BasicNameValuePair("lastName", lastName));
 	    params.add(new BasicNameValuePair("eMail", eMail));
+	    String[] array = numbers.toArray(new String[numbers.size()]);
+	   // params.add(new BasicNameValuePair("numbers", array));
 	    try {
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			try {
@@ -191,13 +195,16 @@ public class PageService {
 	}
 	
 	
-	public User updateUser(Integer id, String firstName, String lastName, String eMail) {
+	public User updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
+		
 		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
 		
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		userGotten.seteMail(eMail);
+		Set<String> nums = new HashSet<String>(numbers);
+		userGotten.setPhoneNumbers(nums);
 		
 		StringWriter writer = new StringWriter();
 		try {
@@ -215,10 +222,14 @@ public class PageService {
 			httpPut.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPut);
 		    User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
+			
 		    return userUpdated;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
+		
+		System.out.println("HERE SENDING NULL");
 		return null;
 	}
 	

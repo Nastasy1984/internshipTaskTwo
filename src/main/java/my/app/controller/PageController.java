@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,17 +110,19 @@ public class PageController {
 	@ResponseBody
 	public ModelAndView addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
 			@RequestParam(value = "lastName", required = true) String lastName,
-			@RequestParam(value = "eMail", required = false) String eMail) {
+			@RequestParam(value = "eMail", required = false, defaultValue = "") String eMail,
+			@RequestParam (value = "number", required = false) List<String> numbers) {
 		ModelAndView modelAndView = new ModelAndView();
 
+		//TODO delete
+		System.out.println("PC");
+		System.out.println(numbers.toString());
+		
 		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
 			modelAndView.setViewName("addNewUser");
 			String failString = "First name and last name are obligatory fields";
 			modelAndView.addObject("failString", failString);
 			return modelAndView;
-		}
-		if (eMail == null) {
-			eMail = "";
 		}
 
 		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
@@ -130,7 +133,8 @@ public class PageController {
 		}
 
 		// saving the user by pageService
-		User user = pageService.addUser(firstName, lastName, eMail);
+		User user = pageService.addUser(firstName, lastName, eMail, numbers);
+		
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
 		// redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
@@ -180,7 +184,8 @@ public class PageController {
 	public ModelAndView updateUser(@RequestParam(value = "id") Integer id,
 			@RequestParam(value = "firstName", required = false) String firstName,
 			@RequestParam(value = "lastName", required = false) String lastName,
-			@RequestParam(value = "eMail", required = false) String eMail) {
+			@RequestParam(value = "eMail", required = false) String eMail,
+			@RequestParam (value = "number", required = false) List<String> numbers) {
 		ModelAndView modelAndView = new ModelAndView();
 		if ((lastName.equals("")) && (firstName.equals("")) && (eMail.equals(""))) {
 			modelAndView.setViewName("updateUser");
@@ -189,9 +194,16 @@ public class PageController {
 			modelAndView.addObject("failString", failString);
 			return modelAndView;
 		}
+		if ((numbers == null) || (numbers.isEmpty())) {
+			modelAndView.setViewName("updateUser");
+			modelAndView.addObject("id", id);
+			String failString = "User must have at lest one telephone number";
+			modelAndView.addObject("failString", failString);
+			return modelAndView;
+		}
 
-		User user = pageService.updateUser(id, firstName, lastName, eMail);
-
+		User user = pageService.updateUser(id, firstName, lastName, eMail, numbers);
+		     
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
 		// redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());

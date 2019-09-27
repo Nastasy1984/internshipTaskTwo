@@ -48,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
 				"	users.user_id, users.first_name, users.last_name, users.email, users.created_on,\r\n" + 
 				"	phone_numbers.phone_number\r\n" + 
 				"FROM users\r\n" + 
-				"INNER JOIN phone_numbers ON users.user_id=phone_numbers.user_id", userListExtractor);
+				"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id", userListExtractor);
 	}
 
 	// DONE WORKS WITH DB
@@ -61,7 +61,7 @@ public class UserRepositoryImpl implements UserRepository {
 					"	users.user_id, users.first_name, users.last_name, users.email, users.created_on,\r\n" + 
 					"	phone_numbers.phone_number\r\n" + 
 					"FROM users\r\n" + 
-					"INNER JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
+					"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
 					"WHERE users.user_id = :id";
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_ID, namedParameters, userListExtractor);
 			if ((users != null) && (!users.isEmpty())) {
@@ -96,7 +96,7 @@ public class UserRepositoryImpl implements UserRepository {
 					"	users.user_id, users.first_name, users.last_name, users.email, users.created_on,\r\n" + 
 					"	phone_numbers.phone_number\r\n" + 
 					"FROM users\r\n" + 
-					"INNER JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
+					"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
 					"WHERE users.last_name = :lastName";
 			
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters,
@@ -116,9 +116,23 @@ public class UserRepositoryImpl implements UserRepository {
 			mapSqlParameterSource.addValue("lastName", user.getLastName());
 			mapSqlParameterSource.addValue("firstName", user.getFirstName());
 			mapSqlParameterSource.addValue("eMail", user.geteMail());
-			final SqlParameterSource namedParameters = mapSqlParameterSource;
+			SqlParameterSource namedParameters = mapSqlParameterSource;
 			final String UPDATE_BY_ID = "UPDATE USERS SET LAST_NAME = :lastName, FIRST_NAME = :firstName, EMAIL = :eMail WHERE USER_ID = :id";
 			namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
+			
+			//deleting all existing numbers
+			final String DELETE_NUM_BY_ID = "DELETE FROM PHONE_NUMBERS WHERE USER_ID = :id";
+			namedParameterJdbcTemplate.update(DELETE_NUM_BY_ID, namedParameters);
+			
+			//adding updated numbers		
+			for (String num : user.getPhoneNumbers()) {
+				if (!num.equals("") && num != null) {
+					mapSqlParameterSource.addValue("number", num);
+					String insert_num_by_id = "INSERT INTO PHONE_NUMBERS (PHONE_NUMBER, USER_ID) VALUES (:number, :id)";
+					namedParameters = mapSqlParameterSource;
+					namedParameterJdbcTemplate.update(insert_num_by_id, namedParameters);
+				}
+			}
 		}
 	}
 

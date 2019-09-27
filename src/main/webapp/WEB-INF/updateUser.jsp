@@ -31,13 +31,27 @@
 		<div class="resultString">${failString}</div>
 		<form action="/SpringRest/update-user" method="POST">
 			<%-- Hidden field for sending user's id --%>
-			<input type="hidden" name="id" value="${id}"> <label>First
-				name</label> <br>
+			<input type="hidden" name="id" value="${id}"> 
+			<label>First name</label> 
+			<br>
 			<input type="text" name="firstName" value="${user.firstName}">
-			<br> <label>Last name</label> <br>
+			<br> 
+			<label>Last name</label> 
+			<br>
 			<input type="text" name="lastName" value="${user.lastName}">
-			<br> <label>E-mail</label> <br>
-			<input type="text" name="eMail" value="${user.eMail}"> <br>
+			<br> 
+			<label>E-mail</label> 
+			<br>
+			<input type="text" name="eMail" value="${user.eMail}"> 
+			<br>
+			<label>Phone numbers:</label>
+			<br>
+			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<br>
+			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<br>
+			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<br>
 			<input class="submit" type="submit" value="Update user">
 		</form>
 

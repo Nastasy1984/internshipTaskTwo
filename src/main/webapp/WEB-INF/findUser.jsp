@@ -21,8 +21,7 @@
 			<a class="action" href="/SpringRest/add-new-user">Add user</a>
 		</div>
 		<div class="action">
-			<a class="action" href="/SpringRest/show-all-users">Show all
-				users</a>
+			<a class="action" href="/SpringRest/show-all-users">Show all users</a>
 		</div>
 	</div>
 
@@ -44,9 +43,11 @@
 		</script>
 
 		<form id="find_user_form" onsubmit="myFunction()">
-			<label>Id or last name</label> <br> <input type="text" name="id"
-				placeholder="User's ID or last Name"> <br> <input
-				class="submit" type="submit" value="Find user">
+			<label>Id or last name</label> 
+			<br> 
+			<input type="text" name="id" placeholder="User's ID or last Name"> 
+			<br> 
+			<input class="submit" type="submit" value="Find user">
 		</form>
 
 

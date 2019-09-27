@@ -95,6 +95,7 @@ public class UserController {
             throw new ResourceNotFoundException("Id is null!");
     	}
     	if ((user!=null)){
+    		
 			User userUpdated = userService.update(user);
 			if (userUpdated==null) {
 				throw new ResourceNotFoundException("There are no user with id " + id + " in the user's list");
