@@ -51,12 +51,12 @@ public class UserListExtractor implements ResultSetExtractor<List<User>>{
 			// if there is such user in the map we ignore his previous fields
 			//now anyway we have a user (from the map or from the DB)
 			// checking if there are phone numbers in this user 
-			Set <String> phoneNumbers = user.getPhoneNumbers();
+			List <String> phoneNumbers = user.getPhoneNumbers();
 			
 			// if no
 			if (phoneNumbers == null) {
 				//creating set of numbers
-				phoneNumbers = new HashSet<String>();
+				phoneNumbers = new ArrayList<String>();
 				user.setPhoneNumbers(phoneNumbers);
 			}
 			//now user has a set of numbers

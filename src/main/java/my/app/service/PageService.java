@@ -203,8 +203,7 @@ public class PageService {
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		userGotten.seteMail(eMail);
-		Set<String> nums = new HashSet<String>(numbers);
-		userGotten.setPhoneNumbers(nums);
+		userGotten.setPhoneNumbers(numbers);
 		
 		StringWriter writer = new StringWriter();
 		try {

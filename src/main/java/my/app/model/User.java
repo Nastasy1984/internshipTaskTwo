@@ -24,7 +24,7 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private String eMail;
-	private Set <String> phoneNumbers;
+	private List <String> phoneNumbers;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd hh:mm:ss")
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")
@@ -39,7 +39,7 @@ public class User {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.eMail = "";
-		this.phoneNumbers = new HashSet<String>();
+		this.phoneNumbers = new ArrayList<String>();
 	}
 		
 	public Integer getId() {
@@ -83,11 +83,11 @@ public class User {
 		this.createdOn = createdOn;
 	}
 
-	public Set<String> getPhoneNumbers() {
+	public List<String> getPhoneNumbers() {
 		return phoneNumbers;
 	}
 
-	public void setPhoneNumbers(Set<String> phoneNumbers) {
+	public void setPhoneNumbers(List<String> phoneNumbers) {
 		this.phoneNumbers = phoneNumbers;
 	}
 

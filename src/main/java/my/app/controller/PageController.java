@@ -187,21 +187,16 @@ public class PageController {
 			@RequestParam(value = "eMail", required = false) String eMail,
 			@RequestParam (value = "number", required = false) List<String> numbers) {
 		ModelAndView modelAndView = new ModelAndView();
-		if ((lastName.equals("")) && (firstName.equals("")) && (eMail.equals(""))) {
-			modelAndView.setViewName("updateUser");
-			modelAndView.addObject("id", id);
-			String failString = "At least one field in the form must be filled";
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
-		}
-		if ((numbers == null) || (numbers.isEmpty())) {
-			modelAndView.setViewName("updateUser");
-			modelAndView.addObject("id", id);
-			String failString = "User must have at lest one telephone number";
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
+		if ((lastName.equals("")) && (firstName.equals(""))) {
+			String failString = "Last name and first name must be filled";
+			return failedUpdate(failString, id);
 		}
 
+		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
+			String failString = "Wrong E-mail. E-mail must contain @";
+			return failedUpdate(failString, id);
+		}
+		
 		User user = pageService.updateUser(id, firstName, lastName, eMail, numbers);
 		     
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
@@ -213,4 +208,14 @@ public class PageController {
 		return modelAndView;
 	}
 
+	private ModelAndView failedUpdate(String failString, Integer id) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("updateUser");
+		modelAndView.addObject("id", id);
+		modelAndView.addObject("failString", failString);
+		List<User> users = pageService.getUserById(id);
+		modelAndView.addObject("user", users.get(0));
+		return modelAndView;
+	}
+	
 }

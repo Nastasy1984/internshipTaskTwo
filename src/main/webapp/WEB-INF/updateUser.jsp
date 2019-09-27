@@ -46,11 +46,11 @@
 			<br>
 			<label>Phone numbers:</label>
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" value="${user.phoneNumbers[0]}">
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" value="${user.phoneNumbers[1]}">
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" value="${user.phoneNumbers[2]}">
 			<br>
 			<input class="submit" type="submit" value="Update user">
 		</form>
