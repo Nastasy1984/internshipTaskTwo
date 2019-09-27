@@ -22,9 +22,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User user) {
-		//TODO delete
-		System.out.println("US got user");
-		System.out.println(user.toString());
 		boolean isSaved = userRepository.save(user);
 		if (isSaved) {
 			return user;

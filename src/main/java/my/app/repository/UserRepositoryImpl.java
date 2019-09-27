@@ -140,10 +140,6 @@ public class UserRepositoryImpl implements UserRepository {
 	// Here I use SimpleJDBCInsert just to try it
 	public boolean save(User user) {
 		
-		//TODO delete
-		System.out.println("UR GOT");
-		System.out.println(user.toString());
-		
 		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
 			final Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("FIRST_NAME", user.getFirstName());
@@ -160,11 +156,7 @@ public class UserRepositoryImpl implements UserRepository {
 					.executeAndReturnKeyHolder(parameters).getKeys();
 
 			Integer userId = (Integer)keys.get("user_id"); 
-			
-			//TODO delete
-			System.out.println("UR got ID");
-			System.out.println(userId);
-			
+					
 			//adding updated numbers		
 			for (String num : user.getPhoneNumbers()) {
 				if (!num.equals("") && num != null) {

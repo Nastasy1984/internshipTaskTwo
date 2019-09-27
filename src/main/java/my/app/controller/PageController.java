@@ -114,9 +114,6 @@ public class PageController {
 			@RequestParam (value = "number", required = false) List<String> numbers) {
 		ModelAndView modelAndView = new ModelAndView();
 
-		//TODO delete
-		System.out.println("PC");
-		System.out.println(numbers.toString());
 		
 		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
 			modelAndView.setViewName("addNewUser");

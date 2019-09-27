@@ -73,10 +73,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public User addNewUser(@RequestBody User user) {
-    	//TODO delete
-    	System.out.println("UC");
-    	System.out.println("User gotten");
-    	System.out.println(user.toString());
+
         /*if ((firstName!=null) &&  (lastName!=null) && (!lastName.equals("")) && (!firstName.equals(""))){
         	User user = new User (firstName, lastName);
         	
