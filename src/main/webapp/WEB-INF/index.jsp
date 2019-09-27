@@ -14,23 +14,38 @@
 </head>
 
 <body>
-	<div class="layout">
-		<h1>Welcome</h1>
-		<h2 id="center">Please, make a choice:</h2>
-		<div id="welcomeActions">
-		<hr noshade size="2" color="#4682B4" />
-			<div class="action">
-				<a href="/SpringRest/show-all-users">Show all users</a>
-			</div>
-			<div class="action">
-				<a href="/SpringRest/add-new-user">Add new user</a>
-			</div>
-			<div class="action">
-				<a href="/SpringRest/find-user">Find user</a>
-			</div>
-			<hr noshade size="2" color="#4682B4" />
+	<div class="flex-container">
+		<div class="action">
+			<a class="action" href="/SpringRest/add-new-user">Add user</a>
 		</div>
-		
+		<div class="action">
+			<a class="action" href="/SpringRest/show-all-users">Show all
+				users</a>
+		</div>
+		<div class="action">
+			<a class="action" href="/SpringRest/find-user">Find user</a>
+		</div>
+	</div>
+	<div class="layout">
+		<h1>Please, make a choice:</h1>
+
+		<div id="welcomeActions">
+
+			<div class="menu">
+				<a class="menu" href="/SpringRest/show-all-users">Show all users</a>
+			</div>
+			<div class="menu">
+				<a class="menu" href="/SpringRest/add-new-user">Add new user</a>
+			</div>
+			<div class="menu">
+				<a class="menu" href="/SpringRest/find-user">Find user</a>
+			</div>
+
+		</div>
+		<div class="footer">
+			<hr noshade size="1" color="#327CA2" />
+			<p>Created by Anastasiya Spiridonova, 2019</p>
+		</div>
 	</div>
 </body>
 </html>

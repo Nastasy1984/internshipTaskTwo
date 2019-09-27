@@ -13,16 +13,27 @@
 <link href="<c:url value="/resources/style.css"/>" rel="stylesheet"></link>
 </head>
 <body>
+	<div class="flex-container">
+		<div class="action">
+			<a class="action" href="/SpringRest/">To the main page</a>
+		</div>
+		<div class="action">
+			<a class="action" href="/SpringRest/add-new-user">Add user</a>
+		</div>
+		<div class="action">
+			<a class="action" href="/SpringRest/show-all-users">Show all
+				users</a>
+		</div>
+	</div>
+
 	<div class="layout">
 		<h1>Find user</h1>
-	<div class="resultString">
-		${failString}
-	</div>
+		<div class="resultString">${failString}</div>
 		<div class="h2">
 			<h2>Enter user's ID or last Name:</h2>
 		</div>
-<%-- <form action="/SpringRest/find-user" method="GET"> --%>
-<%-- instead of this we just make JS function that create new url with adding user's id --%>
+		<%-- <form action="/SpringRest/find-user" method="GET"> --%>
+		<%-- instead of this we just make JS function that create new url with adding user's id --%>
 
 		<script type="text/javascript">
 		function myFunction(){
@@ -32,23 +43,21 @@
 		}
 		</script>
 
-		<form id = "find_user_form" onsubmit="myFunction()">
-			<label>Id or last name</label> <br> <input type="text" name="id" placeholder="User's ID or last Name"> 
-			<br> 
-			<input class="submit" type="submit" value="Find user">
+		<form id="find_user_form" onsubmit="myFunction()">
+			<label>Id or last name</label> <br> <input type="text" name="id"
+				placeholder="User's ID or last Name"> <br> <input
+				class="submit" type="submit" value="Find user">
 		</form>
-		
-	<hr noshade size="2" color="#4682B4" />
-	<div class="action">
-		<a href="/SpringRest/add-new-user">Add new user</a>
-	</div>
-	<div class="action">
-		<a href="/SpringRest/show-all-users">Show all users</a>
-	</div>
-	<div class="action">
-		<a href="/SpringRest/">To the main page</a>
-	</div>
-	<hr noshade size="2" color="#4682B4" />
+
+
+
+
+
+		<div class="footer">
+			<hr noshade size="1" color="#327CA2" />
+			<p>Created by Anastasiya Spiridonova, 2019</p>
+		</div>
+
 	</div>
 </body>
 </html>

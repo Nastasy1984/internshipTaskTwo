@@ -19,14 +19,14 @@ tr:nth-child(even) {
     background-color: #cee7f5;
 }
 h1{
-	color: #4682B4;
+	color: #327CA2;
 	font-size: 30pt;
     font-weight: 500;
     text-align: center; 
     margin-top: 20px;
 }
 h2{
-	color: #4682B4;
+	color: #327CA2;
 	font-size: 15pt;
     font-weight: 300;
     text-align: left; 
@@ -39,7 +39,7 @@ h2{
     margin-left: auto;
     padding-top: 20px;
     padding-bottom: 20px;
-    margin-top: 40px;
+
     margin-bottom: 40px;
 }
 
@@ -63,16 +63,60 @@ form{
     margin-right: auto;
     margin-left: auto;
 }
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    justify-content: space-around;
+    flex-direction: row;
+    width: 80%; 
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #1C5585;
 
+}
+a.action{
+	color: white;
+	text-decoration: none;
+	font-size: 12pt;
+    font-weight: 600;
+}
+a.action:hover{
+	color: #C70039;
+	text-decoration: underline;
+	font-weight: 600;
+}
 div.action{
-	margin-top: 10px;
-	margin-bottom: 10px;
+	display: inline-block;
     text-align: center;
+}
+div.menu{
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+a.menu{
+    text-decoration: none;
+    font-size: 15pt;
+    font-weight: 600;
+}
+a.menu:hover{
+	color: #C70039;
+	text-decoration: underline;
 }
 div.h2{
     width: 80%; 
     margin-right: auto;
     margin-left: auto;
+}
+div.footer{
+	margin-top: 70px;
+    text-align: center;
+    color: #4682B4;
+	font-size: 8pt;
+    font-weight: 500;
 }
 .resultString{
     width: 90%;
@@ -105,9 +149,11 @@ input.submit:hover {
     color: white;
 }
 hr{
-	width: 80%; 
+	width: 90%; 
     margin-right: auto;
     margin-left: auto;
+    margin-top: 20px;
+	margin-bottom: 20px;
 }
 .update{
 	color: #4682B4;
