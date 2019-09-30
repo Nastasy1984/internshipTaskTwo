@@ -3,9 +3,10 @@ package my.app.model;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
@@ -18,24 +19,24 @@ import my.app.model.serialize.Serializer;
 
 @JsonAutoDetect
 public class User {
-	//@Id
-	//@GeneratedValue
+    private static final Logger LOG = LoggerFactory.getLogger(my.app.model.User.class.getName());
 	private Integer id;
 	private String firstName;
 	private String lastName;
 	private String eMail;
 	private List <String> phoneNumbers;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd hh:mm:ss")
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
+
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")
 	@JsonSerialize(using = Serializer.class)
 	@JsonDeserialize(using = Deserializer.class)
 	public LocalDateTime createdOn;
 
 	public User() {
+		LOG.debug("New user was created using constructor without parameters");
 	}
 	
 	public User(String firstName, String lastName) {
+		LOG.debug("New user was created using constructor with parameters firstName: {}, lastName: {}", firstName, lastName);
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.eMail = "";

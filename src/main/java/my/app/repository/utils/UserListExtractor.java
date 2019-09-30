@@ -6,11 +6,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -19,9 +19,11 @@ import my.app.model.User;
 
 @Component
 public class UserListExtractor implements ResultSetExtractor<List<User>>{
+    private static final Logger LOG = LoggerFactory.getLogger(my.app.repository.utils.UserListExtractor.class.getName());
 
 	@Override
 	public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		LOG.info("extractData method was invoked");
 		//we will save users in the map for our purposes
 		Map<Integer, User> map = new HashMap<>();
 		while (rs.next()) {
@@ -66,6 +68,7 @@ public class UserListExtractor implements ResultSetExtractor<List<User>>{
 				user.getPhoneNumbers().add(phoneNumber);	
 		}
 		List<User> users = new ArrayList<User>(map.values());
+		LOG.debug("extractData method extracted users: {}",users.toString());
 		return users;
 	}
 

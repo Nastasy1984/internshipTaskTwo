@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -20,7 +22,7 @@ import my.app.repository.utils.UserListExtractor;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-
+    private static final Logger LOG = LoggerFactory.getLogger(my.app.repository.UserRepositoryImpl.class.getName());
 	private JdbcTemplate jdbcTemplate;
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private UserListExtractor userListExtractor;
@@ -28,11 +30,13 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Autowired 
 	public UserRepositoryImpl(UserListExtractor userListExtractor) {
+		LOG.info("UserRepositoryImpl was created");
 		this.userListExtractor = userListExtractor;
 	}
 
 	@Autowired
 	public void setDataSource(final DataSource dataSource) {
+		LOG.info("setDataSource method was invoked");
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		final CustomSQLErrorCodeTranslator customSQLErrorCodeTranslator = new CustomSQLErrorCodeTranslator();
 		jdbcTemplate.setExceptionTranslator(customSQLErrorCodeTranslator);
@@ -42,7 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
 	// DONE WORKS WITH DB
 	@Override
 	public List<User> getAll() {
-		
+		LOG.info("getAll method was invoked");
 		//return jdbcTemplate.query("SELECT * FROM USERS", new UserRowMapper());
 		return jdbcTemplate.query("SELECT\r\n" + 
 				"	users.user_id, users.first_name, users.last_name, users.email, users.created_on,\r\n" + 
@@ -54,7 +58,9 @@ public class UserRepositoryImpl implements UserRepository {
 	// DONE WORKS WITH DB
 	@Override
 	public User getById(Integer id) {
+		LOG.info("getById method was invoked");
 		if ((id != null) && (id >= 0)) {
+			LOG.debug("searching for user with id: {}", id);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
 			//final String SELECT_BY_ID = "SELECT * FROM USERS WHERE USER_ID = :id";
 			final String SELECT_BY_ID = "SELECT\r\n" + 
@@ -64,32 +70,40 @@ public class UserRepositoryImpl implements UserRepository {
 					"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
 					"WHERE users.user_id = :id";
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_ID, namedParameters, userListExtractor);
+			LOG.debug("getById method got from DB users: {}", users.toString());
 			if ((users != null) && (!users.isEmpty())) {
 				return users.get(0);
 			}
 		}
+		LOG.info("getById method sends null");
 		return null;
 	}
 
 	// DONE WORKS WITH DB
 	@Override
 	public boolean containsId(Integer id) {
+		LOG.info("containsId method was invoked");
 		if ((id != null) && (id >= 0)) {
+			LOG.debug("searching for user with id: {}", id);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
 			final String COUNT_BY_ID = "SELECT COUNT(*) FROM public.users WHERE USER_ID = :id";
 			Integer countUsersInteger = 0;
 			countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
 			if (countUsersInteger > 0) {
+				LOG.info("User with id: {} was found in DB, containsId method sends true", id);
 				return true;
 			}
 		}
+		LOG.info("containsId method sends false");
 		return false;
 	}
 
 	// DONE WORKS WITH DB
 	@Override
 	public List<User> getByLastName(String lastName) {
+		LOG.info("getByLastName method was invoked");
 		if (lastName != null) {
+			LOG.debug("searching for user with lastName: {}", lastName);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("lastName", lastName);
 			//final String SELECT_BY_LAST_NAME = "SELECT * FROM USERS WHERE LAST_NAME = :lastName";
 			final String SELECT_BY_LAST_NAME = "SELECT\r\n" + 
@@ -102,6 +116,7 @@ public class UserRepositoryImpl implements UserRepository {
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters,
 					userListExtractor);
 			if ((users != null) && (!users.isEmpty())) {
+				LOG.debug("getByLastName method got from DB users: {}", users.toString());
 				return users;
 			}
 		}
@@ -110,7 +125,9 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public void update(User user) {
+		LOG.info("update method was invoked");
 		if (user != null) {
+			LOG.debug("Updating user: {}", user.toString());
 			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 			mapSqlParameterSource.addValue("id", user.getId());
 			mapSqlParameterSource.addValue("lastName", user.getLastName());
@@ -120,13 +137,15 @@ public class UserRepositoryImpl implements UserRepository {
 			final String UPDATE_BY_ID = "UPDATE USERS SET LAST_NAME = :lastName, FIRST_NAME = :firstName, EMAIL = :eMail WHERE USER_ID = :id";
 			namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
 			
-			//deleting all existing numbers
+			//deleting all existing numbers for this user
 			final String DELETE_NUM_BY_ID = "DELETE FROM PHONE_NUMBERS WHERE USER_ID = :id";
+			LOG.debug("Deleting all numbers for user with id: {}", user.getId());
 			namedParameterJdbcTemplate.update(DELETE_NUM_BY_ID, namedParameters);
 			
 			//adding updated numbers		
 			for (String num : user.getPhoneNumbers()) {
 				if (!num.equals("") && num != null) {
+					LOG.debug("Inserting number: {} for user with id: {}", num, user.getId());
 					mapSqlParameterSource.addValue("number", num);
 					String insert_num_by_id = "INSERT INTO PHONE_NUMBERS (PHONE_NUMBER, USER_ID) VALUES (:number, :id)";
 					namedParameters = mapSqlParameterSource;
@@ -139,8 +158,10 @@ public class UserRepositoryImpl implements UserRepository {
 	// DONE WORKS WITH DB
 	// Here I use SimpleJDBCInsert just to try it
 	public boolean save(User user) {
+		LOG.info("save method was invoked");
 		
 		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
+			LOG.debug("Saving user: {}", user.toString());
 			final Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("FIRST_NAME", user.getFirstName());
 			parameters.put("LAST_NAME", user.getLastName());
@@ -156,8 +177,8 @@ public class UserRepositoryImpl implements UserRepository {
 					.executeAndReturnKeyHolder(parameters).getKeys();
 
 			Integer userId = (Integer)keys.get("user_id"); 
-					
-			//adding updated numbers		
+			LOG.info("save method created user with generated id: {}", userId);		
+			//adding numbers		
 			for (String num : user.getPhoneNumbers()) {
 				if (!num.equals("") && num != null) {
 					parameters.put("USER_ID", userId);
@@ -177,9 +198,14 @@ public class UserRepositoryImpl implements UserRepository {
 	// DONE WORKS WITH DB
 	@Override
 	public void delete(User user) {
-		final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", user.getId());
-		final String DELETE_BY_ID = "DELETE FROM USERS WHERE USER_ID = :id";
-		namedParameterJdbcTemplate.update(DELETE_BY_ID, namedParameters);
+		LOG.info("delete method was invoked");
+		if (user != null) {
+			LOG.debug("Deleting user: {}", user.toString());
+			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", user.getId());
+			final String DELETE_BY_ID = "DELETE FROM USERS WHERE USER_ID = :id";
+			namedParameterJdbcTemplate.update(DELETE_BY_ID, namedParameters);
+			LOG.debug("User with id: {} was deleted from DB", user.getId());
+		}
 	}
 
 }
