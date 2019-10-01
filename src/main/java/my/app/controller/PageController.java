@@ -79,11 +79,11 @@ public class PageController {
 		LOG.info("findUserById method was invoked with path variable id: {}", id);
 		ModelAndView modelAndView = new ModelAndView();
 		List<User> users = pageService.getUserById(id);
-
+		
 		if (users == null) {
 			return failedSearch(id.toString());
 		}
-
+		LOG.debug("findUserById method got user: {}", users.toString());
 		modelAndView.addObject("users", users);
 		formateDates(modelAndView);
 		modelAndView.setViewName("searchResult");
@@ -95,13 +95,14 @@ public class PageController {
 	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName) {
 		LOG.info("findUserByLastName method was invoked with path variable lastName: {}", lastName);
 		ModelAndView modelAndView = new ModelAndView();
-		List<User> usersList = pageService.getUserByLastName(lastName);
+		List<User> users = pageService.getUserByLastName(lastName);
 
-		if (usersList == null) {
+		if (users == null) {
 			return failedSearch(lastName);
 		}
-
-		modelAndView.addObject("users", usersList);
+		
+		LOG.debug("findUserByLastName method got users: {}", users.toString());
+		modelAndView.addObject("users", users);
 		modelAndView.setViewName("searchResult");
 		formateDates(modelAndView);
 		return modelAndView;
@@ -129,7 +130,6 @@ public class PageController {
 				firstName, lastName, eMail, numbers.toString());
 		ModelAndView modelAndView = new ModelAndView();
 
-		
 		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
 			LOG.warn("Failed adding because of wrong input of names. firstName: {}, lastName: {}", firstName, lastName);
 			LOG.warn("Sending to the addNewUser.jsp page");

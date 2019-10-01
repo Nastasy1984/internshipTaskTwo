@@ -44,60 +44,7 @@
 	</logger>
 
 	<!-- PageController -->
-	<logger name="my.app.controller.PageController" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- UserController -->
-	<logger name="my.app.controller.UserController" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- User -->
-	<logger name="my.app.model.User" level="info" additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- Deserializer -->
-	<logger name="my.app.model.serialize.Deserializer" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- Serializer -->
-	<logger name="my.app.model.serialize.Serializer" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- CustomSQLErrorCodeTranslator -->
-	<logger name="my.app.repository.CustomSQLErrorCodeTranslator"
-		level="info" additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- UserRepositoryImpl -->
-	<logger name="my.app.repository.UserRepositoryImpl" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- UserListExtractor -->
-	<logger name="my.app.repository.utils.UserListExtractor"
-		level="info" additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- PageService -->
-	<logger name="my.app.service.PageService" level="info"
-		additivity="false">
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<!-- UserServiceImpl -->
-	<logger name="my.app.service.UserServiceImpl" level="info"
+	<logger name="my.app" level="debug"
 		additivity="false">
 		<appender-ref ref="FILE" />
 	</logger>
