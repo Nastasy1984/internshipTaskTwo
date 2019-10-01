@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,9 @@ import my.app.model.serialize.Serializer;
 public class User {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.model.User.class.getName());
 	private Integer id;
+	@NotBlank(message="First name cannot be empty")
 	private String firstName;
+	@NotBlank(message="Last name cannot be empty")
 	private String lastName;
 	private String eMail;
 	private List <String> phoneNumbers;

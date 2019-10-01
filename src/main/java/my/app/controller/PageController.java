@@ -155,8 +155,7 @@ public class PageController {
 		// saving the user by pageService
 		User user = pageService.addUser(firstName, lastName, eMail, numbers);
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
-		LOG.info("User with id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {} was added successfully", user.getId(), user.getFirstName(), 
-				user.getLastName(), user.geteMail(), user.getPhoneNumbers().toString());
+		LOG.info("User: {} was added successfully", user.toString());
 		LOG.info("Redirecting to the user.jsp");
 		// redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());
@@ -229,8 +228,7 @@ public class PageController {
 		
 		User user = pageService.updateUser(id, firstName, lastName, eMail, numbers);		     
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
-		LOG.info("User with id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {} was updated successfully", user.getId(), user.getFirstName(), 
-				user.getLastName(), user.geteMail(), user.getPhoneNumbers().toString());
+		LOG.info("User: {} was updated successfully", user.toString());
 		LOG.info("Redirecting to the user.jsp");
 		// redirect to the list with all users
 		modelAndView.addObject("usersList", pageService.getUsersList());

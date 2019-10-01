@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.util.NestedServletException;
 
 import my.app.model.User;
 import my.app.repository.utils.UserListExtractor;
@@ -124,9 +126,9 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public void update(User user) {
+	public User update(User user) {
 		LOG.info("update method was invoked");
-		if (user != null) {
+		if (user != null && user.getId() != null) {
 			LOG.debug("Updating user: {}", user.toString());
 			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 			mapSqlParameterSource.addValue("id", user.getId());
@@ -136,13 +138,13 @@ public class UserRepositoryImpl implements UserRepository {
 			SqlParameterSource namedParameters = mapSqlParameterSource;
 			final String UPDATE_BY_ID = "UPDATE USERS SET LAST_NAME = :lastName, FIRST_NAME = :firstName, EMAIL = :eMail WHERE USER_ID = :id";
 			namedParameterJdbcTemplate.update(UPDATE_BY_ID, namedParameters);
-			
-			//deleting all existing numbers for this user
+
+			// deleting all existing numbers for this user
 			final String DELETE_NUM_BY_ID = "DELETE FROM PHONE_NUMBERS WHERE USER_ID = :id";
 			LOG.debug("Deleting all numbers for user with id: {}", user.getId());
 			namedParameterJdbcTemplate.update(DELETE_NUM_BY_ID, namedParameters);
-			
-			//adding updated numbers		
+
+			// adding updated numbers
 			for (String num : user.getPhoneNumbers()) {
 				if (!num.equals("") && num != null) {
 					LOG.debug("Inserting number: {} for user with id: {}", num, user.getId());
@@ -151,13 +153,15 @@ public class UserRepositoryImpl implements UserRepository {
 					namedParameters = mapSqlParameterSource;
 					namedParameterJdbcTemplate.update(insert_num_by_id, namedParameters);
 				}
+				return getById(user.getId());
 			}
 		}
+		return null;
 	}
 
 	// DONE WORKS WITH DB
 	// Here I use SimpleJDBCInsert just to try it
-	public boolean save(User user) {
+	public User save(User user) {
 		LOG.info("save method was invoked");
 		
 		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
@@ -178,21 +182,32 @@ public class UserRepositoryImpl implements UserRepository {
 
 			Integer userId = (Integer)keys.get("user_id"); 
 			LOG.info("save method created user with generated id: {}", userId);		
-			//adding numbers		
-			for (String num : user.getPhoneNumbers()) {
-				if (!num.equals("") && num != null) {
-					parameters.put("USER_ID", userId);
-					parameters.put("PHONE_NUMBER", num);
-					new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
-					.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
-					.executeAndReturnKeyHolder(parameters).getKeys();
+			//adding numbers
+			if (user.getPhoneNumbers() != null && !user.getPhoneNumbers().isEmpty()) {
+				for (String num : user.getPhoneNumbers()) {
+					
+					if (!num.equals("") && num != null) {
+						parameters.put("USER_ID", userId);
+						parameters.put("PHONE_NUMBER", num);
+						try {
+							new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
+									.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
+									.executeAndReturnKeyHolder(parameters).getKeys();
+						} 
+						//FIXME 
+						//if the number is not unique
+						catch (Exception e) {
+							continue;
+						}
+					}
 				}
 			}
 			
+			return getById(userId);
 			/* System.out.println(keys.toString()); */
-			return true;
+			//return true;
 		}
-		return false;
+		return null;
 	}
 
 	// DONE WORKS WITH DB

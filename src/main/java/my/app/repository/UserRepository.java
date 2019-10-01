@@ -5,7 +5,7 @@ import java.util.List;
 import my.app.model.User;
 
 public interface UserRepository {
-    boolean save(User user);
+    User save(User user);
     
     void delete(User user);
     
@@ -17,5 +17,5 @@ public interface UserRepository {
     
     List<User> getByLastName(String lastName);
     
-    void update(User user);
+    User update(User user);
 }

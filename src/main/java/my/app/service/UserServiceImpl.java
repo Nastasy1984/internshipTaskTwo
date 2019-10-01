@@ -24,11 +24,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User save(User user) {
 		LOG.info("save method was invoked");
-		boolean isSaved = userRepository.save(user);
-		LOG.debug("Is saved: {}", isSaved);
-		if (isSaved) {
-			return user;
+		User userSaved = userRepository.save(user);
+
+		if (userSaved != null) {
+			LOG.debug("User saved: {}", userSaved.toString());
+			return userSaved;
 		}
+		
 		LOG.debug("save method returns null");
 			return null;
 	}
@@ -37,11 +39,10 @@ public class UserServiceImpl implements UserService {
 	public User update(User user) {
 		LOG.info("update method was invoked");
 		if (user != null  && user.getId() != null){
-			userRepository.update(user);
-			int id = user.getId();
-			if (userRepository.getById(id).equals(user)) {
-				LOG.info("User was updated successfully");
-				return user;
+			User userUpdated = userRepository.update(user);
+			if (userUpdated != null) {
+				LOG.debug("User updated: {}", userUpdated.toString());
+				return userUpdated;
 			}
 		}
 		LOG.debug("update method returns null");

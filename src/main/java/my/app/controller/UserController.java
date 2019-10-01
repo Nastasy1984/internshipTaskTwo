@@ -30,6 +30,7 @@ import my.app.controller.exception.ResourceNotFoundException;
 import my.app.model.User;
 import my.app.service.UserService;
 
+//REST API
 @RestController
 public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.UserController.class.getName());
@@ -43,7 +44,8 @@ public class UserController {
 	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
+    //@ResponseBody
+    //We souldn't use the annotation @ResponseBody because we annotated class as a @RestController
     public List<User> getUsersList() {
 		LOG.info("getUsersList method was invoked");
         return userService.getAllAsList();
@@ -51,7 +53,7 @@ public class UserController {
     
 	//DONE WORKS finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
+	//@ResponseBody
     public List <User> findUserById(@PathVariable ("id") Integer id) {
 		LOG.info("findUserById method was invoked with parameter id: {}", id);
 		if (!userService.containsId(id)){
@@ -75,7 +77,7 @@ public class UserController {
 	
 	//DONE WORKS finds user by last name and produces data of user in JSON format
 	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
+	//@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		LOG.info("findUserByLastName method was invoked with parameter lastName: {}", lastName);
 		List <User> users = userService.getByLastName(lastName);
@@ -91,7 +93,7 @@ public class UserController {
 	@PostMapping(value = "/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
+	//@ResponseBody
 	public User addNewUser(@RequestBody User user) {
 			LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 			User userSaved = userService.save(user);
@@ -128,7 +130,7 @@ public class UserController {
     //DONE WORKS getting id and deleting user
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
+    //@ResponseBody
     public void delete(@PathVariable("id") Integer id) {
 		LOG.info("delete method was invoked with path variable id: {}", id);
     	//Checking if there is a user with this id in out list of users
