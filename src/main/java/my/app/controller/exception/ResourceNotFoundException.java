@@ -1,9 +1,8 @@
 package my.app.controller.exception;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.http.HttpStatus;
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
+//is not used since I replace all ResourseNotFoundException with ResponseStatusException in User Controller
+//@ResponseStatus(HttpStatus.NOT_FOUND)
+@SuppressWarnings("serial")
 public class ResourceNotFoundException extends RuntimeException{
 
 	public ResourceNotFoundException() {

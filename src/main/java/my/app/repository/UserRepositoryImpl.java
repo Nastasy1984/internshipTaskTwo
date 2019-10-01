@@ -70,7 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
 					"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
 					"WHERE users.user_id = :id";
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_ID, namedParameters, userListExtractor);
-			LOG.debug("getById method got from DB users: {}", users.toString());
+			LOG.debug("getById method got users from DB : {}", users.toString());
 			if ((users != null) && (!users.isEmpty())) {
 				return users.get(0);
 			}
@@ -116,7 +116,7 @@ public class UserRepositoryImpl implements UserRepository {
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters,
 					userListExtractor);
 			if ((users != null) && (!users.isEmpty())) {
-				LOG.debug("getByLastName method got from DB users: {}", users.toString());
+				LOG.debug("getByLastName method got users from DB: {}", users.toString());
 				return users;
 			}
 		}

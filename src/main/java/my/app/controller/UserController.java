@@ -1,7 +1,11 @@
 package my.app.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -51,13 +56,16 @@ public class UserController {
 		LOG.info("findUserById method was invoked with parameter id: {}", id);
 		if (!userService.containsId(id)){
 			LOG.warn("ResourceNotFoundException in findUserById method. There is no user with id: {} in DB", id);
-			throw new ResourceNotFoundException();
+			//throw new ResourceNotFoundException("User with id " + id + " not found");
+			//an alternative way
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " not found");
 		}
 		User user = userService.getById(id);
 
 		if (user==null) {
 			LOG.warn("ResourceNotFoundException in findUserById method. User gotten from userService is null");
-			throw new ResourceNotFoundException();
+			//throw new ResourceNotFoundException("User with id " + id + " not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " not found");
 		}
 		LOG.info("User gotten from userService: {}", user.toString());
 		List<User> resultList = new ArrayList<User>();
@@ -73,7 +81,8 @@ public class UserController {
 		List <User> users = userService.getByLastName(lastName);
 		if ((users == null) || (users.isEmpty())) {
 			LOG.warn("ResourceNotFoundException in findUserById method. There is no user with last name: {} in the DB", lastName);
-			throw new ResourceNotFoundException("There is no user with last name " + lastName + " in the data base");
+			//throw new ResourceNotFoundException("There is no user with last name " + lastName + " in the data base");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no user with last name " + lastName + " in the data base");
 		}
 		return userService.getByLastName(lastName);
     }
@@ -89,7 +98,8 @@ public class UserController {
 
 			if (userSaved == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
-				throw new ResourceNotFoundException();
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to add user to the data base");
+				//throw new ResourceNotFoundException("Failed to add user to the data base");
 			}
 
 			LOG.info("user gotten from userService is: {}", userSaved.toString());
@@ -108,7 +118,8 @@ public class UserController {
 
 			if (userUpdated == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
-				throw new ResourceNotFoundException("Failed to update user with id " + id);
+				//throw new ResourceNotFoundException("Failed to update user with id " + id);
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update user with id " + id);
 			}
 			return userUpdated;
 	}
@@ -128,7 +139,21 @@ public class UserController {
         }
         else {
         	LOG.info("ResourceNotFoundException in delete method. There is no user with id: {}", id);
-        	throw new ResourceNotFoundException("There is no user with id " + id + " in the DB");
+        	//throw new ResourceNotFoundException("There is no user with id " + id + " in the DB");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no user with id " + id + " in the DB");
         }
     }
+  /*  
+    @RequestMapping(value="/error", produces="application/json")
+    @ResponseBody
+    public Map<String, Object> handle(HttpServletRequest request) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("status", request.getAttribute("javax.servlet.error.status_code"));
+        map.put("reason", request.getAttribute("javax.servlet.error.message"));
+        map.put("llll", "ngfnfdn");
+        return map;
+    }
+*/
+    
 }
