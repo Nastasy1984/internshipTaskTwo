@@ -92,12 +92,11 @@ public class UserController {
 	//public User addNewUser(@RequestBody User user) {
 	public ResponseEntity<User> addNewUser(@RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
-		if (userService.checkNumbers(user.getPhoneNumbers())) {
+		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
 			//cleaning numbers list from empty strings
 			user.getPhoneNumbers().removeIf(""::equals);
-			LOG.debug("User phone numbers are: {}", user.getPhoneNumbers().toString());
-			
 			User userSaved = userService.save(user);
+			
 			if (userSaved == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to add user to the data base");
@@ -106,7 +105,6 @@ public class UserController {
 
 			LOG.info("user gotten from userService is: {}", userSaved.toString());
 			return ResponseEntity.status(HttpStatus.OK).body(userSaved);
-			// return userSaved;
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
@@ -117,17 +115,23 @@ public class UserController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
-
-		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id, user.toString());
+		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id,
+				user.toString());
+		if (userService.checkNumbers(user.getPhoneNumbers(), id)) {
+			//cleaning numbers list from empty strings
+			user.getPhoneNumbers().removeIf(""::equals);
 			User userUpdated = userService.update(user);
 
 			if (userUpdated == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
-				//throw new ResourceNotFoundException("Failed to update user with id " + id);
+				// throw new ResourceNotFoundException("Failed to update user with id " + id);
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update user with id " + id);
 			}
-			return ResponseEntity.status(HttpStatus.OK)
-		            .body(userUpdated);
+			
+			LOG.info("user gotten from userService is: {}", userUpdated.toString());
+			return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
 
     

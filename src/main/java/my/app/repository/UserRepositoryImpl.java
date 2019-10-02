@@ -128,14 +128,18 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public boolean checkNumbers(List<String> numbers) {
+	public boolean checkNumbers(List<String> numbers, int id) {
 		LOG.info("checkNumbers method was invoked");
 		if (numbers != null && !numbers.isEmpty()) {
-			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());	
+			LOG.debug("checkNumbers method got parameter numbers: {} and id: {}", numbers.toString(), id);	
 			
 			for (String num: numbers) {
-				SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("num", num);
-				String count_numbers = "SELECT COUNT(*) FROM PHONE_NUMBERS WHERE PHONE_NUMBER = :num";
+				MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+				LOG.debug("checking num: {} and id: {}", num, id);	
+				mapSqlParameterSource.addValue("num", num);
+				mapSqlParameterSource.addValue("id", id);
+				SqlParameterSource namedParameters = mapSqlParameterSource;
+				String count_numbers = "SELECT COUNT(*) FROM PHONE_NUMBERS WHERE PHONE_NUMBER = :num AND USER_ID != :id";
 				Integer countNums = namedParameterJdbcTemplate.queryForObject(count_numbers, namedParameters, Integer.class);
 				LOG.debug("countNums: {} for num: {}", countNums, num);
 				if (countNums != null && countNums > 0) {
@@ -149,6 +153,8 @@ public class UserRepositoryImpl implements UserRepository {
 		}
 		return false;
 	}
+	
+	
 	
 	
 	@Override

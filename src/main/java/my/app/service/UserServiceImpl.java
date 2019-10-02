@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public boolean checkNumbers(List<String> numbers) {
+	public boolean checkNumbers(List<String> numbers, int id) {
 		LOG.info("checkNumbers method was invoked");
 		if (numbers != null && !numbers.isEmpty()) {
 			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
 			//excluding repeating numbers from the initial list
 			List<String> phoneNumbers = new ArrayList<>(new HashSet<String>(numbers));
 
-			return userRepository.checkNumbers(phoneNumbers);
+			return userRepository.checkNumbers(phoneNumbers, id);
 		}
 		return false;
 	};

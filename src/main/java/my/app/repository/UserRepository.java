@@ -19,5 +19,6 @@ public interface UserRepository {
     
     User update(User user);
     
-    boolean checkNumbers(List<String> numbers);
+    boolean checkNumbers(List<String> numbers, int id);
+   
 }

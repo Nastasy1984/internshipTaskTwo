@@ -157,7 +157,6 @@ public class PageService {
 		return null;
 	}
 	
-	//DONE WORKS 
 	public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("addUser method was invoked");
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
@@ -179,19 +178,24 @@ public class PageService {
 			httpPost.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPost);
 			int respCode = response.getStatusLine().getStatusCode();
+			LOG.debug("addUser method got response code: {}", respCode);
+			
 			if (respCode == 400) {
-				LOG.warn("getUserById method sending HttpStatus.BAD_REQUEST and body null");
+				LOG.warn("getUserById method returns HttpStatus.BAD_REQUEST and body null");
 				return ResponseEntity.status(respCode).body(null);
 			}
-		    User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
-		    LOG.debug("addUser method got user: {}", userAdded.toString());
-		    return ResponseEntity.status(respCode).body(userAdded);
+			
+			if (respCode == 200) {
+				User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
+				LOG.debug("addUser method got user: {}", userAdded.toString());
+				return ResponseEntity.status(respCode).body(userAdded);
+			}
 		} 
 		catch (IOException e) {
 			LOG.error("addUser method caught: {}", e.getClass().getName());
 		}
 		
-		LOG.debug("addUser method returns null");
+		LOG.warn("addUser method returns HttpStatus.NOT_FOUND and body null");
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
@@ -216,7 +220,7 @@ public class PageService {
 	}
 	
 	
-	public User updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
+	public ResponseEntity<User> updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("updateUser method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/user/" + id;
@@ -239,16 +243,26 @@ public class PageService {
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPut.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPut);
-			LOG.debug("updateUser method got response code: {}", response.getStatusLine().getStatusCode());
-		    User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
-		    LOG.debug("updateUser method got user: {}", userUpdated.toString());
-		    return userUpdated;
-		} catch (IOException e) {
+			int respCode = response.getStatusLine().getStatusCode();
+			LOG.debug("updateUser method got response code: {}", respCode);
+			
+			if (respCode == 400) {
+				LOG.warn("updateUser method sending HttpStatus.BAD_REQUEST and body null");
+				return ResponseEntity.status(respCode).body(null);
+			}
+			
+			if (respCode == 200) {
+				User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
+				LOG.debug("updateUser method got user: {}", userUpdated.toString());
+				return ResponseEntity.status(respCode).body(userUpdated);
+			}
+		} 
+		catch (IOException e) {
 			LOG.error("updateUser method caught {}", e.getClass().getName());
 		}
 		
-		LOG.debug("updateUser method returns null");
-		return null;
+		LOG.warn("updateUser method returns HttpStatus.NOT_FOUND and body null");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 }

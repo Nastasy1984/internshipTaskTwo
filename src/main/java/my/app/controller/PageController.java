@@ -145,13 +145,21 @@ public class PageController {
 			return failedAdding(failString);
 		}
 		
+		numbers.removeIf(""::equals);
+		/*
 		int countEmptyNumbers = 0;
 		for(String num: numbers) {
 			if (num == null || num.equals("")){
 				countEmptyNumbers++;
 			}
 		}
+		
 		if (countEmptyNumbers == numbers.size()){
+			String failString = "User must have at least one phone number";
+			return failedUpdate(failString, id);
+		}*/
+		
+		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
 			return failedAdding(failString);
 		}
@@ -161,6 +169,7 @@ public class PageController {
 		int respCode = responseEntity.getStatusCodeValue();
 		
 		if (respCode == 400) {
+			LOG.warn("The user's phone numbers are not unique");
 			String failString = "The user's phone numbers are not unique";
 			return failedAdding(failString);
 		}
@@ -257,27 +266,49 @@ public class PageController {
 			return failedUpdate(failString, id);
 		}
 		
+		numbers.removeIf(""::equals);
+		/*
 		int countEmptyNumbers = 0;
 		for(String num: numbers) {
 			if (num == null || num.equals("")){
 				countEmptyNumbers++;
 			}
 		}
+		
 		if (countEmptyNumbers == numbers.size()){
+			String failString = "User must have at least one phone number";
+			return failedUpdate(failString, id);
+		}*/
+		
+		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
 			return failedUpdate(failString, id);
 		}
 		
-		User user = pageService.updateUser(id, firstName, lastName, eMail, numbers);		     
-		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
-		LOG.info("User: {} was updated successfully", user.toString());
-		LOG.info("Redirecting to the user.jsp");
-		// redirect to the list with all users
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		modelAndView.addObject("successString", successString);
-		formateDates(modelAndView);
-		modelAndView.setViewName("user");
-		return modelAndView;
+		// saving the user by pageService
+		ResponseEntity <User> responseEntity = pageService.updateUser(id, firstName, lastName, eMail, numbers);
+		int respCode = responseEntity.getStatusCodeValue();
+		
+		if (respCode == 400) {
+			LOG.warn("The user's phone numbers are not unique");
+			String failString = "The user's phone numbers are not unique";
+			return failedUpdate(failString, id);
+		}
+		
+		if (respCode == 200) {
+			User user = responseEntity.getBody();
+			String successString = "User " + user.getFirstName() + " " + user.getLastName()
+					+ " was updated successfully";
+			LOG.info("User: {} was updated successfully", user.toString());
+			LOG.info("Redirecting to the user.jsp");
+			// redirect to the list with all users
+			modelAndView.addObject("usersList", pageService.getUsersList());
+			modelAndView.addObject("successString", successString);
+			formateDates(modelAndView);
+			modelAndView.setViewName("user");
+			return modelAndView;
+		}
+		return failedUpdate("Failed update. Please, try again with user", id);
 	}
 
 	private ModelAndView failedUpdate(String failString, Integer id) {

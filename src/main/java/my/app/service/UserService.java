@@ -21,5 +21,5 @@ public interface UserService {
     
     void deleteById(Integer id);
     
-    boolean checkNumbers(List<String>numbers);
+    boolean checkNumbers(List<String>numbers, int id);
 }
