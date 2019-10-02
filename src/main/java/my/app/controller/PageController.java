@@ -129,39 +129,57 @@ public class PageController {
 	public ModelAndView addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
 			@RequestParam(value = "lastName", required = true) String lastName,
 			@RequestParam(value = "eMail", required = false) String eMail,
-			@RequestParam (value = "number", required = false) List<String> numbers) {
+			@RequestParam (value = "number", required = true) List<String> numbers) {
 		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				firstName, lastName, eMail, numbers.toString());
-		ModelAndView modelAndView = new ModelAndView();
+
 
 		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
-			LOG.warn("Failed adding because of wrong input of names. firstName: {}, lastName: {}", firstName, lastName);
-			LOG.warn("Sending to the addNewUser.jsp page");
-			modelAndView.setViewName("addNewUser");
 			String failString = "First name and last name are obligatory fields";
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
+			return failedAdding(failString);
 		}
 
 		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
-			LOG.warn("Failed adding because of wrong input of eMail: {}", eMail);
-			LOG.warn("Sending to the addNewUser.jsp page");
-			modelAndView.setViewName("addNewUser");
 			String failString = "Wrong E-mail. E-mail must contain @";
-			modelAndView.addObject("failString", failString);
-			return modelAndView;
+			return failedAdding(failString);
 		}
-
+		
+		int countEmptyNumbers = 0;
+		for(String num: numbers) {
+			if (num == null || num.equals("")){
+				countEmptyNumbers++;
+			}
+		}
+		if (countEmptyNumbers == numbers.size()){
+			String failString = "User must have at least one phone number";
+			return failedAdding(failString);
+		}
+		
 		// saving the user by pageService
 		User user = pageService.addUser(firstName, lastName, eMail, numbers);
-		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
-		LOG.info("User: {} was added successfully", user.toString());
-		LOG.info("Redirecting to the user.jsp");
-		// redirect to the list with all users
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		modelAndView.addObject("successString", successString);
-		formateDates(modelAndView);
-		modelAndView.setViewName("user");
+		if (user != null) {
+			String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
+			LOG.info("User: {} was added successfully", user.toString());
+			LOG.info("Redirecting to the user.jsp");
+			ModelAndView modelAndView = new ModelAndView();
+			// redirect to the list with all users
+			modelAndView.addObject("usersList", pageService.getUsersList());
+			modelAndView.addObject("successString", successString);
+			formateDates(modelAndView);
+			modelAndView.setViewName("user");
+			return modelAndView;
+		}
+		
+		return failedAdding("Failed adding. Probably user's phone numbers are not unique.");
+	}
+	
+	private ModelAndView failedAdding(String failString) {
+		LOG.info("failedAdding method was invoked");
+		LOG.warn("Failed adding because of: {}", failString);
+		LOG.warn("Sending to the addNewUser.jsp page");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("addNewUser");
+		modelAndView.addObject("failString", failString);
 		return modelAndView;
 	}
 
@@ -226,6 +244,17 @@ public class PageController {
 			return failedUpdate(failString, id);
 		}
 		
+		int countEmptyNumbers = 0;
+		for(String num: numbers) {
+			if (num == null || num.equals("")){
+				countEmptyNumbers++;
+			}
+		}
+		if (countEmptyNumbers == numbers.size()){
+			String failString = "User must have at least one phone number";
+			return failedUpdate(failString, id);
+		}
+		
 		User user = pageService.updateUser(id, firstName, lastName, eMail, numbers);		     
 		String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was updated successfully";
 		LOG.info("User: {} was updated successfully", user.toString());
@@ -250,13 +279,4 @@ public class PageController {
 		modelAndView.addObject("user", users.get(0));
 		return modelAndView;
 	}
-	
-    @RequestMapping(value="/error")
-    @ResponseBody
-    public ModelAndView handle() {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("404");
-		return modelAndView;
-    }
-	
 }

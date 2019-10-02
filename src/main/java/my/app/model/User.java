@@ -21,7 +21,6 @@ import my.app.model.serialize.Serializer;
 
 @JsonAutoDetect
 public class User {
-    private static final Logger LOG = LoggerFactory.getLogger(my.app.model.User.class.getName());
 	private Integer id;
 	@NotBlank(message="First name cannot be empty")
 	private String firstName;
@@ -36,11 +35,9 @@ public class User {
 	public LocalDateTime createdOn;
 
 	public User() {
-		LOG.debug("New user was created using constructor without parameters");
 	}
 	
 	public User(String firstName, String lastName) {
-		LOG.debug("New user was created using constructor with parameters firstName: {}, lastName: {}", firstName, lastName);
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.eMail = "";
