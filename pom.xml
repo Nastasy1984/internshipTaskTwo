@@ -13,7 +13,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.ver>5.1.9.RELEASE</spring.ver>
+		<!-- <spring.ver>5.1.9.RELEASE</spring.ver> -->
+		<spring.ver>5.2.0.RELEASE</spring.ver>
 		<jersey.ver>2.23.1</jersey.ver>
 		<jackson.ver>2.9.9</jackson.ver>
 		<logback.ver>1.2.3</logback.ver>
@@ -57,6 +58,12 @@
 			<version>${spring.ver}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.ver}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -71,6 +78,7 @@
 			<artifactId>jackson-core</artifactId>
 			<version>${jackson.ver}</version>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -84,7 +92,6 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>${jackson.ver}</version>
 		</dependency>
-
 
 		<!-- https://mvnrepository.com/artifact/javax/javaee-api -->
 		<dependency>
@@ -118,6 +125,7 @@
 			<artifactId>jersey-server</artifactId>
 			<version>${jersey.ver}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -137,7 +145,6 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.2.8</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

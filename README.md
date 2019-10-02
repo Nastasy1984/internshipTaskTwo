@@ -6,3 +6,62 @@ Post запрос должен использовать какой-то слож
 Развернуть на Tomcat 
 Юнит-тестирование (желательно с использованием Mochito)
 Логгирование
+
+Ниже примеры адекватных запросов при использовании сервиса в качестве REST API (взаимодействие с классом UserController)
+
+{id:\\d+} = это id номер User'a, записанный числом
+
+**************************
+GET
+Получаем список Users в формате JSON
+http://localhost:8080/SpringRest/users
+
+**************************
+Получаем User по id в формате JSON
+http://localhost:8080/SpringRest/user{id:\\d+}
+
+**************************
+POST
+Добавляем нового User в ответ получаем добавленного User в формате JSON
+URL
+/SpringRest/add
+
+HEADERS
+Content-Type: application/json
+Accept: application/json
+
+{
+    "firstName": "Tom",
+    "lastName": "Tomson",
+    "eMail": "tomson@tom.com",
+    "phoneNumbers": [
+        "88881",
+        "88882",
+	"88885"
+    ]
+}
+
+**************************
+PUT
+Изменяем существующего User по id в ответ получаем измененного User в формате JSON
+
+URL
+/SpringRest/user/{id:\\d+}
+
+HEADERS
+Content-Type: application/json
+Accept: application/json
+
+BODY
+{
+    "id": 1,
+    "firstName": "Denis",
+    "lastName": "Denisov",
+    "eMail": "denisov@tom.com",
+    "phoneNumbers": [
+        "77771",
+        "77772",
+	"77775"
+    ],
+    "createdOn": "2019-10-02 18:11:09"
+}

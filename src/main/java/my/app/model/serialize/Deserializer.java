@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+@SuppressWarnings("serial")
 public class Deserializer extends StdDeserializer<LocalDateTime>{ 
     private static final Logger LOG = LoggerFactory.getLogger(my.app.model.serialize.Deserializer.class.getName());
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

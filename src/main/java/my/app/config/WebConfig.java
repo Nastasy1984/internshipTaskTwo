@@ -1,7 +1,5 @@
 package my.app.config;
 
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 

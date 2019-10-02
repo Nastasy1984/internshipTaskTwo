@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 
-
+@SuppressWarnings("serial")
 public class Serializer extends StdSerializer<LocalDateTime> {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.model.serialize.Serializer.class.getName());
 	// we will write dates to JSON using this format
