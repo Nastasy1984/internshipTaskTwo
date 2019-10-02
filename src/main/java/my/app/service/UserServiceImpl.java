@@ -1,6 +1,9 @@
 package my.app.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,4 +105,17 @@ public class UserServiceImpl implements UserService {
 		LOG.debug("getByLastName method returns null because lastName is null");
 		return null;
 	}
+	
+	@Override
+	public boolean checkNumbers(List<String> numbers) {
+		LOG.info("checkNumbers method was invoked");
+		if (numbers != null && !numbers.isEmpty()) {
+			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());	
+			//to exclude repeating numbers from the initial list
+			List<String> phoneNumbers = new ArrayList<>(new HashSet<String>(numbers));
+			return userRepository.checkNumbers(phoneNumbers);
+		}
+		return false;
+	};
+	
 }

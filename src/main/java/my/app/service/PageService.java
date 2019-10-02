@@ -24,6 +24,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -156,7 +158,7 @@ public class PageService {
 	}
 	
 	//DONE WORKS 
-	public User addUser(String firstName, String lastName, String eMail, List<String> numbers) {
+	public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("addUser method was invoked");
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
 		User userGotten = new User (firstName, lastName);
@@ -176,14 +178,21 @@ public class PageService {
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPost.setEntity(stringEntity);
 			CloseableHttpResponse response = client.execute(httpPost);
+			int respCode = response.getStatusLine().getStatusCode();
+			if (respCode == 400) {
+				LOG.warn("getUserById method sending HttpStatus.BAD_REQUEST and body null");
+				return ResponseEntity.status(respCode).body(null);
+			}
 		    User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
 		    LOG.debug("addUser method got user: {}", userAdded.toString());
-		    return userAdded;
-		} catch (IOException e) {
+		    return ResponseEntity.status(respCode).body(userAdded);
+		} 
+		catch (IOException e) {
 			LOG.error("addUser method caught: {}", e.getClass().getName());
 		}
+		
 		LOG.debug("addUser method returns null");
-		return null;
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 	public int deleteUser(Integer id) {

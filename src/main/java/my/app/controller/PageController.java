@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -156,21 +157,33 @@ public class PageController {
 		}
 		
 		// saving the user by pageService
-		User user = pageService.addUser(firstName, lastName, eMail, numbers);
-		if (user != null) {
-			String successString = "User " + user.getFirstName() + " " + user.getLastName() + " was added successfully";
-			LOG.info("User: {} was added successfully", user.toString());
-			LOG.info("Redirecting to the user.jsp");
-			ModelAndView modelAndView = new ModelAndView();
-			// redirect to the list with all users
-			modelAndView.addObject("usersList", pageService.getUsersList());
-			modelAndView.addObject("successString", successString);
-			formateDates(modelAndView);
-			modelAndView.setViewName("user");
-			return modelAndView;
+		ResponseEntity <User> responseEntity = pageService.addUser(firstName, lastName, eMail, numbers);
+		int respCode = responseEntity.getStatusCodeValue();
+		
+		if (respCode == 400) {
+			String failString = "The user's phone numbers are not unique";
+			return failedAdding(failString);
 		}
 		
-		return failedAdding("Failed adding. Probably user's phone numbers are not unique.");
+		if (respCode == 200) {
+			User user = responseEntity.getBody();
+			
+			if (user != null) {
+				String successString = "User " + user.getFirstName() + " " + user.getLastName()
+						+ " was added successfully";
+				LOG.info("User: {} was added successfully", user.toString());
+				LOG.info("Redirecting to the user.jsp");
+				ModelAndView modelAndView = new ModelAndView();
+				// redirect to the list with all users
+				modelAndView.addObject("usersList", pageService.getUsersList());
+				modelAndView.addObject("successString", successString);
+				formateDates(modelAndView);
+				modelAndView.setViewName("user");
+				return modelAndView;
+			}
+			
+		}
+		return failedAdding("Failed adding. Please, try again");
 	}
 	
 	private ModelAndView failedAdding(String failString) {

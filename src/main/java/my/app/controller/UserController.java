@@ -91,19 +91,21 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	//public User addNewUser(@RequestBody User user) {
 	public ResponseEntity<User> addNewUser(@RequestBody User user) {
-			LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
+		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
+		if (userService.checkNumbers(user.getPhoneNumbers())) {
 			User userSaved = userService.save(user);
 
 			if (userSaved == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to add user to the data base");
-				//throw new ResourceNotFoundException("Failed to add user to the data base");
+				// throw new ResourceNotFoundException("Failed to add user to the data base");
 			}
 
 			LOG.info("user gotten from userService is: {}", userSaved.toString());
-			return ResponseEntity.status(HttpStatus.OK)
-            .body(userSaved);
-			//return userSaved;
+			return ResponseEntity.status(HttpStatus.OK).body(userSaved);
+			// return userSaved;
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
     
   //DONE getting data of user and updating user in the users list

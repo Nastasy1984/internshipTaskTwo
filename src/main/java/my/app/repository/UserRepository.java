@@ -18,4 +18,6 @@ public interface UserRepository {
     List<User> getByLastName(String lastName);
     
     User update(User user);
+    
+    boolean checkNumbers(List<String> numbers);
 }

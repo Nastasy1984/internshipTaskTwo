@@ -17,7 +17,9 @@ public interface UserService {
     
     List<User> getByLastName(String lastName);
     
-    public List<User> getAllAsList();
+    List<User> getAllAsList();
     
-    public void deleteById(Integer id);
+    void deleteById(Integer id);
+    
+    boolean checkNumbers(List<String>numbers);
 }

@@ -1,8 +1,11 @@
 package my.app.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -89,9 +92,8 @@ public class UserRepositoryImpl implements UserRepository {
 			LOG.debug("searching for user with id: {}", id);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
 			final String COUNT_BY_ID = "SELECT COUNT(*) FROM public.users WHERE USER_ID = :id";
-			Integer countUsersInteger = 0;
-			countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
-			if (countUsersInteger > 0) {
+			Integer countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
+			if (countUsersInteger != null && countUsersInteger > 0) {
 				LOG.info("User with id: {} was found in DB, containsId method sends true", id);
 				return true;
 			}
@@ -125,6 +127,30 @@ public class UserRepositoryImpl implements UserRepository {
 		return null;
 	}
 
+	@Override
+	public boolean checkNumbers(List<String> numbers) {
+		LOG.info("checkNumbers method was invoked");
+		if (numbers != null && !numbers.isEmpty()) {
+			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());	
+			
+			for (String num: numbers) {
+				SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("num", num);
+				String count_numbers = "SELECT COUNT(*) FROM PHONE_NUMBERS WHERE PHONE_NUMBER = :num";
+				Integer countNums = namedParameterJdbcTemplate.queryForObject(count_numbers, namedParameters, Integer.class);
+				LOG.debug("countNums: {} for num: {}", countNums, num);
+				if (countNums != null && countNums > 0) {
+					LOG.debug("Phone number num: {} was found in DB, checkNumbers returns false", num);
+					return false;
+				}
+				
+				LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	
 	@Override
 	public User update(User user) {
 		LOG.info("update method was invoked");
@@ -222,5 +248,4 @@ public class UserRepositoryImpl implements UserRepository {
 			LOG.debug("User with id: {} was deleted from DB", user.getId());
 		}
 	}
-
 }
