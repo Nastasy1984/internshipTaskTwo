@@ -110,9 +110,11 @@ public class UserServiceImpl implements UserService {
 	public boolean checkNumbers(List<String> numbers) {
 		LOG.info("checkNumbers method was invoked");
 		if (numbers != null && !numbers.isEmpty()) {
-			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());	
-			//to exclude repeating numbers from the initial list
+			LOG.debug("checkNumbers method got parameter numbers: {}", numbers.toString());
+		
+			//excluding repeating numbers from the initial list
 			List<String> phoneNumbers = new ArrayList<>(new HashSet<String>(numbers));
+
 			return userRepository.checkNumbers(phoneNumbers);
 		}
 		return false;

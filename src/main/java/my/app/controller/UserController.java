@@ -93,8 +93,11 @@ public class UserController {
 	public ResponseEntity<User> addNewUser(@RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 		if (userService.checkNumbers(user.getPhoneNumbers())) {
+			//cleaning numbers list from empty strings
+			user.getPhoneNumbers().removeIf(""::equals);
+			LOG.debug("User phone numbers are: {}", user.getPhoneNumbers().toString());
+			
 			User userSaved = userService.save(user);
-
 			if (userSaved == null) {
 				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to add user to the data base");

@@ -143,8 +143,8 @@ public class UserRepositoryImpl implements UserRepository {
 					return false;
 				}
 				
-				LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
 			}
+			LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
 			return true;
 		}
 		return false;
