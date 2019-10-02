@@ -1,23 +1,19 @@
 package my.app.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
-import my.app.controller.exception.ResourceNotFoundException;
 import my.app.model.User;
 import my.app.service.UserService;
 
@@ -44,16 +40,16 @@ public class UserController {
 	//DONE WORKS return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
-    //@ResponseBody
-    //We souldn't use the annotation @ResponseBody because we annotated class as a @RestController
-    public List<User> getUsersList() {
+    public ResponseEntity<List<User>> getUsersList() {
 		LOG.info("getUsersList method was invoked");
-        return userService.getAllAsList();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.getAllAsList());
     }
     
 	//DONE WORKS finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	//@ResponseBody
+    //We souldn't use the annotation @ResponseBody because we annotated class as a @RestController
     public List <User> findUserById(@PathVariable ("id") Integer id) {
 		LOG.info("findUserById method was invoked with parameter id: {}", id);
 		if (!userService.containsId(id)){
@@ -93,8 +89,8 @@ public class UserController {
 	@PostMapping(value = "/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.CREATED)
-	//@ResponseBody
-	public User addNewUser(@RequestBody User user) {
+	//public User addNewUser(@RequestBody User user) {
+	public ResponseEntity<User> addNewUser(@RequestBody User user) {
 			LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 			User userSaved = userService.save(user);
 
@@ -105,7 +101,9 @@ public class UserController {
 			}
 
 			LOG.info("user gotten from userService is: {}", userSaved.toString());
-			return userSaved;
+			return ResponseEntity.status(HttpStatus.OK)
+            .body(userSaved);
+			//return userSaved;
 	}
     
   //DONE getting data of user and updating user in the users list
@@ -113,7 +111,7 @@ public class UserController {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public User updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
+	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
 
 		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id, user.toString());
 			User userUpdated = userService.update(user);
@@ -123,7 +121,8 @@ public class UserController {
 				//throw new ResourceNotFoundException("Failed to update user with id " + id);
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update user with id " + id);
 			}
-			return userUpdated;
+			return ResponseEntity.status(HttpStatus.OK)
+		            .body(userUpdated);
 	}
 
     
