@@ -153,8 +153,8 @@ public class UserRepositoryImpl implements UserRepository {
 					namedParameters = mapSqlParameterSource;
 					namedParameterJdbcTemplate.update(insert_num_by_id, namedParameters);
 				}
-				return getById(user.getId());
 			}
+			return getById(user.getId());
 		}
 		return null;
 	}
