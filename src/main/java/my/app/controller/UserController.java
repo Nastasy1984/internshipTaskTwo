@@ -38,7 +38,7 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	//DONE WORKS return the list with all users
+	//return the list with all users
     @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<User>> getUsersList() {
@@ -48,7 +48,6 @@ public class UserController {
 		Collections.sort(resultSortedList, new Comparator<User>() {
 		    @Override
 		    public int compare(User first, User sec) {
-		        // -1 - less than, 1 - greater than, 0 - equal
 		        return first.getId() > sec.getId() ? 1 : (first.getId() < sec.getId()) ? -1 : 0;
 		    }
 		});
@@ -56,7 +55,7 @@ public class UserController {
                 .body(resultSortedList);
     }
     
-	//DONE WORKS finds user by id and produces data of user in JSON format
+	//finds user by id and produces data of user in JSON format
 	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	//@ResponseBody
     //We souldn't use the annotation @ResponseBody because we annotated class as a @RestController
@@ -81,9 +80,8 @@ public class UserController {
 		return resultList;
     }
 	
-	//DONE WORKS finds user by last name and produces data of user in JSON format
+	//finds user by last name and produces data of user in JSON format
 	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
-	//@ResponseBody
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		LOG.info("findUserByLastName method was invoked with parameter lastName: {}", lastName);
 		List <User> users = userService.getByLastName(lastName);
@@ -95,11 +93,10 @@ public class UserController {
 		return userService.getByLastName(lastName);
     }
 
-	//DONE WORKS getting data of user in JSON format and adding user to the users list
+	//getting data of user in JSON format and adding user to the users list
 	@PostMapping(value = "/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.CREATED)
-	//public User addNewUser(@RequestBody User user) {
 	public ResponseEntity<User> addNewUser(@RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
@@ -119,7 +116,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
     
-  //DONE getting data of user and updating user in the users list
+  //getting data of user and updating user in the users list
 	@PutMapping(value = "/user/{id:\\d+}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.OK)
@@ -145,10 +142,9 @@ public class UserController {
 	}
 
     
-    //DONE WORKS getting id and deleting user
+    //getting id and deleting user
     @DeleteMapping("/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
-    //@ResponseBody
     public void delete(@PathVariable("id") Integer id) {
 		LOG.info("delete method was invoked with path variable id: {}", id);
     	//Checking if there is a user with this id in out list of users
@@ -162,18 +158,5 @@ public class UserController {
         	//throw new ResourceNotFoundException("There is no user with id " + id + " in the DB");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no user with id " + id + " in the DB");
         }
-    }
-  /*  
-    @RequestMapping(value="/error", produces="application/json")
-    @ResponseBody
-    public Map<String, Object> handle(HttpServletRequest request) {
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("status", request.getAttribute("javax.servlet.error.status_code"));
-        map.put("reason", request.getAttribute("javax.servlet.error.message"));
-        map.put("llll", "ngfnfdn");
-        return map;
-    }
-*/
-    
+    } 
 }

@@ -6,6 +6,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 //this class allow us to register our configuration in Spring context
 public class WebAppInitialiser extends AbstractAnnotationConfigDispatcherServletInitializer {
 	 // Here we should add config where we initialize beans
+	// root-config classes will be registered in the ContextLoaderListener context
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{RootConfig.class};
