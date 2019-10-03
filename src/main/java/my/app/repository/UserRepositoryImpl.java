@@ -52,7 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
 				"	users.user_id, users.first_name, users.last_name, users.email, users.created_on,\r\n" + 
 				"	phone_numbers.phone_number\r\n" + 
 				"FROM users\r\n" + 
-				"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id", userListExtractor);
+				"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id ORDER BY users.last_name", userListExtractor);
 	}
 
 	// DONE WORKS WITH DB

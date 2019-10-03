@@ -1,7 +1,8 @@
 package my.app.controller;
 
 import java.util.ArrayList;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -42,8 +43,17 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<User>> getUsersList() {
 		LOG.info("getUsersList method was invoked");
+		
+		List <User> resultSortedList = userService.getAllAsList(); 
+		Collections.sort(resultSortedList, new Comparator<User>() {
+		    @Override
+		    public int compare(User first, User sec) {
+		        // -1 - less than, 1 - greater than, 0 - equal
+		        return first.getId() > sec.getId() ? 1 : (first.getId() < sec.getId()) ? -1 : 0;
+		    }
+		});
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.getAllAsList());
+                .body(resultSortedList);
     }
     
 	//DONE WORKS finds user by id and produces data of user in JSON format
