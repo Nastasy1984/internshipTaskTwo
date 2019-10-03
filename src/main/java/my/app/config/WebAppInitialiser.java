@@ -9,9 +9,12 @@ public class WebAppInitialiser extends AbstractAnnotationConfigDispatcherServlet
 	// root-config classes will be registered in the ContextLoaderListener context
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{RootConfig.class};
+    // AppConfig defines beans that would be in root-context.xml
+    // for service and infrastructure beans
+        return new Class[]{RootConfig.class, WebSecurityConfig.class};
     }
  // Here we should add config where we initialize ViewResolver
+ // WebConfig defines beans that would be in servlet.xml
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{WebConfig.class};
@@ -23,6 +26,7 @@ public class WebAppInitialiser extends AbstractAnnotationConfigDispatcherServlet
     }
     
     //for error handling with errorHandler class
+    //in one app can be several dispatcher servlets
     @Override
     protected DispatcherServlet createDispatcherServlet(WebApplicationContext servletAppContext) {
         final DispatcherServlet dispatcherServlet = (DispatcherServlet) super.createDispatcherServlet(servletAppContext);

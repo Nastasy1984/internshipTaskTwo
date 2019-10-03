@@ -27,7 +27,7 @@
 			<maxHistory>10</maxHistory>
 
 			<!-- Max size of log file is 10 GB -->
-			<totalSizeCap>10GB</totalSizeCap>
+			<totalSizeCap>50MB</totalSizeCap>
 		</rollingPolicy>
 
 		<encoder>
