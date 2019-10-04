@@ -3,13 +3,16 @@ package my.app.controller;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -131,31 +134,20 @@ public class PageController {
 		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				firstName, lastName, eMail, numbers.toString());
 
-
-		if ((firstName == null) || (lastName == null) || (lastName.equals("")) || (firstName.equals(""))) {
+		//checking obligatory fields last name and first name
+		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "First name and last name are obligatory fields";
 			return failedAdding(failString);
 		}
 
-		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
+		//checking eMail
+		if ((!eMail.contains("@")) && (!StringUtils.isBlank(eMail))) {
 			String failString = "Wrong E-mail. E-mail must contain @";
 			return failedAdding(failString);
 		}
 		
+		//checking numbers
 		numbers.removeIf(""::equals);
-		/*
-		int countEmptyNumbers = 0;
-		for(String num: numbers) {
-			if (num == null || num.equals("")){
-				countEmptyNumbers++;
-			}
-		}
-		
-		if (countEmptyNumbers == numbers.size()){
-			String failString = "User must have at least one phone number";
-			return failedUpdate(failString, id);
-		}*/
-		
 		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
 			return failedAdding(failString);
@@ -178,16 +170,15 @@ public class PageController {
 				String successString = "User " + user.getFirstName() + " " + user.getLastName()
 						+ " was added successfully";
 				LOG.info("User: {} was added successfully", user.toString());
+				// redirecting to the list with all users
 				LOG.info("Redirecting to the user.jsp");
 				ModelAndView modelAndView = new ModelAndView();
-				// redirect to the list with all users
 				modelAndView.addObject("usersList", pageService.getUsersList());
 				modelAndView.addObject("successString", successString);
 				formateDates(modelAndView);
 				modelAndView.setViewName("user");
 				return modelAndView;
 			}
-			
 		}
 		return failedAdding("Failed adding. Please, try again");
 	}
@@ -209,23 +200,25 @@ public class PageController {
 	public ModelAndView deleteUser(@PathVariable("id") Integer id) {
 		LOG.info("deleteUser method was invoked for user with path variable id: {}", id);
 		ModelAndView modelAndView = new ModelAndView();
-
 		int respCode = pageService.deleteUser(id);
+		
 		if (respCode == 200) {
 			LOG.info("Got {} response status. User with id: {} was deleted", respCode, id);
 			String successString = "User with id " + id + " was deleted successfully";
 			modelAndView.addObject("successString", successString);
-		} else {
+		} 
+		else {
 			String failString = "Failed to delete user with id " + id;
 			modelAndView.addObject("successString", failString);
 		}
+		
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		formateDates(modelAndView);
 		modelAndView.setViewName("user");
 		return modelAndView;
 	}
 
-	// sending to the user\s updating page
+	// redirecting to the user's updating page
 	@GetMapping(value = "/update/{id:\\d+}")
 	public ModelAndView updateUserPage(@PathVariable("id") Integer id) {
 		LOG.info("updateUserPage method was invoked with path variable id: {}", id);
@@ -251,38 +244,29 @@ public class PageController {
 				id, firstName, lastName, eMail, numbers.toString());
 		ModelAndView modelAndView = new ModelAndView();
 		
-		if ((lastName.equals("")) || (firstName.equals(""))) {
+		//checking obligatory fields last name and first name
+		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "Last name and first name must be filled";
 			LOG.warn("Redirecting to failedUpdate method");
 			return failedUpdate(failString, id);
 		}
 
-		if ((!eMail.contains("@")) && (!eMail.equals(""))) {
+		//checking eMail
+		if ((!eMail.contains("@")) && (!StringUtils.isBlank(eMail))) {
 			String failString = "Wrong E-mail. E-mail must contain @";
 			LOG.warn("Redirecting to failedUpdate method");
 			return failedUpdate(failString, id);
 		}
 		
+		//checking phone numbers
 		numbers.removeIf(""::equals);
-		/*
-		int countEmptyNumbers = 0;
-		for(String num: numbers) {
-			if (num == null || num.equals("")){
-				countEmptyNumbers++;
-			}
-		}
-		
-		if (countEmptyNumbers == numbers.size()){
-			String failString = "User must have at least one phone number";
-			return failedUpdate(failString, id);
-		}*/
 		
 		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
 			return failedUpdate(failString, id);
 		}
 		
-		// saving the user by pageService
+		// updating by pageService
 		ResponseEntity <User> responseEntity = pageService.updateUser(id, firstName, lastName, eMail, numbers);
 		int respCode = responseEntity.getStatusCodeValue();
 		
@@ -320,4 +304,5 @@ public class PageController {
 		modelAndView.addObject("user", users.get(0));
 		return modelAndView;
 	}
+	
 }
