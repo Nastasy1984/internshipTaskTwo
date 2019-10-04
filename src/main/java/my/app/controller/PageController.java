@@ -81,7 +81,8 @@ public class PageController {
 			formateDates(modelAndView);
 
 			if (strings != null && strings.length > 0) {
-				modelAndView.addObject(strings[0]);
+				LOG.debug("strings: {}", strings.toString());
+				modelAndView.addObject("successString", strings[0]);
 			}
 
 			modelAndView.setViewName("user");
