@@ -3,6 +3,9 @@ package my.app.controller;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +137,6 @@ public class PageController {
 	}
 
 	// getting parameters of user and adding user to the users list
-	// sending to the page with users
 	@PostMapping(value = "/add-new-user")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
@@ -150,11 +152,22 @@ public class PageController {
 			String failString = "First name and last name are obligatory fields";
 			return failedAdding(failString);
 		}
-
-		//checking eMail
-		if ((!eMail.contains("@")) && (!StringUtils.isBlank(eMail))) {
-			String failString = "Wrong E-mail. E-mail must contain @";
-			return failedAdding(failString);
+	
+		// checking eMail
+		if (!StringUtils.isBlank(eMail)) {
+			boolean isEmailValid = true;
+			
+			try {
+				InternetAddress emailAddr = new InternetAddress(eMail);
+				emailAddr.validate();
+			} catch (AddressException ex) {
+				isEmailValid = false;
+			}
+			
+			if (!isEmailValid) {
+				String failString = "Invalid E-mail";
+				return failedAdding(failString);
+			}
 		}
 		
 		//checking numbers
@@ -190,8 +203,7 @@ public class PageController {
 	}
 	
 	private ModelAndView failedAdding(String failString) {
-		LOG.info("failedAdding method was invoked");
-		LOG.warn("Failed adding because of: {}", failString);
+		LOG.warn("failedAdding method was invoked because of: {}", failString);
 		LOG.warn("Sending to the addNewUser.jsp page");
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("addNewUser");
@@ -231,7 +243,6 @@ public class PageController {
 	}
 
 	// getting parameters of user and updating user in the users list
-	// sending to the page with users
 	@PostMapping(value = "/update-user")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
@@ -251,10 +262,20 @@ public class PageController {
 		}
 
 		//checking eMail
-		if ((!eMail.contains("@")) && (!StringUtils.isBlank(eMail))) {
-			String failString = "Wrong E-mail. E-mail must contain @";
-			LOG.warn("Redirecting to failedUpdate method");
-			return failedUpdate(failString, id);
+		if (!StringUtils.isBlank(eMail)) {
+			boolean isEmailValid = true;
+			
+			try {
+				InternetAddress emailAddr = new InternetAddress(eMail);
+				emailAddr.validate();
+			} catch (AddressException ex) {
+				isEmailValid = false;
+			}
+			
+			if (!isEmailValid) {
+				String failString = "Invalid E-mail";
+				return failedUpdate(failString, id);
+			}
 		}
 		
 		//checking phone numbers
@@ -300,5 +321,4 @@ public class PageController {
 		modelAndView.addObject("user", users.get(0));
 		return modelAndView;
 	}
-	
 }

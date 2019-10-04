@@ -57,6 +57,15 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.ver}</version>
 		</dependency>
+	
+		<!-- for InternetAddress -->
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+    		<groupId>javax.mail</groupId>
+    		<artifactId>mail</artifactId>
+    		<version>1.4.7</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
 		<dependency>

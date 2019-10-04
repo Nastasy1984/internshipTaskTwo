@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import my.app.model.User;
 
 public class UserControllerTest {
-
+/*
 	private ObjectMapper mapper;
 	private CloseableHttpClient client;
 	
@@ -90,6 +90,6 @@ public class UserControllerTest {
 		
 	}
 	
-	
+	*/
 	
 }
