@@ -72,7 +72,7 @@ public class PageService {
 	public List<User> getUsersList(){
 		LOG.info("getUsersList method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/users");
+		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/api/users");
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 	        User[] usersArr = mapper.readValue(response.getEntity().getContent(), User[].class);
@@ -92,7 +92,7 @@ public class PageService {
 	public List<User> getUserById(Integer id) {
 		LOG.info("getUserById method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
-		String url = "http://localhost:8080/SpringRest/user/" + id;
+		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		HttpGet httpGet = new HttpGet(url);
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
@@ -122,7 +122,7 @@ public class PageService {
 	public List<User> getUserByLastName(String lastName) {
 		LOG.info("getUserByLastName method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
-		String url = "http://localhost:8080/SpringRest/userln/";
+		String url = "http://localhost:8080/SpringRest/api/userln/";
 		HttpGet httpGet = new HttpGet(url);
 	    URI uri;
 		try {
@@ -159,7 +159,7 @@ public class PageService {
 	
 	public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("addUser method was invoked");
-		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/add");
+		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/api/add");
 		User userGotten = new User (firstName, lastName);
 		userGotten.seteMail(eMail);
 		userGotten.setPhoneNumbers(numbers);
@@ -202,7 +202,7 @@ public class PageService {
 	public int deleteUser(Integer id) {
 		LOG.info("deleteUser method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
-		String url = "http://localhost:8080/SpringRest/user/" + id;
+		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		HttpDelete httpDelete = new HttpDelete(url);
 		try {
 			CloseableHttpResponse response = client.execute(httpDelete);
@@ -223,7 +223,7 @@ public class PageService {
 	public ResponseEntity<User> updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("updateUser method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
-		String url = "http://localhost:8080/SpringRest/user/" + id;
+		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		userGotten.seteMail(eMail);

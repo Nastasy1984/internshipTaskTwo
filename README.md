@@ -14,11 +14,11 @@ Post запрос должен использовать какой-то слож
 **************************
 GET
 Получаем список Users в формате JSON
-http://localhost:8080/SpringRest/users
+http://localhost:8080/SpringRest/api/users
 
 **************************
 Получаем User по id в формате JSON
-http://localhost:8080/SpringRest/user{id:\\d+}
+http://localhost:8080/SpringRest/api/user{id:\\d+}
 
 **************************
 POST
@@ -46,7 +46,7 @@ PUT
 Изменяем существующего User по id в ответ получаем измененного User в формате JSON
 
 URL
-/SpringRest/user/{id:\\d+}
+/SpringRest/api/user/{id:\\d+}
 
 HEADERS
 Content-Type: application/json
@@ -69,4 +69,4 @@ BODY
 DELETE
 Удаляем существующего User по id 
 
-/SpringRest/user/{id:\\d+}
+/SpringRest/api/user/{id:\\d+}

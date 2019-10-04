@@ -39,7 +39,7 @@ public class UserController {
 	}
 	
 	//return the list with all users
-    @GetMapping(value ="/users", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value ="/api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<User>> getUsersList() {
 		LOG.info("getUsersList method was invoked");
@@ -56,7 +56,7 @@ public class UserController {
     }
     
 	//finds user by id and produces data of user in JSON format
-	@GetMapping(value ="/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(value ="/api/user/{id:\\d+}", produces = {MediaType.APPLICATION_JSON_VALUE})
 	//@ResponseBody
     //We souldn't use the annotation @ResponseBody because we annotated class as a @RestController
     public List <User> findUserById(@PathVariable ("id") Integer id) {
@@ -81,7 +81,7 @@ public class UserController {
     }
 	
 	//finds user by last name and produces data of user in JSON format
-	@GetMapping(value ="/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(value ="/api/userln", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<User> findUserByLastName(@RequestParam(value="lastName", required=true) String lastName) {
 		LOG.info("findUserByLastName method was invoked with parameter lastName: {}", lastName);
 		List <User> users = userService.getByLastName(lastName);
@@ -94,7 +94,7 @@ public class UserController {
     }
 
 	//getting data of user in JSON format and adding user to the users list
-	@PostMapping(value = "/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+	@PostMapping(value = "/api/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<User> addNewUser(@RequestBody User user) {
@@ -117,7 +117,7 @@ public class UserController {
 	}
     
   //getting data of user and updating user in the users list
-	@PutMapping(value = "/user/{id:\\d+}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+	@PutMapping(value = "/api/user/{id:\\d+}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
@@ -143,7 +143,7 @@ public class UserController {
 
     
     //getting id and deleting user
-    @DeleteMapping("/user/{id:\\d+}")
+    @DeleteMapping("/api/user/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("id") Integer id) {
 		LOG.info("delete method was invoked with path variable id: {}", id);
