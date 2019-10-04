@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import my.app.model.User;
 import my.app.service.PageService;
+import my.app.service.UserService;
 
 @Controller
 public class PageController {
@@ -70,12 +71,21 @@ public class PageController {
 	public ModelAndView showUsersList(String... strings) {
 		LOG.info("showUsersList method was invoked");
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		formateDates(modelAndView);
-		if (strings != null && strings.length > 0) {
-			modelAndView.addObject(strings[0]);
+		
+		List <User> users = pageService.getUsersList();
+		
+		if (users != null) {
+			modelAndView.addObject("usersList", pageService.getUsersList());
+			formateDates(modelAndView);
+
+			if (strings != null && strings.length > 0) {
+				modelAndView.addObject(strings[0]);
+			}
+
+			modelAndView.setViewName("user");
+			return modelAndView;
 		}
-		modelAndView.setViewName("user");
+		modelAndView.setViewName("404");
 		return modelAndView;
 	}
 
@@ -275,6 +285,7 @@ public class PageController {
 			LOG.info("Redirecting to the user.jsp");
 			return showUsersList(successString);
 		}
+		
 		return failedUpdate("Failed update. Please, try again with user", id);
 	}
 
