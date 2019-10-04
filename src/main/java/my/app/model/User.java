@@ -9,6 +9,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,6 +21,7 @@ import my.app.model.serialize.Deserializer;
 import my.app.model.serialize.Serializer;
 
 @JsonAutoDetect
+@Validated
 public class User {
 	private Integer id;
 	@NotBlank(message="First name cannot be empty")
@@ -28,7 +31,7 @@ public class User {
 	@Email(message = "Email should be valid")
 	private String eMail;
 	@NotNull(message="At least one number must be fiiled")
-	private List <String> phoneNumbers;
+	private List <@NotBlank String> phoneNumbers;
 
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")
 	@JsonSerialize(using = Serializer.class)

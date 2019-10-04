@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,6 +59,13 @@ public class WebConfig {
         dataSource.setPassword("Novgorod14");
         return dataSource;
     }
+    
+    //for RequestParam validation
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
+    }
+    
     /*
     @Bean
     public SimpleMappingExceptionResolver simpleMappingExceptionResolver(){

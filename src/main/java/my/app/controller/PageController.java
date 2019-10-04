@@ -148,6 +148,9 @@ public class PageController {
 		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				firstName, lastName, eMail, numbers.toString());
 
+		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
+		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
+		 */
 		//checking obligatory fields last name and first name
 		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "First name and last name are obligatory fields";
@@ -255,6 +258,9 @@ public class PageController {
 		LOG.info("updateUser method was invoked with parameters id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				id, firstName, lastName, eMail, numbers.toString());
 		
+		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
+		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
+		 */
 		//checking obligatory fields last name and first name
 		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "Last name and first name must be filled";

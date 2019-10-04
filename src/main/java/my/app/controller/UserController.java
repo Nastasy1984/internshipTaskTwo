@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<User>> getUsersList() {
 		LOG.info("getUsersList method was invoked");
-		
 		List <User> resultSortedList = userService.getAllAsList(); 
 		Collections.sort(resultSortedList, new Comparator<User>() {
 		    @Override
@@ -97,7 +98,7 @@ public class UserController {
 	@PostMapping(value = "/api/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<User> addNewUser(@RequestBody User user) {
+	public ResponseEntity<User> addNewUser(@Valid @RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
 			//cleaning numbers list from empty strings
@@ -121,7 +122,7 @@ public class UserController {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
+	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @Valid @RequestBody User user) {
 		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id,
 				user.toString());
 		if (userService.checkNumbers(user.getPhoneNumbers(), id)) {
