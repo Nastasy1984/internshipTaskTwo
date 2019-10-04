@@ -121,7 +121,6 @@ public class UserRepositoryImpl implements UserRepository {
 				LOG.debug("getByLastName method got users from DB: {}", users.toString());
 				return users;
 			}
-			
 		}
 		return null;
 	}
@@ -129,32 +128,28 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public boolean checkNumbers(List<String> numbers, int id) {
 		LOG.info("checkNumbers method was invoked");
-		
-		if (numbers != null && !numbers.isEmpty()) {
-			LOG.debug("checkNumbers method got parameter numbers: {} and id: {}", numbers.toString(), id);	
+		LOG.debug("checkNumbers method got parameter numbers: {} and id: {}", numbers.toString(), id);
+
+		for (String num : numbers) {
+			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+			LOG.debug("checking num: {} and id: {}", num, id);
+			mapSqlParameterSource.addValue("num", num);
+			mapSqlParameterSource.addValue("id", id);
+			SqlParameterSource namedParameters = mapSqlParameterSource;
+			String count_numbers = "SELECT COUNT(*) FROM PHONE_NUMBERS WHERE PHONE_NUMBER = :num AND USER_ID != :id";
+			Integer countNums = namedParameterJdbcTemplate.queryForObject(count_numbers, namedParameters,
+					Integer.class);
+			LOG.debug("countNums: {} for num: {}", countNums, num);
 			
-			for (String num: numbers) {
-				MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-				LOG.debug("checking num: {} and id: {}", num, id);	
-				mapSqlParameterSource.addValue("num", num);
-				mapSqlParameterSource.addValue("id", id);
-				SqlParameterSource namedParameters = mapSqlParameterSource;
-				String count_numbers = "SELECT COUNT(*) FROM PHONE_NUMBERS WHERE PHONE_NUMBER = :num AND USER_ID != :id";
-				Integer countNums = namedParameterJdbcTemplate.queryForObject(count_numbers, namedParameters, Integer.class);
-				LOG.debug("countNums: {} for num: {}", countNums, num);
-				if (countNums != null && countNums > 0) {
-					LOG.debug("Phone number num: {} was found in DB, checkNumbers returns false", num);
-					return false;
-				}
-				
+			if (countNums != null && countNums > 0) {
+				LOG.debug("Phone number num: {} was found in DB, checkNumbers returns false", num);
+				return false;
 			}
-			LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
-			return true;
+
 		}
-		return false;
+		LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
+		return true;
 	}
-	
-	
 	
 	
 	@Override
@@ -178,13 +173,11 @@ public class UserRepositoryImpl implements UserRepository {
 
 			// adding updated numbers
 			for (String num : user.getPhoneNumbers()) {
-				if (!num.equals("") && num != null) {
-					LOG.debug("Inserting number: {} for user with id: {}", num, user.getId());
-					mapSqlParameterSource.addValue("number", num);
-					String insert_num_by_id = "INSERT INTO PHONE_NUMBERS (PHONE_NUMBER, USER_ID) VALUES (:number, :id)";
-					namedParameters = mapSqlParameterSource;
-					namedParameterJdbcTemplate.update(insert_num_by_id, namedParameters);
-				}
+				LOG.debug("Inserting number: {} for user with id: {}", num, user.getId());
+				mapSqlParameterSource.addValue("number", num);
+				String insert_num_by_id = "INSERT INTO PHONE_NUMBERS (PHONE_NUMBER, USER_ID) VALUES (:number, :id)";
+				namedParameters = mapSqlParameterSource;
+				namedParameterJdbcTemplate.update(insert_num_by_id, namedParameters);
 			}
 			return getById(user.getId());
 		}
@@ -196,7 +189,7 @@ public class UserRepositoryImpl implements UserRepository {
 	public User save(User user) {
 		LOG.info("save method was invoked");
 		
-		if (user != null && !StringUtils.isBlank(user.getFirstName())  && !StringUtils.isBlank(user.getLastName())) {
+		if (user != null) {
 			LOG.debug("Saving user: {}", user.toString());
 			final Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("FIRST_NAME", user.getFirstName());
@@ -205,23 +198,18 @@ public class UserRepositoryImpl implements UserRepository {
 			Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate).withTableName("users")
 					.usingColumns("last_name", "first_name", "email").usingGeneratedKeyColumns("user_id", "created_on")
 					.executeAndReturnKeyHolder(parameters).getKeys();
-
 			Integer userId = (Integer)keys.get("user_id"); 
-			LOG.info("save method created user with generated id: {}", userId);		
-			//adding numbers
-			if (user.getPhoneNumbers() != null && !user.getPhoneNumbers().isEmpty()) {
-				
-				for (String num : user.getPhoneNumbers()) {
-					
-					if (!StringUtils.isBlank(num)) {
-						parameters.put("USER_ID", userId);
-						parameters.put("PHONE_NUMBER", num);
-						new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
-								.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
-								.executeAndReturnKeyHolder(parameters).getKeys();
-					}
-				}
+			LOG.info("save method created user with generated id: {}", userId);
+			// adding numbers
+
+			for (String num : user.getPhoneNumbers()) {
+				parameters.put("USER_ID", userId);
+				parameters.put("PHONE_NUMBER", num);
+				new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
+						.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
+						.executeAndReturnKeyHolder(parameters).getKeys();
 			}
+			
 			return getById(userId);
 		}
 		return null;
