@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
@@ -28,9 +29,10 @@ public class User {
 	private String firstName;
 	@NotBlank(message="Last name cannot be empty")
 	private String lastName;
-	@Email(message = "Email should be valid")
+	@Email(message = "Email must be valid")
 	private String eMail;
 	@NotNull(message="At least one number must be fiiled")
+	@NotEmpty(message="At least one number must be fiiled")
 	private List <@NotBlank String> phoneNumbers;
 
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")
