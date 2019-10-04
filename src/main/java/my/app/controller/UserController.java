@@ -100,9 +100,8 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<User> addNewUser(@Valid @RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
+		
 		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
-			//cleaning numbers list from empty strings
-			user.getPhoneNumbers().removeIf(""::equals);
 			User userSaved = userService.save(user);
 			
 			if (userSaved == null) {
@@ -125,9 +124,8 @@ public class UserController {
 	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @Valid @RequestBody User user) {
 		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id,
 				user.toString());
+		
 		if (userService.checkNumbers(user.getPhoneNumbers(), id)) {
-			//cleaning numbers list from empty strings
-			user.getPhoneNumbers().removeIf(""::equals);
 			User userUpdated = userService.update(user);
 
 			if (userUpdated == null) {

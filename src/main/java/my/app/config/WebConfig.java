@@ -4,11 +4,15 @@ import javax.sql.DataSource;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
@@ -24,18 +28,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebMvc
 //where we can find our components
 @ComponentScan(basePackages = "my.app")
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer{
+	private static final Logger LOG = LoggerFactory.getLogger(my.app.config.WebConfig.class.getName());
  //show, where we can find our jsp pages
     @Bean
     ViewResolver viewResolver(){
+    	LOG.info("viewResolver method was invoked");
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/");
         resolver.setSuffix(".jsp");
         return resolver;
     }
     
+    
+   /* @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+       //registry.addViewController("/").setViewName("index");
+       registry.addViewController("/login").setViewName("login.jsp");;
+    }*/
+    
+    
     @Bean
     public ObjectMapper objectMapper() {
+    	LOG.info("objectMapper method was invoked");
     	/*ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new Serializer());
@@ -47,11 +62,13 @@ public class WebConfig {
     
     @Bean
     public CloseableHttpClient closeableHttpClient() {
+    	LOG.info("closeableHttpClient method was invoked");
         return HttpClients.createDefault();
     }
     
     @Bean
     public DataSource postgreSQLDataSource() {
+    	LOG.info("postgreSQLDataSource method was invoked");
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/users");
@@ -63,6 +80,7 @@ public class WebConfig {
     //for RequestParam validation
     @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {
+    	LOG.info("methodValidationPostProcessor method was invoked");
         return new MethodValidationPostProcessor();
     }
     

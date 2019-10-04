@@ -80,6 +80,21 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.ver}</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-web</artifactId>
+    		<version>${spring.ver}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<!--used for @EnableWebSecurity annotation in WebSecurityConfig-->
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-config</artifactId>
+    		<version>${spring.ver}</version>
+		</dependency>
 	
 		<!-- for InternetAddress -->
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->

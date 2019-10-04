@@ -9,7 +9,7 @@ public class WebAppInitialiser extends AbstractAnnotationConfigDispatcherServlet
 	// root-config classes will be registered in the ContextLoaderListener context
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{RootConfig.class};
+        return new Class[]{RootConfig.class, WebSecurityConfig.class};
     }
  // Here we should add config where we initialize ViewResolver
     @Override

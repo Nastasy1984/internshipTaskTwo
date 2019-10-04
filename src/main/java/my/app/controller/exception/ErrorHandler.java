@@ -18,7 +18,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
 public class ErrorHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.UserController.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.exception.ErrorHandler.class.getName());
 	/*@ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody

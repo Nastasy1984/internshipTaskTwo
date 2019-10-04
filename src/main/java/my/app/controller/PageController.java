@@ -172,6 +172,7 @@ public class PageController {
 				String failString = "Invalid E-mail";
 				return failedAdding(failString);
 			}
+			
 		}
 		
 		//checking numbers
@@ -223,6 +224,7 @@ public class PageController {
 		LOG.info("deleteUser method was invoked for user with path variable id: {}", id);
 		int respCode = pageService.deleteUser(id);
 		String resultString;
+		
 		if (respCode == 200) {
 			LOG.info("Got {} response status. User with id: {} was deleted", respCode, id);
 			resultString = "User with id " + id + " was deleted successfully";
