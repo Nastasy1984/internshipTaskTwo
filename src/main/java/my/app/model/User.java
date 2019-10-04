@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
@@ -23,7 +25,9 @@ public class User {
 	private String firstName;
 	@NotBlank(message="Last name cannot be empty")
 	private String lastName;
+	@Email(message = "Email should be valid")
 	private String eMail;
+	@NotNull(message="At least one number must be fiiled")
 	private List <String> phoneNumbers;
 
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-ddThh:mm:ss")

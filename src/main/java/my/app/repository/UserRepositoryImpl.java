@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,8 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public List<User> getByLastName(String lastName) {
 		LOG.info("getByLastName method was invoked");
-		if (lastName != null) {
+		
+		if (!StringUtils.isBlank(lastName)) {
 			LOG.debug("searching for user with lastName: {}", lastName);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("lastName", lastName);
 			//final String SELECT_BY_LAST_NAME = "SELECT * FROM USERS WHERE LAST_NAME = :lastName";
@@ -114,10 +116,12 @@ public class UserRepositoryImpl implements UserRepository {
 			
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters,
 					userListExtractor);
+			
 			if ((users != null) && (!users.isEmpty())) {
 				LOG.debug("getByLastName method got users from DB: {}", users.toString());
 				return users;
 			}
+			
 		}
 		return null;
 	}
@@ -125,6 +129,7 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public boolean checkNumbers(List<String> numbers, int id) {
 		LOG.info("checkNumbers method was invoked");
+		
 		if (numbers != null && !numbers.isEmpty()) {
 			LOG.debug("checkNumbers method got parameter numbers: {} and id: {}", numbers.toString(), id);	
 			
@@ -191,18 +196,12 @@ public class UserRepositoryImpl implements UserRepository {
 	public User save(User user) {
 		LOG.info("save method was invoked");
 		
-		if ((user != null) && (user.getFirstName() != null) && (user.getLastName() != null)) {
+		if (user != null && !StringUtils.isBlank(user.getFirstName())  && !StringUtils.isBlank(user.getLastName())) {
 			LOG.debug("Saving user: {}", user.toString());
 			final Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("FIRST_NAME", user.getFirstName());
 			parameters.put("LAST_NAME", user.getLastName());
 			parameters.put("EMAIL", user.geteMail());
-			/*
-			 * Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate)
-			 * .withTableName("users") .usingColumns("last_name", "first_name", "email")
-			 * .usingGeneratedKeyColumns("user_id", "created_on")
-			 * .executeAndReturnKeyHolder(parameters) .getKeys();
-			 */
 			Map<String, Object> keys = new SimpleJdbcInsert(this.jdbcTemplate).withTableName("users")
 					.usingColumns("last_name", "first_name", "email").usingGeneratedKeyColumns("user_id", "created_on")
 					.executeAndReturnKeyHolder(parameters).getKeys();
@@ -211,28 +210,19 @@ public class UserRepositoryImpl implements UserRepository {
 			LOG.info("save method created user with generated id: {}", userId);		
 			//adding numbers
 			if (user.getPhoneNumbers() != null && !user.getPhoneNumbers().isEmpty()) {
+				
 				for (String num : user.getPhoneNumbers()) {
 					
-					if (!num.equals("") && num != null) {
+					if (!StringUtils.isBlank(num)) {
 						parameters.put("USER_ID", userId);
 						parameters.put("PHONE_NUMBER", num);
-						try {
-							new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
-									.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
-									.executeAndReturnKeyHolder(parameters).getKeys();
-						} 
-						//FIXME 
-						//if the number is not unique
-						catch (Exception e) {
-							continue;
-						}
+						new SimpleJdbcInsert(this.jdbcTemplate).withTableName("phone_numbers")
+								.usingColumns("user_id", "phone_number").usingGeneratedKeyColumns("number_id")
+								.executeAndReturnKeyHolder(parameters).getKeys();
 					}
 				}
 			}
-			
 			return getById(userId);
-			/* System.out.println(keys.toString()); */
-			//return true;
 		}
 		return null;
 	}

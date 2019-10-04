@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import my.app.model.User;
 import my.app.service.PageService;
-import my.app.service.UserService;
 
 @Controller
 public class PageController {
