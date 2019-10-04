@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,11 +67,14 @@ public class PageController {
 
 	// providing the list of all users
 	@GetMapping("/show-all-users")
-	public ModelAndView showUsersList() {
+	public ModelAndView showUsersList(String... strings) {
 		LOG.info("showUsersList method was invoked");
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("usersList", pageService.getUsersList());
 		formateDates(modelAndView);
+		if (strings != null && strings.length > 0) {
+			modelAndView.addObject(strings[0]);
+		}
 		modelAndView.setViewName("user");
 		return modelAndView;
 	}
@@ -170,14 +172,9 @@ public class PageController {
 				String successString = "User " + user.getFirstName() + " " + user.getLastName()
 						+ " was added successfully";
 				LOG.info("User: {} was added successfully", user.toString());
-				// redirecting to the list with all users
+				// redirecting to the list with all users		
 				LOG.info("Redirecting to the user.jsp");
-				ModelAndView modelAndView = new ModelAndView();
-				modelAndView.addObject("usersList", pageService.getUsersList());
-				modelAndView.addObject("successString", successString);
-				formateDates(modelAndView);
-				modelAndView.setViewName("user");
-				return modelAndView;
+				return showUsersList(successString);
 			}
 		}
 		return failedAdding("Failed adding. Please, try again");
@@ -199,23 +196,17 @@ public class PageController {
 	@ResponseBody
 	public ModelAndView deleteUser(@PathVariable("id") Integer id) {
 		LOG.info("deleteUser method was invoked for user with path variable id: {}", id);
-		ModelAndView modelAndView = new ModelAndView();
 		int respCode = pageService.deleteUser(id);
-		
+		String resultString;
 		if (respCode == 200) {
 			LOG.info("Got {} response status. User with id: {} was deleted", respCode, id);
-			String successString = "User with id " + id + " was deleted successfully";
-			modelAndView.addObject("successString", successString);
+			resultString = "User with id " + id + " was deleted successfully";
 		} 
 		else {
-			String failString = "Failed to delete user with id " + id;
-			modelAndView.addObject("successString", failString);
+			resultString = "Failed to delete user with id " + id;
 		}
-		
-		modelAndView.addObject("usersList", pageService.getUsersList());
-		formateDates(modelAndView);
-		modelAndView.setViewName("user");
-		return modelAndView;
+
+		return showUsersList(resultString);
 	}
 
 	// redirecting to the user's updating page
@@ -242,7 +233,6 @@ public class PageController {
 			@RequestParam (value = "number", required = false) List<String> numbers) {
 		LOG.info("updateUser method was invoked with parameters id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				id, firstName, lastName, eMail, numbers.toString());
-		ModelAndView modelAndView = new ModelAndView();
 		
 		//checking obligatory fields last name and first name
 		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
@@ -281,13 +271,9 @@ public class PageController {
 			String successString = "User " + user.getFirstName() + " " + user.getLastName()
 					+ " was updated successfully";
 			LOG.info("User: {} was updated successfully", user.toString());
+			// redirecting to the list with all users		
 			LOG.info("Redirecting to the user.jsp");
-			// redirect to the list with all users
-			modelAndView.addObject("usersList", pageService.getUsersList());
-			modelAndView.addObject("successString", successString);
-			formateDates(modelAndView);
-			modelAndView.setViewName("user");
-			return modelAndView;
+			return showUsersList(successString);
 		}
 		return failedUpdate("Failed update. Please, try again with user", id);
 	}
