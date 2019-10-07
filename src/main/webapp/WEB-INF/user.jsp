@@ -4,7 +4,8 @@
 <%-- Including class from jstl library to the jsp page --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 
 <link href="<c:url value="/resources/style.css"/>" rel="stylesheet"></link>
@@ -24,6 +25,9 @@
 			</div>
 			<div class="action">
 				<a class="action" href="/SpringRest/find-user">Find user</a>
+			</div>
+			<div class="action">
+				<a class="logout" href="/SpringRest/logout">Log out</a>
 			</div>
 		</div>
 

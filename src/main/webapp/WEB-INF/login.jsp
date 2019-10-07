@@ -90,6 +90,7 @@ label {
 <body>
 	<div class="layout">
 	<h1>Welcome to my super secret application! <br> Please, enter your login and password:</h1>
+	
 		<div class="resultString">
 			<c:if test="${logout == true}"> 
 			You have been log out successfully

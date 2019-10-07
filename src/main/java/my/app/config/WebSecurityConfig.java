@@ -11,13 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import my.app.security.CustomAccessDeniedHandler;
-import my.app.security.CustomAuthenticationFailureHandler;
-import my.app.security.CustomLogoutSuccessHandler;
+
 
 @Configuration
 @EnableWebSecurity
@@ -67,6 +63,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         	.and() 
         	.formLogin().loginPage("/login").permitAll()
         	.and() 
+        	.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll()
+        	.and()
         	.httpBasic()//TODO delete чтобы не отправлять логин пароль с каждым запросом
         	.and()
         	.csrf() 

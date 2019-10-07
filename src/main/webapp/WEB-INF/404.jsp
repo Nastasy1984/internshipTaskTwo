@@ -28,6 +28,9 @@
 		<div class="action">
 			<a class="action" href="/SpringRest/find-user">Find user</a>
 		</div>
+		<div class="action">
+			<a class="logout" href="/SpringRest/logout">Log out</a>
+		</div>
 	</div>
 	<div class="layout">
 		<h1>404 error: page not found</h1>
