@@ -17,8 +17,16 @@
 }
 
 h1 {
-	color: #327CA2;
+	color: #C70039;
 	font-size: 30pt;
+	font-weight: 500;
+	text-align: center;
+	margin-top: 20px;
+}
+
+h2 {
+	color: #327CA2;
+	font-size: 20pt;
 	font-weight: 500;
 	text-align: center;
 	margin-top: 20px;
@@ -89,8 +97,8 @@ label {
 
 <body>
 	<div class="layout">
-	<h1>Welcome to my super secret application! <br> Please, enter your login and password:</h1>
-	
+	<h1>Welcome to my super secret application!</h1>
+	<h2> Please, enter your login and password:</h2>
 		<div class="resultString">
 			<c:if test="${logout == true}"> 
 			You have been log out successfully
