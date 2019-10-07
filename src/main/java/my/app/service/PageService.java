@@ -73,6 +73,9 @@ public class PageService {
 		LOG.info("getUsersList method was invoked");
 		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/api/users");
+		
+		//TODO delete?????
+		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		try {
 			CloseableHttpResponse response = client.execute(httpGet);
 	        User[] usersArr = mapper.readValue(response.getEntity().getContent(), User[].class);

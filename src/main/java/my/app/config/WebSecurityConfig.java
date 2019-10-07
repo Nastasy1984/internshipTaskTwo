@@ -28,7 +28,55 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	public WebSecurityConfig() {
 		super();
 	}
+	
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
+    //creating new user (here - in memory!) with his login and password
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
+    	LOG.info("configureGlobal method was invoked");
+        try {
+			auth.inMemoryAuthentication()
+			  .withUser("admin").password(passwordEncoder().encode("admin"))
+			  .roles("ADMIN");
+		} 
+        catch (Exception e) {
+			LOG.warn("configureGlobal method caught: {}", e.getClass().getName());
+		}
+    }
+    
+    
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+    	LOG.info("configure method was invoked");
+        http
+        	//.sessionManagement()
+        	//.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        	//.and()
+        	.authorizeRequests()
+        	.antMatchers("/", "/**", "/api/**", "/api/users", "/show-all-users", "/SpringRest/api/**", "/SpringRest/**")
+        	.hasRole("ADMIN")
+        	
+        	.antMatchers("/login*").permitAll()
+        	.anyRequest() 
+        	.authenticated() 
+        	.and() 
+        	.formLogin()
+        	.and() 
+        	.httpBasic()
+        	.and()
+        	.csrf() 
+        	.disable(); 
+        	
+        ;
+    }
+	
+	
 
+	/*
 	//creating new user (here - in memory!) with his login and password
 	//Authentication Manager. The Authentication Provider is backed by a simple, 
 	//in-memory implementation – InMemoryUserDetailsManager specifically. 
@@ -44,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	        http
 	          .csrf().disable()     
 	          .authorizeRequests()
-	          .antMatchers("/", "/**", "/api/**")
+	          .antMatchers("/", "/**", "/api/**", "/api/users", "/show-all-users", "/SpringRest/api/**", "/SpringRest/**")
 	          .hasRole("ADMIN")
 	          .antMatchers("/login*").permitAll()
 	          .anyRequest().authenticated()
@@ -63,9 +111,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	          .logoutSuccessHandler(logoutSuccessHandler());
 	    }
 	     
-	
-	
-	
 	
 	    @Bean
 	    public PasswordEncoder passwordEncoder() {
@@ -87,5 +132,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	    public AuthenticationFailureHandler authenticationFailureHandler() {
 	        return new CustomAuthenticationFailureHandler();
 	    }
-	    
+	    */
 }
