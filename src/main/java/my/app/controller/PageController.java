@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -330,5 +332,16 @@ public class PageController {
 		List<User> users = pageService.getUserById(id);
 		modelAndView.addObject("user", users.get(0));
 		return modelAndView;
+	}
+	
+	@RequestMapping("/login")
+	public String getLogin(@RequestParam(value="error", required = false) String error,
+			@RequestParam(value="logout", required = false) String logout, 
+			Model model) {
+		LOG.info("getLogin method was invoked");
+		model.addAttribute("error", error != null);
+		model.addAttribute("logout", logout != null);
+		
+		return "login";
 	}
 }
