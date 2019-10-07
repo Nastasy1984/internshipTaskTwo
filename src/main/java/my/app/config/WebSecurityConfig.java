@@ -57,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         	//.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         	//.and()
         	.authorizeRequests()
-        	.antMatchers("/", "/**", "/api/**", "/api/users", "/show-all-users", "/SpringRest/api/**", "/SpringRest/**")
+        	.antMatchers("/", "/**", "/api/**")//, "/SpringRest/api/**", "/SpringRest/**")
         	.hasRole("ADMIN")
         	
         	.antMatchers("/login*").permitAll()
@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         	.and() 
         	.formLogin()
         	.and() 
-        	.httpBasic()
+        	.httpBasic()//TODO delete чтобы не отправлять логин пароль с каждым запросом
         	.and()
         	.csrf() 
         	.disable(); 

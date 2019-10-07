@@ -36,16 +36,18 @@
 
 		<script type="text/javascript">
 		function myFunction(){
-		    let actionSrc = "/SpringRest/find-user/" + document.getElementsByName("id")[0].value;
+			<%--let actionSrc = "/SpringRest/find-user/" + document.getElementsByName("id")[0].value;--%>
+			let actionSrc = "/SpringRest/find-user/" + document.getElementById("idUser").value
 		    let findUserForm = document.getElementById('find_user_form');
 		    findUserForm.action = actionSrc;
 		}
 		</script>
 
 		<form id="find_user_form" onsubmit="myFunction()">
-			<label>Id or last name</label> 
+			<label>Id or last name</label>
 			<br> 
-			<input type="text" name="id" placeholder="User's ID or last Name"> 
+			<%--<input type="text" name="id" placeholder="User's ID or last Name"> --%>
+			<input type="text" id="idUser" placeholder="User's ID or last Name">
 			<br> 
 			<input class="submit" type="submit" value="Find user">
 		</form>

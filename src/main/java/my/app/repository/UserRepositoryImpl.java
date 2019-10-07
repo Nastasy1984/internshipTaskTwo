@@ -87,7 +87,7 @@ public class UserRepositoryImpl implements UserRepository {
 		if ((id != null) && (id >= 0)) {
 			LOG.debug("searching for user with id: {}", id);
 			final SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("id", id);
-			final String COUNT_BY_ID = "SELECT COUNT(*) FROM public.users WHERE USER_ID = :id";
+			final String COUNT_BY_ID = "SELECT COUNT(*) FROM users WHERE USER_ID = :id";
 			Integer countUsersInteger = namedParameterJdbcTemplate.queryForObject(COUNT_BY_ID, namedParameters, Integer.class);
 			if (countUsersInteger != null && countUsersInteger > 0) {
 				LOG.info("User with id: {} was found in DB, containsId method sends true", id);

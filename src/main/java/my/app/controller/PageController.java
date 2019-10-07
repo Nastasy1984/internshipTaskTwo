@@ -111,6 +111,7 @@ public class PageController {
 	}
 
 	// searching for user by last name
+	//@GetMapping("/find-user/{lastName:\\D+}")
 	@GetMapping("/find-user/{lastName:\\D+}")
 	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName) {
 		LOG.info("findUserByLastName method was invoked with path variable lastName: {}", lastName);
