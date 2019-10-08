@@ -1,14 +1,14 @@
 package my.app.config;
 
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,6 +91,7 @@ public class WebConfig implements WebMvcConfigurer{
         ds.setPassword("Novgorod14");
         ds.setMinIdle(5);
         ds.setMaxIdle(10);
+        ds.setInitialSize(5);
         return ds;
     }
     

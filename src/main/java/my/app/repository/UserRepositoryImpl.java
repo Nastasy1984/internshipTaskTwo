@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +45,6 @@ public class UserRepositoryImpl implements UserRepository {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	// DONE WORKS WITH DB
 	@Override
 	public List<User> getAll() {
 		LOG.info("getAll method was invoked");
@@ -56,7 +56,6 @@ public class UserRepositoryImpl implements UserRepository {
 				"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id ORDER BY users.last_name", userListExtractor);
 	}
 
-	// DONE WORKS WITH DB
 	@Override
 	public User getById(Integer id) {
 		LOG.info("getById method was invoked");
@@ -80,7 +79,6 @@ public class UserRepositoryImpl implements UserRepository {
 		return null;
 	}
 
-	// DONE WORKS WITH DB
 	@Override
 	public boolean containsId(Integer id) {
 		LOG.info("containsId method was invoked");
@@ -98,7 +96,6 @@ public class UserRepositoryImpl implements UserRepository {
 		return false;
 	}
 
-	// DONE WORKS WITH DB
 	@Override
 	public List<User> getByLastName(String lastName) {
 		LOG.info("getByLastName method was invoked");
@@ -150,7 +147,7 @@ public class UserRepositoryImpl implements UserRepository {
 		LOG.debug("Phone numbers numbers: {} were not found in DB, checkNumbers returns true", numbers);
 		return true;
 	}
-	
+
 	
 	@Override
 	public User update(User user) {
@@ -184,7 +181,6 @@ public class UserRepositoryImpl implements UserRepository {
 		return null;
 	}
 
-	// DONE WORKS WITH DB
 	// Here I use SimpleJDBCInsert just to try it
 	public User save(User user) {
 		LOG.info("save method was invoked");
@@ -215,7 +211,6 @@ public class UserRepositoryImpl implements UserRepository {
 		return null;
 	}
 
-	// DONE WORKS WITH DB
 	@Override
 	public void delete(User user) {
 		LOG.info("delete method was invoked");
