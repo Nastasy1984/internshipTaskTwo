@@ -167,12 +167,54 @@ public class PageService {
 		return null;
 	}
 	
-	public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
+	/*public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("addUser method was invoked");
 		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/api/add");
 		User userGotten = new User (firstName, lastName);
 		userGotten.seteMail(eMail);
 		userGotten.setPhoneNumbers(numbers);
+		StringWriter writer = new StringWriter();      
+		
+		try {
+			mapper.writeValue(writer, userGotten);
+		} catch (IOException e) {
+			LOG.error("addUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
+		}
+
+		try {	
+			httpPost.setHeader("Accept","application/json");
+			httpPost.setHeader("Content-type","application/json");
+			StringEntity stringEntity = new StringEntity(writer.toString());
+			httpPost.setEntity(stringEntity);
+			CloseableHttpResponse response = client.execute(httpPost);
+			int respCode = response.getStatusLine().getStatusCode();
+			LOG.debug("addUser method got response code: {}", respCode);
+			
+			if (respCode == 400) {
+				LOG.warn("getUserById method returns HttpStatus.BAD_REQUEST and body null");
+				return ResponseEntity.status(respCode).body(null);
+			}
+			
+			if (respCode == 200) {
+				User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
+				LOG.debug("addUser method got user: {}", userAdded.toString());
+				return ResponseEntity.status(respCode).body(userAdded);
+			}
+		} 
+		catch (IOException e) {
+			LOG.error("addUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
+		}
+		
+		LOG.warn("addUser method returns HttpStatus.NOT_FOUND and body null");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	}
+	*/
+	
+	public ResponseEntity<User> addUser(User userGotten) {
+		LOG.info("addUser method was invoked");
+		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/api/add");
 		StringWriter writer = new StringWriter();      
 		
 		try {

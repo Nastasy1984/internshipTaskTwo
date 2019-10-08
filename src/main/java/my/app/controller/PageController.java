@@ -186,7 +186,10 @@ public class PageController {
 		}
 		
 		// saving the user by pageService
-		ResponseEntity <User> responseEntity = pageService.addUser(firstName, lastName, eMail, numbers);
+		User userGotten = new User (firstName,lastName);
+		userGotten.seteMail(eMail);
+		userGotten.setPhoneNumbers(numbers);
+		ResponseEntity <User> responseEntity = pageService.addUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
 		
 		if (respCode == 400) {
