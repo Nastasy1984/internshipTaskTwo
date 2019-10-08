@@ -85,8 +85,10 @@ public class PageService {
 			
 		} catch (ClientProtocolException e) {
 	        LOG.error("getUsersList method caught: {}", e.getClass().getName());
+	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		} catch (IOException e) {
 	        LOG.error("getUsersList method caught: {}", e.getClass().getName());
+	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
         return null;
 	}
@@ -115,8 +117,10 @@ public class PageService {
 			
 		} catch (ClientProtocolException e) {
 	        LOG.error("getUserById method caught: {}", e.getClass().getName());
+	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		} catch (IOException e) {
 	        LOG.error("getUserById method caught: {}", e.getClass().getName());
+	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 		return null;
 	}
@@ -134,6 +138,7 @@ public class PageService {
 			
 		} catch (URISyntaxException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 	    		
 		try {
@@ -153,8 +158,10 @@ public class PageService {
 			
 		} catch (ClientProtocolException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		} catch (IOException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 
 		return null;
@@ -172,6 +179,7 @@ public class PageService {
 			mapper.writeValue(writer, userGotten);
 		} catch (IOException e) {
 			LOG.error("addUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 
 		try {	
@@ -196,6 +204,7 @@ public class PageService {
 		} 
 		catch (IOException e) {
 			LOG.error("addUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 		
 		LOG.warn("addUser method returns HttpStatus.NOT_FOUND and body null");
@@ -215,8 +224,10 @@ public class PageService {
 			
 		} catch (ClientProtocolException e) {
 			LOG.error("deleteUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		} catch (IOException e) {
 			LOG.error("deleteUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 		LOG.debug("deleteUser method returns 0");
 		return 0;
@@ -236,6 +247,7 @@ public class PageService {
 			mapper.writeValue(writer, userGotten);
 		} catch (IOException e) {
 			LOG.error("updateUser method caught: {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 
 		HttpPut httpPut = new HttpPut(url);
@@ -262,6 +274,7 @@ public class PageService {
 		} 
 		catch (IOException e) {
 			LOG.error("updateUser method caught {}", e.getClass().getName());
+			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 		
 		LOG.warn("updateUser method returns HttpStatus.NOT_FOUND and body null");
