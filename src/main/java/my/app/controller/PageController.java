@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,6 @@ import my.app.service.PageService;
 @Controller
 public class PageController {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.PageController.class.getName());
-
     private PageService pageService;
 
 	@Autowired

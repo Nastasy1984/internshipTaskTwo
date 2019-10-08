@@ -1,17 +1,22 @@
 package my.app.config;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-
+import org.omg.CosNaming.NamingContextExtPackage.URLStringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.support.incrementer.DB2MainframeSequenceMaxValueIncrementer;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -29,8 +34,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebMvc
 //where we can find our components
 @ComponentScan(basePackages = "my.app")
+@PropertySource("classpath:application.properties")
+//@ConfigurationProperties("classpath:application.properties")
 public class WebConfig implements WebMvcConfigurer{
 	private static final Logger LOG = LoggerFactory.getLogger(my.app.config.WebConfig.class.getName());
+	//@Value("${hostname}")
+	//@Value("#{'${hostname}'}")
+	//private String hostname;
+	//private String dbUrl;
+	@Autowired
+	private Environment env;
+	
+	/*
+    @PostConstruct
+    public void postConstruct() {
+		LOG.info("postConstruct method was invoked");
+    	LOG.debug("Hostname in postConstruct: {}", hostname);
+    	dbUrl = "jdbc:postgresql://" + hostname + ":5432/users";
+        LOG.debug("dbUrl set in postConstruct: {}", dbUrl);
+    }*/
+	
+   /* @Bean
+    String hostUrl() {
+    	
+    	//String hostUrlString = hostname;
+    	LOG.info("hostUrl creates hostUrl BEAN: {}", hostname);
+    	return hostname;
+    }*/
+    
+    @Bean
+    String hostName() {
+    	//String hostUrlString = hostname;
+    	String hostname = env.getProperty("hostname");
+    	LOG.info("hostUrl creates hostUrl BEAN: {}", hostname);
+    	return hostname;
+    }
+    
+    
  //show, where we can find our jsp pages
     @Bean
     ViewResolver viewResolver(){
@@ -41,13 +81,11 @@ public class WebConfig implements WebMvcConfigurer{
         return resolver;
     }
     
-    
    /* @Override
     public void addViewControllers(ViewControllerRegistry registry) {
        //registry.addViewController("/").setViewName("index");
        registry.addViewController("/login").setViewName("login.jsp");;
-    }*/
-    
+    }*/    
     
     @Bean
     public ObjectMapper objectMapper() {
@@ -86,7 +124,9 @@ public class WebConfig implements WebMvcConfigurer{
     	LOG.info("postgreSQLDataSource method was invoked");
     	BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/users");
+        //ds.setUrl("jdbc:postgresql://localhost:5432/users");
+        ds.setUrl(env.getProperty("jdbc.url"));
+        LOG.debug("DB url: {} ", ds.getUrl());
         ds.setUsername("postgres");
         ds.setPassword("Novgorod14");
         ds.setMinIdle(5);
@@ -95,6 +135,7 @@ public class WebConfig implements WebMvcConfigurer{
         return ds;
     }
     
+  
     
     //for RequestParam validation
     @Bean

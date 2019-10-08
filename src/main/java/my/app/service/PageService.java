@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.apache.http.client.ClientProtocolException;
@@ -24,6 +25,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -34,17 +36,32 @@ import my.app.model.User;
 
 //this service sends JSON request from page controller to user controller and send it's response to page controller
 @Component
+@PropertySource("classpath:application.properties")
 public class PageService {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.service.PageService.class.getName());
 	private ObjectMapper mapper;
 	private CloseableHttpClient client;
+	//@Value("${hostname}")
+	private String hostName;
+	private String urlBeginsWith;
 	
 	@Autowired
-	public PageService(ObjectMapper mapper, CloseableHttpClient client) {
+	public PageService(ObjectMapper objectMapper, CloseableHttpClient closeableHttpClient, String hostName) {
+		LOG.info("PageService constructor was invoked");
+		this.mapper = objectMapper;
+		this.client = closeableHttpClient;
+		LOG.debug("hostName in constructor: {}", hostName);
+		this.hostName = hostName;
 		LOG.info("PageService was created");
-		this.mapper = mapper;
-		this.client = client;
 	}
+	
+    @PostConstruct
+    public void postConstruct() {
+		LOG.info("postConstruct method was invoked");
+    	LOG.debug("Hostname in postConstruct: {}", hostName);
+        urlBeginsWith = "http://" + hostName + ":8080/SpringRest/api/";
+        LOG.debug("urlBeginsWith set in postConstruct: {}", urlBeginsWith);
+    }
 	
 	public ObjectMapper getMapper() {
 		return mapper;
@@ -62,6 +79,7 @@ public class PageService {
 		this.client = client;
 	}
 	
+	
     @PreDestroy
     public void cleanUp() throws Exception {
 		LOG.info("cleanUp method was invoked");
@@ -70,7 +88,8 @@ public class PageService {
 	
 	public List<User> getUsersList(){
 		LOG.info("getUsersList method was invoked");
-		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/api/users");
+		LOG.debug("Hostname in GetUsersList method: {}", hostName);
+		HttpGet httpGet = new HttpGet(urlBeginsWith + "users");
 		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		try (CloseableHttpResponse response = client.execute(httpGet)){
 	        User[] usersArr = mapper.readValue(response.getEntity().getContent(), User[].class);
@@ -91,7 +110,8 @@ public class PageService {
 	
 	public List<User> getUserById(Integer id) {
 		LOG.info("getUserById method was invoked");
-		String url = "http://localhost:8080/SpringRest/api/user/" + id;
+		String url = urlBeginsWith + "user/" + id;
+		LOG.debug("url: {}", url);
 		HttpGet httpGet = new HttpGet(url);
 		try (CloseableHttpResponse response = client.execute(httpGet)){
 			String string = EntityUtils.toString(response.getEntity());
@@ -122,8 +142,9 @@ public class PageService {
 	}
 	
 	public List<User> getUserByLastName(String lastName) {
-		LOG.info("getUserByLastName method was invoked");
-		String url = "http://localhost:8080/SpringRest/api/userln/";
+		LOG.info("getUserByLastName method was invoked with lastName: {}", lastName);
+		String url = urlBeginsWith + "userln/";
+		LOG.debug("url: {}", url);
 		HttpGet httpGet = new HttpGet(url);
 	    URI uri;
 		try {
@@ -165,7 +186,7 @@ public class PageService {
 	
 	public ResponseEntity<User> addUser(User userGotten) {
 		LOG.info("addUser method was invoked");
-		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/api/add");
+		HttpPost httpPost = new HttpPost(urlBeginsWith + "add");
 		StringWriter writer = new StringWriter();      
 		
 		try {
@@ -208,7 +229,8 @@ public class PageService {
 	
 	public int deleteUser(Integer id) {
 		LOG.info("deleteUser method was invoked");
-		String url = "http://localhost:8080/SpringRest/api/user/" + id;
+		String url = urlBeginsWith + "user/" + id;
+		LOG.debug("url: {}", url);
 		HttpDelete httpDelete = new HttpDelete(url);
 		try (CloseableHttpResponse response = client.execute(httpDelete)){
 			int respCode = response.getStatusLine().getStatusCode();
@@ -230,7 +252,7 @@ public class PageService {
 	
 	public ResponseEntity<User> updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("updateUser method was invoked");
-		String url = "http://localhost:8080/SpringRest/api/user/" + id;
+		String url = urlBeginsWith + "user/" + id;
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		userGotten.seteMail(eMail);
