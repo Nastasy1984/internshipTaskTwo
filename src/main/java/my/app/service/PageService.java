@@ -68,42 +68,36 @@ public class PageService {
     	client.close();
     }
 	
-	//DONE WORKS
 	public List<User> getUsersList(){
 		LOG.info("getUsersList method was invoked");
-		//CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/api/users");
-		
-		//TODO delete?????
 		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
-		try {
-			CloseableHttpResponse response = client.execute(httpGet);
+		try (CloseableHttpResponse response = client.execute(httpGet)){
 	        User[] usersArr = mapper.readValue(response.getEntity().getContent(), User[].class);
 	        List<User> users = Arrays.asList(usersArr);
 	        LOG.debug("getUsersList method got response with users: {}", users);
 	        return users;
-			
-		} catch (ClientProtocolException e) {
+		} 
+		catch (ClientProtocolException e) {
 	        LOG.error("getUsersList method caught: {}", e.getClass().getName());
 	        LOG.error("Stack trace {}", e.getStackTrace().toString());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 	        LOG.error("getUsersList method caught: {}", e.getClass().getName());
 	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
         return null;
 	}
 	
-	//DONE WORKS
 	public List<User> getUserById(Integer id) {
 		LOG.info("getUserById method was invoked");
-		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		HttpGet httpGet = new HttpGet(url);
-		try {
-			CloseableHttpResponse response = client.execute(httpGet);
+		try (CloseableHttpResponse response = client.execute(httpGet)){
 			String string = EntityUtils.toString(response.getEntity());
 			int respCode = response.getStatusLine().getStatusCode(); 
 			LOG.debug("getUserById method got response code: {}", respCode);
+			
 			if (respCode != 200) {
 				LOG.warn("getUserById method sending null");
 				return null;
@@ -115,20 +109,20 @@ public class PageService {
 	        LOG.debug("getUserById method got users: {}", users.toString());
 	        return users;
 			
-		} catch (ClientProtocolException e) {
+		} 
+		catch (ClientProtocolException e) {
 	        LOG.error("getUserById method caught: {}", e.getClass().getName());
 	        LOG.error("Stack trace {}", e.getStackTrace().toString());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 	        LOG.error("getUserById method caught: {}", e.getClass().getName());
 	        LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 		return null;
 	}
 	
-	//DONE WORKS
 	public List<User> getUserByLastName(String lastName) {
 		LOG.info("getUserByLastName method was invoked");
-		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/api/userln/";
 		HttpGet httpGet = new HttpGet(url);
 	    URI uri;
@@ -136,13 +130,13 @@ public class PageService {
 			uri = new URIBuilder(httpGet.getURI()).addParameter("lastName", lastName).build();
 			((HttpRequestBase) httpGet).setURI(uri);
 			
-		} catch (URISyntaxException e) {
+		} 
+		catch (URISyntaxException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 	    		
-		try {
-			CloseableHttpResponse response = client.execute(httpGet);
+		try (CloseableHttpResponse response = client.execute(httpGet)){
 			int respCode = response.getStatusLine().getStatusCode();
 			LOG.debug("getUserByLastName method got response code: {}", respCode);
 			if (respCode != 200) {
@@ -156,61 +150,18 @@ public class PageService {
 	        LOG.debug("getUserByLastName method got users: {}", users.toString());
 	        return users;
 			
-		} catch (ClientProtocolException e) {
+		} 
+		catch (ClientProtocolException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			LOG.error("getUserByLastName method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
 
 		return null;
 	}
-	
-	/*public ResponseEntity<User> addUser(String firstName, String lastName, String eMail, List<String> numbers) {
-		LOG.info("addUser method was invoked");
-		HttpPost httpPost = new HttpPost("http://localhost:8080/SpringRest/api/add");
-		User userGotten = new User (firstName, lastName);
-		userGotten.seteMail(eMail);
-		userGotten.setPhoneNumbers(numbers);
-		StringWriter writer = new StringWriter();      
-		
-		try {
-			mapper.writeValue(writer, userGotten);
-		} catch (IOException e) {
-			LOG.error("addUser method caught: {}", e.getClass().getName());
-			LOG.error("Stack trace {}", e.getStackTrace().toString());
-		}
-
-		try {	
-			httpPost.setHeader("Accept","application/json");
-			httpPost.setHeader("Content-type","application/json");
-			StringEntity stringEntity = new StringEntity(writer.toString());
-			httpPost.setEntity(stringEntity);
-			CloseableHttpResponse response = client.execute(httpPost);
-			int respCode = response.getStatusLine().getStatusCode();
-			LOG.debug("addUser method got response code: {}", respCode);
-			
-			if (respCode == 400) {
-				LOG.warn("getUserById method returns HttpStatus.BAD_REQUEST and body null");
-				return ResponseEntity.status(respCode).body(null);
-			}
-			
-			if (respCode == 200) {
-				User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
-				LOG.debug("addUser method got user: {}", userAdded.toString());
-				return ResponseEntity.status(respCode).body(userAdded);
-			}
-		} 
-		catch (IOException e) {
-			LOG.error("addUser method caught: {}", e.getClass().getName());
-			LOG.error("Stack trace {}", e.getStackTrace().toString());
-		}
-		
-		LOG.warn("addUser method returns HttpStatus.NOT_FOUND and body null");
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	}
-	*/
 	
 	public ResponseEntity<User> addUser(User userGotten) {
 		LOG.info("addUser method was invoked");
@@ -219,7 +170,8 @@ public class PageService {
 		
 		try {
 			mapper.writeValue(writer, userGotten);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			LOG.error("addUser method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
@@ -229,19 +181,20 @@ public class PageService {
 			httpPost.setHeader("Content-type","application/json");
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPost.setEntity(stringEntity);
-			CloseableHttpResponse response = client.execute(httpPost);
-			int respCode = response.getStatusLine().getStatusCode();
-			LOG.debug("addUser method got response code: {}", respCode);
-			
-			if (respCode == 400) {
-				LOG.warn("getUserById method returns HttpStatus.BAD_REQUEST and body null");
-				return ResponseEntity.status(respCode).body(null);
-			}
-			
-			if (respCode == 200) {
-				User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
-				LOG.debug("addUser method got user: {}", userAdded.toString());
-				return ResponseEntity.status(respCode).body(userAdded);
+			try (CloseableHttpResponse response = client.execute(httpPost)) {
+				int respCode = response.getStatusLine().getStatusCode();
+				LOG.debug("addUser method got response code: {}", respCode);
+
+				if (respCode == 400) {
+					LOG.warn("getUserById method returns HttpStatus.BAD_REQUEST and body null");
+					return ResponseEntity.status(respCode).body(null);
+				}
+
+				if (respCode == 200) {
+					User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
+					LOG.debug("addUser method got user: {}", userAdded.toString());
+					return ResponseEntity.status(respCode).body(userAdded);
+				}
 			}
 		} 
 		catch (IOException e) {
@@ -255,19 +208,19 @@ public class PageService {
 	
 	public int deleteUser(Integer id) {
 		LOG.info("deleteUser method was invoked");
-		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		HttpDelete httpDelete = new HttpDelete(url);
-		try {
-			CloseableHttpResponse response = client.execute(httpDelete);
+		try (CloseableHttpResponse response = client.execute(httpDelete)){
 			int respCode = response.getStatusLine().getStatusCode();
 			LOG.debug("deleteUser method got response code: {}", respCode);
 			return respCode;
 			
-		} catch (ClientProtocolException e) {
+		} 
+		catch (ClientProtocolException e) {
 			LOG.error("deleteUser method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			LOG.error("deleteUser method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
@@ -275,19 +228,19 @@ public class PageService {
 		return 0;
 	}
 	
-	
 	public ResponseEntity<User> updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
 		LOG.info("updateUser method was invoked");
-		//CloseableHttpClient client = HttpClients.createDefault();
 		String url = "http://localhost:8080/SpringRest/api/user/" + id;
 		User userGotten = new User (firstName, lastName);
 		userGotten.setId(id);
 		userGotten.seteMail(eMail);
 		userGotten.setPhoneNumbers(numbers);
 		StringWriter writer = new StringWriter();
+		
 		try {
 			mapper.writeValue(writer, userGotten);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			LOG.error("updateUser method caught: {}", e.getClass().getName());
 			LOG.error("Stack trace {}", e.getStackTrace().toString());
 		}
@@ -299,19 +252,20 @@ public class PageService {
 			httpPut.setHeader("Content-type","application/json");
 			StringEntity stringEntity = new StringEntity(writer.toString());
 			httpPut.setEntity(stringEntity);
-			CloseableHttpResponse response = client.execute(httpPut);
-			int respCode = response.getStatusLine().getStatusCode();
-			LOG.debug("updateUser method got response code: {}", respCode);
-			
-			if (respCode == 400) {
-				LOG.warn("updateUser method sending HttpStatus.BAD_REQUEST and body null");
-				return ResponseEntity.status(respCode).body(null);
-			}
-			
-			if (respCode == 200) {
-				User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
-				LOG.debug("updateUser method got user: {}", userUpdated.toString());
-				return ResponseEntity.status(respCode).body(userUpdated);
+			try (CloseableHttpResponse response = client.execute(httpPut)) {
+				int respCode = response.getStatusLine().getStatusCode();
+				LOG.debug("updateUser method got response code: {}", respCode);
+
+				if (respCode == 400) {
+					LOG.warn("updateUser method sending HttpStatus.BAD_REQUEST and body null");
+					return ResponseEntity.status(respCode).body(null);
+				}
+
+				if (respCode == 200) {
+					User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
+					LOG.debug("updateUser method got user: {}", userUpdated.toString());
+					return ResponseEntity.status(respCode).body(userUpdated);
+				}
 			}
 		} 
 		catch (IOException e) {
@@ -322,5 +276,4 @@ public class PageService {
 		LOG.warn("updateUser method returns HttpStatus.NOT_FOUND and body null");
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
-	
 }

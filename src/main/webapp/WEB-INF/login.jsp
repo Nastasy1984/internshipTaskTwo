@@ -101,7 +101,7 @@ label {
 	<h2> Please, enter your login and password:</h2>
 		<div class="resultString">
 			<c:if test="${logout == true}"> 
-			You have been log out successfully
+			You have been logged out successfully
 			</c:if>
 		</div>
 
