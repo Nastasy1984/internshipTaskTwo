@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
@@ -67,6 +68,8 @@ public class WebConfig implements WebMvcConfigurer{
         return HttpClients.createDefault();
     }
     
+    //This method worked correctly, but I replaced it with the data source that provides pooling
+    /*
     @Bean
     public DataSource postgreSQLDataSource() {
     	LOG.info("postgreSQLDataSource method was invoked");
@@ -76,7 +79,22 @@ public class WebConfig implements WebMvcConfigurer{
         dataSource.setUsername("postgres");
         dataSource.setPassword("Novgorod14");
         return dataSource;
+    }*/
+    
+    
+    @Bean
+    public DataSource postgreSQLDataSource() {
+    	LOG.info("postgreSQLDataSource method was invoked");
+    	BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("org.postgresql.Driver");
+        ds.setUrl("jdbc:postgresql://localhost:5432/users");
+        ds.setUsername("postgres");
+        ds.setPassword("Novgorod14");
+        ds.setMinIdle(5);
+        ds.setMaxIdle(10);
+        return ds;
     }
+    
     
     //for RequestParam validation
     @Bean
