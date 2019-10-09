@@ -25,7 +25,7 @@ http://localhost:8080/SpringRest/api/user{id:\\d+}
 POST
 Добавляем нового User в ответ получаем добавленного User в формате JSON
 URL
-/SpringRest/add
+/SpringRest/api/add
 
 HEADERS
 Content-Type: application/json

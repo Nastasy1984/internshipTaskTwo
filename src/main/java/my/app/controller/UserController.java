@@ -35,6 +35,7 @@ import my.app.service.UserService;
 public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.UserController.class.getName());
 	private UserService userService;
+	private static final String regex = "^[a-zA-Z\'-]+$";
 	
 	@Autowired
 	public UserController(UserService userService) {
@@ -101,6 +102,14 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<User> addNewUser(@Valid @RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
+		//check for correct input of first name and last name (only letters)
+		//String regex = "^[a-zA-Z\'-]+$";
+		LOG.debug("addNewUser method: lastName matches regex {}", user.getLastName().matches(regex));
+		LOG.debug("addNewUser method: firstName matches regex {}", user.getFirstName().matches(regex));
+		if (!user.getLastName().matches(regex) || !user.getFirstName().matches(regex)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		
 		
 		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
 			User userSaved = userService.save(user);
@@ -125,6 +134,14 @@ public class UserController {
 	public ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @Valid @RequestBody User user) {
 		LOG.info("updateUser method was invoked with path variable id: {} and request body user: {}", id,
 				user.toString());
+		
+		//check for correct input of first name and last name (only letters)
+		//String regex = "^[a-zA-Z\'-]+$";
+		LOG.debug("updateUser method: lastName matches regex {}", user.getLastName().matches(regex));
+		LOG.debug("updateUser method: firstName matches regex {}", user.getFirstName().matches(regex));
+		if (!user.getLastName().matches(regex) || !user.getFirstName().matches(regex)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 		
 		if (userService.checkNumbers(user.getPhoneNumbers(), id)) {
 			User userUpdated = userService.update(user);
