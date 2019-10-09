@@ -103,9 +103,9 @@ public class UserController {
 	public ResponseEntity<User> addNewUser(@Valid @RequestBody User user) {
 		LOG.info("addNewUser method was invoked with request body user: {}", user.toString());
 		//check for correct input of first name and last name (only letters)
-		//String regex = "^[a-zA-Z\'-]+$";
 		LOG.debug("addNewUser method: lastName matches regex {}", user.getLastName().matches(regex));
 		LOG.debug("addNewUser method: firstName matches regex {}", user.getFirstName().matches(regex));
+		
 		if (!user.getLastName().matches(regex) || !user.getFirstName().matches(regex)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
@@ -136,9 +136,9 @@ public class UserController {
 				user.toString());
 		
 		//check for correct input of first name and last name (only letters)
-		//String regex = "^[a-zA-Z\'-]+$";
 		LOG.debug("updateUser method: lastName matches regex {}", user.getLastName().matches(regex));
 		LOG.debug("updateUser method: firstName matches regex {}", user.getFirstName().matches(regex));
+		
 		if (!user.getLastName().matches(regex) || !user.getFirstName().matches(regex)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
