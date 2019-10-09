@@ -88,7 +88,6 @@ public class PageService {
 	
 	public List<User> getUsersList(){
 		LOG.info("getUsersList method was invoked");
-		LOG.debug("Hostname in GetUsersList method: {}", hostName);
 		HttpGet httpGet = new HttpGet(urlBeginsWith + "users");
 		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		try (CloseableHttpResponse response = client.execute(httpGet)){
@@ -113,6 +112,7 @@ public class PageService {
 		String url = urlBeginsWith + "user/" + id;
 		LOG.debug("url: {}", url);
 		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		try (CloseableHttpResponse response = client.execute(httpGet)){
 			String string = EntityUtils.toString(response.getEntity());
 			int respCode = response.getStatusLine().getStatusCode(); 
@@ -146,6 +146,7 @@ public class PageService {
 		String url = urlBeginsWith + "userln/";
 		LOG.debug("url: {}", url);
 		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 	    URI uri;
 		try {
 			uri = new URIBuilder(httpGet.getURI()).addParameter("lastName", lastName).build();
@@ -187,6 +188,7 @@ public class PageService {
 	public ResponseEntity<User> addUser(User userGotten) {
 		LOG.info("addUser method was invoked");
 		HttpPost httpPost = new HttpPost(urlBeginsWith + "add");
+		httpPost.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		StringWriter writer = new StringWriter();      
 		
 		try {
@@ -232,6 +234,7 @@ public class PageService {
 		String url = urlBeginsWith + "user/" + id;
 		LOG.debug("url: {}", url);
 		HttpDelete httpDelete = new HttpDelete(url);
+		httpDelete.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 		try (CloseableHttpResponse response = client.execute(httpDelete)){
 			int respCode = response.getStatusLine().getStatusCode();
 			LOG.debug("deleteUser method got response code: {}", respCode);
@@ -268,6 +271,7 @@ public class PageService {
 		}
 
 		HttpPut httpPut = new HttpPut(url);
+		httpPut.setHeader("Authorization","Basic YWRtaW46YWRtaW4=");
 
 		try {	
 			httpPut.setHeader("Accept","application/json");

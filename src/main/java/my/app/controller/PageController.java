@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -154,11 +153,13 @@ public class PageController {
 		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
 		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
 		 */
+		//commented, because I check first name and last name at the page with JS script
+		/*
 		//checking obligatory fields last name and first name
 		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "First name and last name are obligatory fields";
 			return failedAdding(failString);
-		}
+		}*/
 	
 		// checking eMail
 		if (!StringUtils.isBlank(eMail)) {
@@ -269,13 +270,14 @@ public class PageController {
 		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
 		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
 		 */
+		//commented, because I check first name and last name at the page with JS script
 		//checking obligatory fields last name and first name
-		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
+		/*if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
 			String failString = "Last name and first name must be filled";
 			LOG.warn("Redirecting to failedUpdate method");
 			return failedUpdate(failString, id);
 		}
-
+*/
 		//checking eMail
 		if (!StringUtils.isBlank(eMail)) {
 			boolean isEmailValid = true;

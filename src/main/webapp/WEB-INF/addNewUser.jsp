@@ -9,7 +9,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Add user</title>
 <link href="<c:url value="/resources/style.css"/>" rel="stylesheet"></link>
-
+	<script type="text/javascript">
+		function ValidateInsert() {
+			var specialChars = /[^a-z\'\-A-Z ]/g;
+			if (document.addForm.firstName.value.match(specialChars) || document.addForm.firstName.value.match(specialChars)) {
+				alert("Only characters A-Z, ', -, a-z in fields first name and last name are allowed!")
+				return false;
+			}
+			if (document.addForm.firstName.value == 0 || document.addForm.firstName.value == 0) {
+				alert("Fields first name and last name must be filled!")
+				return false;
+			}
+			return (true);
+		}
+	</script>
 </head>
 <body>
 	<div class="flex-container">
@@ -27,10 +40,12 @@
 			<a class="logout" href="/SpringRest/logout">Log out</a>
 		</div>
 	</div>
+	
+
 	<div class="layout">
 		<h1>Add new user</h1>
 		<div class="resultString">${failString}</div>
-		<form id="addForm" action="/SpringRest/add-new-user" method="POST">
+		<form name = "addForm" id="addForm" action="/SpringRest/add-new-user" method="POST" onSubmit="return ValidateInsert()">
 			<label>First name</label>
 			<br> 
 			<input type="text" name="firstName" placeholder="First Name"> 

@@ -9,6 +9,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Update user</title>
 <link href="<c:url value="/resources/style.css"/>" rel="stylesheet"></link>
+	<script type="text/javascript">
+		function ValidateInsert() {
+			var specialChars = /[^a-z\'\-A-Z ]/g;
+			if (document.updateForm.firstName.value.match(specialChars) || document.updateForm.firstName.value.match(specialChars)) {
+				alert("Only characters A-Z, ', -, a-z in fields first name and last name are allowed!")
+				return false;
+			}
+			if (document.updateForm.firstName.value == 0 || document.updateForm.firstName.value == 0) {
+				alert("Fields first name and last name must be filled!")
+				return false;
+			}
+			return (true);
+		}
+	</script>
 </head>
 <body>
 	<div class="flex-container">
@@ -32,7 +46,7 @@
 	<div class="layout">
 		<h1>Update user with id ${id}</h1>
 		<div class="resultString">${failString}</div>
-		<form action="/SpringRest/update-user" method="POST">
+		<form name = "updateForm" action="/SpringRest/update-user" method="POST" onSubmit="return ValidateInsert()">
 			<%-- Hidden field for sending user's id --%>
 			<input type="hidden" name="id" value="${id}"> 
 			<label>First name</label> 
