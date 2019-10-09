@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -131,6 +130,8 @@ public class PageController {
 		// All reasons of BAD REQUEST status except not unique phone numbers we are checking here
 		// Therefore the only possible reason of BAD REQUEST status is not unique numbers
 
+		User userGotten = new User (firstName, lastName);
+		userGotten.setPhoneNumbers(numbers);
 		// checking eMail
 		if (!StringUtils.isBlank(eMail)) {
 			boolean isEmailValid = true;
@@ -145,29 +146,30 @@ public class PageController {
 
 			if (!isEmailValid) {
 				String failString = "Invalid E-mail";
-				return failedAdding(failString, redirectAttributes);
+				return failedAdding(failString, redirectAttributes, userGotten);
 			}
 		}
+		userGotten.seteMail(eMail);
 
 		// checking numbers
 		numbers.removeIf(""::equals);
 		
 		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
-			return failedAdding(failString, redirectAttributes);
+			return failedAdding(failString, redirectAttributes, userGotten);
 		}
 
 		// saving the user by pageService
-		User userGotten = new User(firstName, lastName);
-		userGotten.seteMail(eMail);
-		userGotten.setPhoneNumbers(numbers);
+		//User userGotten = new User(firstName, lastName);
+		//userGotten.seteMail(eMail);
+		//userGotten.setPhoneNumbers(numbers);
 		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
 
 		if (respCode == 400) {
 			LOG.warn("addNewUser method: The user's phone numbers are not unique");
 			String failString = "The user's phone numbers are not unique";
-			return failedAdding(failString, redirectAttributes);
+			return failedAdding(failString, redirectAttributes, userGotten);
 		}
 
 		if (respCode == 200) {
@@ -183,13 +185,14 @@ public class PageController {
 				return "redirect:/show-all-users";
 			}
 		}
-		return failedAdding("Failed adding. Please, try again", redirectAttributes);
+		return failedAdding("Failed adding. Please, try again", redirectAttributes, userGotten);
 	}
 	
-	private String failedAdding(String failString, RedirectAttributes redirectAttributes) {
+	private String failedAdding(String failString, RedirectAttributes redirectAttributes, User user) {
 		LOG.warn("failedAdding method was invoked because of: {}", failString);
 		LOG.warn("failedAdding method: Redirecting to the addNewUser.jsp page");
 		redirectAttributes.addFlashAttribute("failString", failString);
+		redirectAttributes.addFlashAttribute("user", user);
 		return "redirect:/add-new-user";
 	}
 		

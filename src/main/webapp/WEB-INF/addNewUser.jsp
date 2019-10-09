@@ -48,23 +48,23 @@
 		<form name = "addForm" id="addForm" action="/SpringRest/add-new-user" method="POST" onSubmit="return ValidateInsert()">
 			<label>First name</label>
 			<br> 
-			<input type="text" name="firstName" placeholder="First Name"> 
+			<input type="text" name="firstName" placeholder="First Name" value="${user.firstName}"> 
 			<br> 
 			<label>Last name:</label> 
 			<br>
-			<input type="text" name="lastName" placeholder="Last Name"> 
+			<input type="text" name="lastName" placeholder="Last Name" value="${user.lastName}"> 
 			<br> 
 			<label>E-mail:</label>
 			<br>
-			<input type="text" name="eMail" placeholder="E-mail"> 
+			<input type="text" name="eMail" placeholder="E-mail" value="${user.eMail}"> 
 			<br> 
 			<label>Phone numbers:</label>
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" placeholder="0-000-000-00-00" value="${user.phoneNumbers[0]}">
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" placeholder="0-000-000-00-00" value="${user.phoneNumbers[1]}">
 			<br>
-			<input type="text" name="number" placeholder="0-000-000-00-00">
+			<input type="text" name="number" placeholder="0-000-000-00-00" value="${user.phoneNumbers[2]}">
 			<br>
 			<input class="submit" type="submit" value="Add user">
 		</form>

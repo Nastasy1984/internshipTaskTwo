@@ -3,7 +3,7 @@ package my.app.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User save(User user) {
 		LOG.info("save method was invoked");
+		
+		//deleting repeating numbers
+		Set<String> cleanedNumbers = new HashSet<String>(user.getPhoneNumbers());
+		List <String> listOfNumbers = new ArrayList<>(cleanedNumbers);
+		user.setPhoneNumbers(listOfNumbers);
+		
 		User userSaved = userRepository.save(user);
 
 		if (userSaved != null) {
@@ -42,6 +48,11 @@ public class UserServiceImpl implements UserService {
 	public User update(User user) {
 		LOG.info("update method was invoked");
 		if (user != null  && user.getId() != null){
+			//deleting repeating numbers
+			Set<String> cleanedNumbers = new HashSet<String>(user.getPhoneNumbers());
+			List <String> listOfNumbers = new ArrayList<>(cleanedNumbers);
+			user.setPhoneNumbers(listOfNumbers);
+			
 			User userUpdated = userRepository.update(user);
 			if (userUpdated != null) {
 				LOG.debug("User updated: {}", userUpdated.toString());
