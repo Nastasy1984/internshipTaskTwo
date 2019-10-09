@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,13 +49,13 @@ public class PageController {
 	
 	// searching for user by id
 	@GetMapping("/find-user/{id:\\d+}")
-	public ModelAndView findUserById(@PathVariable("id") Integer id) {
+	public ModelAndView findUserById(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
 		LOG.info("findUserById method was invoked with path variable id: {}", id);
 		ModelAndView modelAndView = new ModelAndView();
 		List<User> users = pageService.getUserById(id);
 		
 		if (users == null) {
-			return failedSearch(id.toString());
+			return failedSearch(id.toString(), redirectAttributes);
 		}
 		
 		LOG.debug("findUserById method got user: {}", users.toString());
@@ -67,13 +67,13 @@ public class PageController {
 
 	// searching for user by last name
 	@GetMapping("/find-user/{lastName:\\D+}")
-	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName) {
+	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName, RedirectAttributes redirectAttributes) {
 		LOG.info("findUserByLastName method was invoked with path variable lastName: {}", lastName);
 		ModelAndView modelAndView = new ModelAndView();
 		List<User> users = pageService.getUserByLastName(lastName);
 
 		if (users == null) {
-			return failedSearch(lastName);
+			return failedSearch(lastName, redirectAttributes);
 		}
 		
 		LOG.debug("findUserByLastName method got users: {}", users.toString());
@@ -83,14 +83,13 @@ public class PageController {
 		return modelAndView;
 	}
 
-	private ModelAndView failedSearch(String userString) {
+	private ModelAndView failedSearch(String userString, RedirectAttributes redirectAttributes) {
 		LOG.info("failedSearch method was invoked for searching user {}", userString);
-		ModelAndView modelAndView = new ModelAndView();
 		String failString = "Failed to find user " + userString;
-		modelAndView.setViewName("findUser");
-		modelAndView.addObject("failString", failString);
-		return modelAndView;
+		redirectAttributes.addFlashAttribute("failString", failString);
+		return new ModelAndView("redirect:/find-user");
 	}
+	
 
 	/*DELETING*/
 	// deleting user DONE WORKS with redirecting

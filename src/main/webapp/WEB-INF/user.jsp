@@ -32,8 +32,6 @@
 
 <div class="layout">
 
-
-
 	<h1>Users</h1>
 
 	<div class="resultString">
