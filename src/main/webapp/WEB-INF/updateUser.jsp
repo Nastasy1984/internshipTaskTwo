@@ -12,11 +12,11 @@
 	<script type="text/javascript">
 		function ValidateInsert() {
 			var specialChars = /[^a-z\'\-A-Z ]/g;
-			if (document.updateForm.firstName.value.match(specialChars) || document.updateForm.firstName.value.match(specialChars)) {
+			if (document.updateForm.lastName.value.match(specialChars) || document.updateForm.firstName.value.match(specialChars)) {
 				alert("Only characters A-Z, ', -, a-z in fields first name and last name are allowed!")
 				return false;
 			}
-			if (document.updateForm.firstName.value == 0 || document.updateForm.firstName.value == 0) {
+			if (document.updateForm.lastName.value == 0 || document.updateForm.firstName.value == 0) {
 				alert("Fields first name and last name must be filled!")
 				return false;
 			}
