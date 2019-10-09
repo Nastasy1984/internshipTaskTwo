@@ -108,7 +108,7 @@ public class UserRepositoryImpl implements UserRepository {
 					"	phone_numbers.phone_number\r\n" + 
 					"FROM users\r\n" + 
 					"LEFT JOIN phone_numbers ON users.user_id=phone_numbers.user_id\r\n" + 
-					"WHERE users.last_name = :lastName";
+					"WHERE users.last_name ILIKE :lastName";
 			
 			List<User> users = namedParameterJdbcTemplate.query(SELECT_BY_LAST_NAME, namedParameters,
 					userListExtractor);
