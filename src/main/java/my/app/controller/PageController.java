@@ -12,18 +12,16 @@ import org.slf4j.LoggerFactory;
 import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -41,60 +39,14 @@ public class PageController {
 		LOG.info("PageService was created");
 	}
 
-	// sending to the first page
-	@GetMapping("/")
-	public ModelAndView getWelcomePage() {
-		LOG.info("getWelcomePage method was invoked");
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("index");
-		return modelAndView;
-	}
-
-	// sending to the jsp page addNewUser
-	@GetMapping("/add-new-user")
-	public String addNewUserPage() {
-		LOG.info("addNewUserPage method was invoked");
-		return "addNewUser";
-	}
-
+	/*SEARCHING*/
 	// sending to the jsp page findUser
 	@GetMapping("/find-user")
 	public String findUserPage() {
 		LOG.info("findUserPage method was invoked");
 		return "findUser";
 	}
-
-	//date formatter that we send to the user and searchResult pages to display dates correctly
-	private void formateDates(ModelAndView modelAndView) {
-		LOG.info("formateDates method was invoked");
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		modelAndView.addObject("formatter", formatter);
-	}
-
-	// providing the list of all users
-	@GetMapping("/show-all-users")
-	public ModelAndView showUsersList(String... strings) {
-		LOG.info("showUsersList method was invoked");
-		ModelAndView modelAndView = new ModelAndView();
-		
-		List <User> users = pageService.getUsersList();
-		
-		if (users != null) {
-			modelAndView.addObject("usersList", pageService.getUsersList());
-			formateDates(modelAndView);
-
-			if (strings != null && strings.length > 0) {
-				LOG.debug("strings: {}", strings.toString());
-				modelAndView.addObject("successString", strings[0]);
-			}
-
-			modelAndView.setViewName("user");
-			return modelAndView;
-		}
-		modelAndView.setViewName("404");
-		return modelAndView;
-	}
-
+	
 	// searching for user by id
 	@GetMapping("/find-user/{id:\\d+}")
 	public ModelAndView findUserById(@PathVariable("id") Integer id) {
@@ -114,7 +66,6 @@ public class PageController {
 	}
 
 	// searching for user by last name
-	//@GetMapping("/find-user/{lastName:\\D+}")
 	@GetMapping("/find-user/{lastName:\\D+}")
 	public ModelAndView findUserByLastName(@PathVariable("lastName") String lastName) {
 		LOG.info("findUserByLastName method was invoked with path variable lastName: {}", lastName);
@@ -141,95 +92,10 @@ public class PageController {
 		return modelAndView;
 	}
 
-	// getting parameters of user and adding user to the users list
-	@PostMapping(value = "/add-new-user")
-	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
-	public ModelAndView addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
-			@RequestParam(value = "lastName", required = true) String lastName,
-			@RequestParam(value = "eMail", required = false) String eMail,
-			@RequestParam (value = "number", required = true) List<String> numbers) {
-		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
-				firstName, lastName, eMail, numbers.toString());
-
-		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
-		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
-		 */
-		//commented, because I check first name and last name at the page with JS script
-		/*
-		//checking obligatory fields last name and first name
-		if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
-			String failString = "First name and last name are obligatory fields";
-			return failedAdding(failString);
-		}*/
-	
-		// checking eMail
-		if (!StringUtils.isBlank(eMail)) {
-			boolean isEmailValid = true;
-			
-			try {
-				InternetAddress emailAddr = new InternetAddress(eMail);
-				emailAddr.validate();
-			} catch (AddressException ex) {
-				isEmailValid = false;
-			}
-			
-			if (!isEmailValid) {
-				String failString = "Invalid E-mail";
-				return failedAdding(failString);
-			}
-			
-		}
-		
-		//checking numbers
-		numbers.removeIf(""::equals);
-		if (numbers.isEmpty()) {
-			String failString = "User must have at least one phone number";
-			return failedAdding(failString);
-		}
-		
-		// saving the user by pageService
-		User userGotten = new User (firstName,lastName);
-		userGotten.seteMail(eMail);
-		userGotten.setPhoneNumbers(numbers);
-		ResponseEntity <User> responseEntity = pageService.addUser(userGotten);
-		int respCode = responseEntity.getStatusCodeValue();
-		
-		if (respCode == 400) {
-			LOG.warn("The user's phone numbers are not unique");
-			String failString = "The user's phone numbers are not unique";
-			return failedAdding(failString);
-		}
-		
-		if (respCode == 200) {
-			User user = responseEntity.getBody();
-			
-			if (user != null) {
-				String successString = "User " + user.getFirstName() + " " + user.getLastName()
-						+ " was added successfully";
-				LOG.info("User: {} was added successfully", user.toString());
-				// redirecting to the list with all users		
-				LOG.info("Redirecting to the user.jsp");
-				return showUsersList(successString);
-			}
-		}
-		return failedAdding("Failed adding. Please, try again");
-	}
-	
-	private ModelAndView failedAdding(String failString) {
-		LOG.warn("failedAdding method was invoked because of: {}", failString);
-		LOG.warn("Sending to the addNewUser.jsp page");
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("addNewUser");
-		modelAndView.addObject("failString", failString);
-		return modelAndView;
-	}
-
-	// deleting user
+	/*DELETING*/
+	// deleting user DONE WORKS with redirecting
 	@GetMapping(value = "/delete/{id:\\d+}")
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public ModelAndView deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+	public String deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
 		LOG.info("deleteUser method was invoked for user with path variable id: {}", id);
 		int respCode = pageService.deleteUser(id);
 		String resultString;
@@ -241,10 +107,94 @@ public class PageController {
 		else {
 			resultString = "Failed to delete user with id " + id;
 		}
-
-		return showUsersList(resultString);
+		redirectAttributes.addFlashAttribute( "successString", resultString);
+		return "redirect:/show-all-users";
 	}
+	
+	/*ADDING*/
+	// redirecting to the jsp page addNewUser
+	@GetMapping("/add-new-user")
+	public String addNewUserPage() {
+		LOG.info("addNewUserPage method was invoked");
+		return "addNewUser";
+	}
+	
+	// getting parameters of user and adding user to the users list
+	@PostMapping(value = "/add-new-user")
+	public String addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
+			@RequestParam(value = "lastName", required = true) String lastName,
+			@RequestParam(value = "eMail", required = false) String eMail,
+			@RequestParam(value = "number", required = true) List<String> numbers,
+			RedirectAttributes redirectAttributes) {
+		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}",
+				firstName, lastName, eMail, numbers.toString());
 
+		// All reasons of BAD REQUEST status except not unique phone numbers we are checking here
+		// Therefore the only possible reason of BAD REQUEST status is not unique numbers
+
+		// checking eMail
+		if (!StringUtils.isBlank(eMail)) {
+			boolean isEmailValid = true;
+
+			try {
+				InternetAddress emailAddr = new InternetAddress(eMail);
+				emailAddr.validate();
+			} 
+			catch (AddressException ex) {
+				isEmailValid = false;
+			}
+
+			if (!isEmailValid) {
+				String failString = "Invalid E-mail";
+				return failedAdding(failString, redirectAttributes);
+			}
+		}
+
+		// checking numbers
+		numbers.removeIf(""::equals);
+		
+		if (numbers.isEmpty()) {
+			String failString = "User must have at least one phone number";
+			return failedAdding(failString, redirectAttributes);
+		}
+
+		// saving the user by pageService
+		User userGotten = new User(firstName, lastName);
+		userGotten.seteMail(eMail);
+		userGotten.setPhoneNumbers(numbers);
+		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
+		int respCode = responseEntity.getStatusCodeValue();
+
+		if (respCode == 400) {
+			LOG.warn("addNewUser method: The user's phone numbers are not unique");
+			String failString = "The user's phone numbers are not unique";
+			return failedAdding(failString, redirectAttributes);
+		}
+
+		if (respCode == 200) {
+			User user = responseEntity.getBody();
+
+			if (user != null) {
+				String successString = "User " + user.getFirstName() + " " + user.getLastName()
+						+ " was added successfully";
+				LOG.info("addNewUser method: User: {} was added successfully", user.toString());
+				// redirecting to the list with all users
+				LOG.info("addNewUser method: Redirecting to the user.jsp");
+				redirectAttributes.addFlashAttribute("successString", successString);
+				return "redirect:/show-all-users";
+			}
+		}
+		return failedAdding("Failed adding. Please, try again", redirectAttributes);
+	}
+	
+	private String failedAdding(String failString, RedirectAttributes redirectAttributes) {
+		LOG.warn("failedAdding method was invoked because of: {}", failString);
+		LOG.warn("failedAdding method: Redirecting to the addNewUser.jsp page");
+		redirectAttributes.addFlashAttribute("failString", failString);
+		return "redirect:/add-new-user";
+	}
+		
+	/*UPDATING*/
 	// redirecting to the user's updating page
 	@GetMapping(value = "/update/{id:\\d+}")
 	public ModelAndView updateUserPage(@PathVariable("id") Integer id) {
@@ -256,30 +206,19 @@ public class PageController {
 		modelAndView.addObject("user", users.get(0));
 		return modelAndView;
 	}
-
+	
 	// getting parameters of user and updating user in the users list
 	@PostMapping(value = "/update-user")
-	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
-	public ModelAndView updateUser(@RequestParam(value = "id") Integer id,
+	//@ResponseStatus(HttpStatus.CREATED)
+	public String updateUser(@RequestParam(value = "id") Integer id,
 			@RequestParam(value = "firstName", required = false) String firstName,
 			@RequestParam(value = "lastName", required = false) String lastName,
 			@RequestParam(value = "eMail", required = false) String eMail,
-			@RequestParam (value = "number", required = false) List<String> numbers) {
+			@RequestParam (value = "number", required = false) List<String> numbers, 
+			RedirectAttributes redirectAttributes) {
 		LOG.info("updateUser method was invoked with parameters id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				id, firstName, lastName, eMail, numbers.toString());
-		
-		/*All reasons of BAD REQUEST status except not unique phone numbers we are checking here
-		 * Therefore the only possible reason of BAD REQUEST status is not unique numbers
-		 */
-		//commented, because I check first name and last name at the page with JS script
-		//checking obligatory fields last name and first name
-		/*if (StringUtils.isBlank(firstName) || StringUtils.isBlank(lastName)) {
-			String failString = "Last name and first name must be filled";
-			LOG.warn("Redirecting to failedUpdate method");
-			return failedUpdate(failString, id);
-		}
-*/
+
 		//checking eMail
 		if (!StringUtils.isBlank(eMail)) {
 			boolean isEmailValid = true;
@@ -287,13 +226,14 @@ public class PageController {
 			try {
 				InternetAddress emailAddr = new InternetAddress(eMail);
 				emailAddr.validate();
-			} catch (AddressException ex) {
+			} 
+			catch (AddressException ex) {
 				isEmailValid = false;
 			}
 			
 			if (!isEmailValid) {
 				String failString = "Invalid E-mail";
-				return failedUpdate(failString, id);
+				return failedUpdate(failString, id, redirectAttributes);
 			}
 		}
 		
@@ -302,7 +242,7 @@ public class PageController {
 		
 		if (numbers.isEmpty()) {
 			String failString = "User must have at least one phone number";
-			return failedUpdate(failString, id);
+			return failedUpdate(failString, id, redirectAttributes);
 		}
 		
 		// updating by pageService
@@ -312,35 +252,32 @@ public class PageController {
 		if (respCode == 400) {
 			LOG.warn("The user's phone numbers are not unique");
 			String failString = "The user's phone numbers are not unique";
-			return failedUpdate(failString, id);
+			return failedUpdate(failString, id, redirectAttributes);
 		}
 		
 		if (respCode == 200) {
 			User user = responseEntity.getBody();
 			String successString = "User " + user.getFirstName() + " " + user.getLastName()
 					+ " was updated successfully";
-			LOG.info("User: {} was updated successfully", user.toString());
 			// redirecting to the list with all users		
-			LOG.info("Redirecting to the user.jsp");
-			return showUsersList(successString);
+			LOG.info("updateUser method: Redirecting to the user.jsp after updating User: {}", user.toString());
+			redirectAttributes.addFlashAttribute( "successString", successString);
+			return "redirect:/show-all-users";
 		}
 		
-		return failedUpdate("Failed update. Please, try again with user", id);
-	}
-
-	private ModelAndView failedUpdate(String failString, Integer id) {
-		LOG.info("failedUpdate method was invoked");
-		LOG.warn("Failed updating of user with id: {}", id);
-		LOG.warn("Sending to the updateUser.jsp page with message {}", failString);
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("updateUser");
-		modelAndView.addObject("id", id);
-		modelAndView.addObject("failString", failString);
-		List<User> users = pageService.getUserById(id);
-		modelAndView.addObject("user", users.get(0));
-		return modelAndView;
+		return failedUpdate("Failed update. Please, try again with user", id, redirectAttributes);
 	}
 	
+	
+	private String failedUpdate(String failString, Integer id, RedirectAttributes redirectAttributes) {
+		LOG.warn("failedUpdate method was invoked for user with id: {}", id);
+		LOG.warn("failedUpdate method: Redirecting to the updateUser.jsp page user id:{} with message {}", id, failString);
+		redirectAttributes.addFlashAttribute("failString", failString);
+		LOG.debug("failedUpdate method: Redirecting to url redirect:/update/{}", id);
+		return "redirect:/update/" + id;
+	}
+
+	/*LOGIN*/
 	@RequestMapping("/login")
 	public String getLogin(@RequestParam(value="error", required = false) String error,
 			@RequestParam(value="logout", required = false) String logout, 
@@ -350,5 +287,42 @@ public class PageController {
 		model.addAttribute("logout", logout != null);
 		
 		return "login";
+	}
+	
+	/*OTHER*/
+	// sending to the first page
+	@GetMapping("/")
+	public ModelAndView getWelcomePage() {
+		LOG.info("getWelcomePage method was invoked");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("index");
+		return modelAndView;
+	}
+
+	// date formatter that we send to the user and searchResult pages to display
+	// dates correctly
+	private void formateDates(ModelAndView modelAndView) {
+		LOG.info("formateDates method was invoked");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		modelAndView.addObject("formatter", formatter);
+	}
+
+	// providing the list of all users
+	@GetMapping("/show-all-users")
+	public ModelAndView showUsersList() {
+		LOG.info("showUsersList method was invoked");
+		ModelAndView modelAndView = new ModelAndView();
+
+		List<User> users = pageService.getUsersList();
+
+		if (users != null) {
+			modelAndView.addObject("usersList", pageService.getUsersList());
+			formateDates(modelAndView);
+			modelAndView.setViewName("user");
+			return modelAndView;
+		}
+
+		modelAndView.setViewName("404");
+		return modelAndView;
 	}
 }
