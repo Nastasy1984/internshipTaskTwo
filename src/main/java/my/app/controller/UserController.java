@@ -77,7 +77,7 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " not found");
 		}
 		LOG.info("User gotten from userService: {}", user.toString());
-		List<User> resultList = new ArrayList<User>();
+		List<User> resultList = new ArrayList<>();
 		resultList.add(userService.getById(id));
 		return resultList;
     }
