@@ -1,22 +1,20 @@
 package my.app.config;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.omg.CosNaming.NamingContextExtPackage.URLStringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.support.incrementer.DB2MainframeSequenceMaxValueIncrementer;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -44,24 +42,7 @@ public class WebConfig implements WebMvcConfigurer{
 	//private String dbUrl;
 	@Autowired
 	private Environment env;
-	
-	/*
-    @PostConstruct
-    public void postConstruct() {
-		LOG.info("postConstruct method was invoked");
-    	LOG.debug("Hostname in postConstruct: {}", hostname);
-    	dbUrl = "jdbc:postgresql://" + hostname + ":5432/users";
-        LOG.debug("dbUrl set in postConstruct: {}", dbUrl);
-    }*/
-	
-   /* @Bean
-    String hostUrl() {
-    	
-    	//String hostUrlString = hostname;
-    	LOG.info("hostUrl creates hostUrl BEAN: {}", hostname);
-    	return hostname;
-    }*/
-    
+	  
     @Bean
     String hostName() {
     	//String hostUrlString = hostname;
@@ -70,8 +51,7 @@ public class WebConfig implements WebMvcConfigurer{
     	return hostname;
     }
     
-    
- //show, where we can find our jsp pages
+ //shows, where we can find our jsp pages
     @Bean
     ViewResolver viewResolver(){
     	LOG.info("viewResolver method was invoked");
@@ -102,7 +82,16 @@ public class WebConfig implements WebMvcConfigurer{
     @Bean
     public CloseableHttpClient closeableHttpClient() {
     	LOG.info("closeableHttpClient method was invoked");
-        return HttpClients.createDefault();
+    	int timeout = 15;
+    	RequestConfig config = RequestConfig.custom()
+    		//the time to establish the connection with the remote host
+    	  .setConnectTimeout(timeout * 1000)
+    	  .setConnectionRequestTimeout(timeout * 1000)
+    	  //the time waiting for data – after establishing the connection; maximum time of inactivity between two data packets
+    	  .setSocketTimeout(timeout * 1000).build();
+    	CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+        //return HttpClients.createDefault();
+    	return client;
     }
     
     //This method worked correctly, but I replaced it with the data source that provides pooling
