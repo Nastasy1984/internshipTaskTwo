@@ -79,7 +79,7 @@ public class UserController {
 		}
 		LOG.info("User gotten from userService: {}", user.toString());
 		List<User> resultList = new ArrayList<>();
-		resultList.add(userService.getById(id));
+		resultList.add(user);
 		return resultList;
     }
 	
@@ -165,9 +165,9 @@ public class UserController {
     public void delete(@PathVariable("id") Integer id) {
 		LOG.info("delete method was invoked with path variable id: {}", id);
     	//Checking if there is a user with this id in out list of users
-    	User user = userService.getById(id);
-    	
-        if (user != null){
+    	//User user = userService.getById(id);
+
+        if (userService.containsId(id)){
         	userService.deleteById(id);
         }
         else {

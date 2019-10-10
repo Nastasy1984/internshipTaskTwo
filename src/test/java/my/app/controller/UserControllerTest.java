@@ -99,18 +99,18 @@ public class UserControllerTest {
 		bUser.setPhoneNumbers(bNum);
 		data.add(bUser);
 		/*
-		Mockito.when(userServiceMock.getAllAsList()).thenReturn(data);
-		Mockito.when(userServiceMock.getById(1)).thenReturn(aUser);
-		Mockito.when(userServiceMock.getById(3)).thenReturn(null);
-		Mockito.when(userServiceMock.getByLastName(Mockito.eq(bUser.getLastName()))).thenReturn(new ArrayList<>(Arrays.asList(bUser)));
-		Mockito.when(userServiceMock.getByLastName("WrongLastName")).thenReturn(null);
-		Mockito.when(userServiceMock.containsId(3)).thenReturn(false);
-		Mockito.when(userServiceMock.containsId(1)).thenReturn(true);
-		Mockito.doNothing().when(userServiceMock).deleteById(Mockito.any());
+		Mockito.when(userService.getAllAsList()).thenReturn(data);
+		Mockito.when(userService.getById(1)).thenReturn(aUser);
+		Mockito.when(userService.getById(3)).thenReturn(null);
+		Mockito.when(userService.getByLastName(Mockito.eq(bUser.getLastName()))).thenReturn(new ArrayList<>(Arrays.asList(bUser)));
+		Mockito.when(userService.getByLastName("WrongLastName")).thenReturn(null);
+		Mockito.when(userService.containsId(3)).thenReturn(false);
+		Mockito.when(userService.containsId(1)).thenReturn(true);
+		Mockito.doNothing().when(userService).deleteById(Mockito.any());
 		*/
     }
 	
-	//DONE
+	/*///DONE
     @Test
     public void getAllUsers() throws IOException {
     	LOG.info("getAllUsers method was invoked");
@@ -119,23 +119,27 @@ public class UserControllerTest {
     	assertEquals(responseEntity.getBody(), data);
     	assertEquals(responseEntity.getStatusCodeValue(), 200);
     }
-    
+    */
     @Test
 	public void findUserById_ReturnsExistingUser(){
     	LOG.info("findUserById_ReturnsExistingUser method was invoked");
     	Mockito.when(userService.getById(1)).thenReturn(data.get(0));
     	Mockito.when(userService.containsId(1)).thenReturn(true);
     	List<User> actualList = userController.findUserById(1);
+       	Mockito.verify(userService).containsId(1);
+    	Mockito.verify(userService).getById(1);
     	List<User> expected = new ArrayList<>(Arrays.asList(data.get(0)));
     	assertEquals(actualList, expected);
     }
-	
+	/*
     @Test (expected = ResponseStatusException.class)
 	public void findUserById_ThrowsResponseStatusException(){
     	LOG.info("findUserById_ThrowsResponseStatusException method was invoked");
     	Mockito.when(userService.getById(3)).thenReturn(null);
     	Mockito.when(userService.containsId(3)).thenReturn(false);
     	List<User> actualList = userController.findUserById(3);
+    	Mockito.verify(userService).containsId(3);
+    	Mockito.verify(userService).getById(3);
     	assertEquals(actualList, null);
     }
 	
@@ -150,18 +154,46 @@ public class UserControllerTest {
 	
     @Test (expected = ResponseStatusException.class)
 	public void findUserByLastName_ThrowsResponseStatusException(){
-    	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
+    	LOG.info("findUserByLastName_ThrowsResponseStatusException method was invoked");
     	Mockito.when(userService.getByLastName("Ccc")).thenReturn(null);
     	List<User> actualList = userController.findUserByLastName("Ccc");
     	assertEquals(actualList, null);
     }
 	
+    @Test 
+	public void delete_HappyPath(){
+    	LOG.info("delete_HappyPath method was invoked");
+    	Mockito.when(userService.containsId(1)).thenReturn(true);
+    	Mockito.doNothing().when(userService).deleteById(Mockito.any());
+    	userController.delete(1);
+    	Mockito.verify(userService).containsId(1);
+    	Mockito.verify(userService).deleteById(1);
+    }
+	
+    @Test (expected = ResponseStatusException.class)
+	public void delete_ThrowsResponseStatusException(){
+    	LOG.info("delete_ThrowsResponseStatusException method was invoked");
+    	Mockito.when(userService.containsId(3)).thenReturn(false);
+    	Mockito.doNothing().when(userService).deleteById(Mockito.any());
+    	userController.delete(3);
+    	Mockito.verify(userService).containsId(3);
+    	Mockito.verify(userService).deleteById(3);
+    }
 	
 	
 	
-	
-	
-	
+	*/
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 /*
 	private ObjectMapper mapper;
 	private CloseableHttpClient client;
