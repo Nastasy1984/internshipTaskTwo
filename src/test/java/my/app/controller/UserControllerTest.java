@@ -33,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import my.app.UserControllerTestConfiguration;
 import my.app.model.User;
@@ -55,29 +56,9 @@ public class UserControllerTest {
 	//@Autowired
 	@InjectMocks
     private UserController userController;
-	
-	@Autowired
-	private ObjectMapper mapper;
-	/*@Autowired
-	private CloseableHttpClient client;
-	@Autowired
-	private String hostName;
-	private String urlBeginsWith;*/
+
 	private List<User> data;
-	
-	/*@PostConstruct
-    public void postConstruct() {
-		LOG.info("postConstruct method was invoked");
-    	LOG.debug("Hostname in postConstruct: {}", hostName);
-        urlBeginsWith = "http://" + hostName + ":8080/SpringRest/api/";
-        LOG.debug("urlBeginsWith set in postConstruct: {}", urlBeginsWith);
-    }
-	
-    @PreDestroy
-    public void cleanUp() throws Exception {
-		LOG.info("cleanUp method was invoked");
-    	client.close();
-    }*/
+
 	
 	@Before
     public void setUp(){		
@@ -98,170 +79,121 @@ public class UserControllerTest {
 		List<String> bNum = new ArrayList<>(Arrays.asList("21"));
 		bUser.setPhoneNumbers(bNum);
 		data.add(bUser);
-		/*
-		Mockito.when(userService.getAllAsList()).thenReturn(data);
-		Mockito.when(userService.getById(1)).thenReturn(aUser);
-		Mockito.when(userService.getById(3)).thenReturn(null);
-		Mockito.when(userService.getByLastName(Mockito.eq(bUser.getLastName()))).thenReturn(new ArrayList<>(Arrays.asList(bUser)));
-		Mockito.when(userService.getByLastName("WrongLastName")).thenReturn(null);
-		Mockito.when(userService.containsId(3)).thenReturn(false);
-		Mockito.when(userService.containsId(1)).thenReturn(true);
-		Mockito.doNothing().when(userService).deleteById(Mockito.any());
-		*/
     }
 	
-	/*///DONE
+	//DONE
     @Test
     public void getAllUsers() throws IOException {
     	LOG.info("getAllUsers method was invoked");
-       	Mockito.when(userService.getAllAsList()).thenReturn(data);
+       	when(userService.getAllAsList()).thenReturn(data);
        	ResponseEntity<List<User>> responseEntity = userController.getUsersList();
+       	verify(userService).getAllAsList();
     	assertEquals(responseEntity.getBody(), data);
     	assertEquals(responseEntity.getStatusCodeValue(), 200);
     }
-    */
+
     @Test
 	public void findUserById_ReturnsExistingUser(){
     	LOG.info("findUserById_ReturnsExistingUser method was invoked");
-    	Mockito.when(userService.getById(1)).thenReturn(data.get(0));
-    	Mockito.when(userService.containsId(1)).thenReturn(true);
+    	when(userService.getById(1)).thenReturn(data.get(0));
+    	when(userService.containsId(1)).thenReturn(true);
     	List<User> actualList = userController.findUserById(1);
-       	Mockito.verify(userService).containsId(1);
-    	Mockito.verify(userService).getById(1);
     	List<User> expected = new ArrayList<>(Arrays.asList(data.get(0)));
     	assertEquals(actualList, expected);
     }
-	/*
+    
     @Test (expected = ResponseStatusException.class)
 	public void findUserById_ThrowsResponseStatusException(){
     	LOG.info("findUserById_ThrowsResponseStatusException method was invoked");
-    	Mockito.when(userService.getById(3)).thenReturn(null);
-    	Mockito.when(userService.containsId(3)).thenReturn(false);
+    	when(userService.getById(3)).thenReturn(null);
+    	when(userService.containsId(3)).thenReturn(false);
     	List<User> actualList = userController.findUserById(3);
-    	Mockito.verify(userService).containsId(3);
-    	Mockito.verify(userService).getById(3);
     	assertEquals(actualList, null);
     }
 	
     @Test
 	public void findUserByLastName_ReturnsExistingUser(){
     	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
-    	Mockito.when(userService.getByLastName("Bb'First-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
+    	when(userService.getByLastName("Bb'First-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
     	List<User> actualList = userController.findUserByLastName("Bb'First-Name");
     	List<User> expected = new ArrayList<>(Arrays.asList(data.get(1)));
+    	verify(userService).getByLastName("Bb'First-Name");
     	assertEquals(actualList, expected);
     }
 	
     @Test (expected = ResponseStatusException.class)
 	public void findUserByLastName_ThrowsResponseStatusException(){
     	LOG.info("findUserByLastName_ThrowsResponseStatusException method was invoked");
-    	Mockito.when(userService.getByLastName("Ccc")).thenReturn(null);
+    	when(userService.getByLastName("Ccc")).thenReturn(null);
     	List<User> actualList = userController.findUserByLastName("Ccc");
+    	verify(userService).getByLastName("Ccc");
     	assertEquals(actualList, null);
     }
-	
+		
     @Test 
 	public void delete_HappyPath(){
     	LOG.info("delete_HappyPath method was invoked");
-    	Mockito.when(userService.containsId(1)).thenReturn(true);
-    	Mockito.doNothing().when(userService).deleteById(Mockito.any());
+    	when(userService.containsId(1)).thenReturn(true);
+    	doNothing().when(userService).deleteById(Mockito.any());
     	userController.delete(1);
-    	Mockito.verify(userService).containsId(1);
-    	Mockito.verify(userService).deleteById(1);
+    	verify(userService).containsId(1);
+    	verify(userService).deleteById(1);
+    	assertEquals(0, 0);
     }
-	
+   
     @Test (expected = ResponseStatusException.class)
 	public void delete_ThrowsResponseStatusException(){
     	LOG.info("delete_ThrowsResponseStatusException method was invoked");
-    	Mockito.when(userService.containsId(3)).thenReturn(false);
-    	Mockito.doNothing().when(userService).deleteById(Mockito.any());
+    	when(userService.containsId(3)).thenReturn(false);
+    	doNothing().when(userService).deleteById(Mockito.any());
     	userController.delete(3);
-    	Mockito.verify(userService).containsId(3);
-    	Mockito.verify(userService).deleteById(3);
     }
-	
-	
-	
-	*/
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-/*
-	private ObjectMapper mapper;
-	private CloseableHttpClient client;
-	
-	@Before
-    public void setUp(){
-		client = HttpClients.createDefault();
-		mapper = new ObjectMapper();
+    @Test 
+	public void addNewUser_HappyPath(){
+    	LOG.info("addNewUser_HappyPath method was invoked");
+    	User user = new User("CcFN","CcLN");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
+    	when(userService.save(user)).thenReturn(user);
+    	ResponseEntity<User> responseEntity = userController.addNewUser(user);
+    	assertEquals(responseEntity.getStatusCodeValue(), 200);
+    	assertEquals(responseEntity.getBody(), user);	
     }
-	
-	@After
-    public void tearDown(){
-		try {
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    
+    @Test 
+	public void addNewUser_InvalidLastName(){
+    	LOG.info("addNewUser_InvalidLastName method was invoked");
+    	User user = new User("CcFN","123");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	ResponseEntity<User> responseEntity = userController.addNewUser(user);
+    	verify(userService, times(0)).checkNumbers(user.getPhoneNumbers(), 0);
+    	verify(userService, times(0)).save(any());
+    	assertEquals(responseEntity.getStatusCodeValue(), 400);
+    	assertEquals(responseEntity.getBody(), null);	
     }
-	
-	
-	@Test
-	public void GetUsersListTest() throws IOException{
-		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/users");
-		CloseableHttpResponse response = client.execute(httpGet);
-		String string = EntityUtils.toString(response.getEntity());
-		StringReader reader = new StringReader(string);
-		User[] usersArr = mapper.readValue(reader, User[].class);
-		int respCode = response.getStatusLine().getStatusCode();
-		assertEquals(new Integer(1), usersArr[0].getId());
-		assertEquals(200, respCode);
-	}
-	
-	
-	@Test
-	public void GetUserByIdTest() throws IOException{
-		HttpGet httpGet = new HttpGet("http://localhost:8080/SpringRest/user/1");
-		CloseableHttpResponse response = client.execute(httpGet);
-		String string = EntityUtils.toString(response.getEntity());
-		StringReader reader = new StringReader(string);
-		User[] usersArr = mapper.readValue(reader, User[].class);
-		int respCode = response.getStatusLine().getStatusCode();
-		assertEquals(new Integer(1), usersArr[0].getId());
-		assertEquals(200, respCode);
-	}
-	
-	@Test
-	public void updateUserTest() throws IOException{
-		String url = "http://localhost:8080/SpringRest/user/1";
-		
-		User user = new User ("Tom", "Tomson");
-		user.seteMail("tomson@tom.com");
-		user.setId(1);
-		StringWriter writer = new StringWriter();
-		mapper.writeValue(writer, user);
-		HttpPut httpPut = new HttpPut(url);
-		httpPut.setHeader("Accept", "application/json");
-		httpPut.setHeader("Content-type", "application/json");
-		StringEntity stringEntity = new StringEntity(writer.toString());
-		httpPut.setEntity(stringEntity);
-		CloseableHttpResponse response = client.execute(httpPut);
-		User userUpdated = mapper.readValue(response.getEntity().getContent(), User.class);
-		int respCode = response.getStatusLine().getStatusCode();
-		user.setId(1);
-		assertEquals(user, userUpdated);
-		assertEquals(200, respCode);
-		
-	}
-	
-	*/
-	
+    
+    @Test 
+	public void addNewUser_NotUniqueNumbers(){
+    	LOG.info("addNewUser_NotUniqueNumbers method was invoked");
+    	User user = new User("CcFN","123");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(false);
+    	ResponseEntity<User> responseEntity = userController.addNewUser(user);
+ 	    verify(userService, times(0)).save(any());
+    	assertEquals(responseEntity.getStatusCodeValue(), 400);
+    	assertEquals(responseEntity.getBody(), null);	
+    }
+    
+    @Test (expected = ResponseStatusException.class)
+	public void addNewUser_ThrowsResponseStatusException(){
+    	LOG.info("addNewUser_ThrowsResponseStatusException method was invoked");
+    	User user = new User("CcFN","CcLn");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
+    	when(userService.save(user)).thenReturn(null);
+    	userController.addNewUser(user);
+    	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), 0);
+    	verify(userService, times(1)).save(any());
+    }
 }

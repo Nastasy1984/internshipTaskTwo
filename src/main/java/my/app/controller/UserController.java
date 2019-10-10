@@ -93,7 +93,7 @@ public class UserController {
 			//throw new ResourceNotFoundException("There is no user with last name " + lastName + " in the data base");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no user with last name " + lastName + " in the data base");
 		}
-		return userService.getByLastName(lastName);
+		return users;
     }
 
 	//getting data of user in JSON format and adding user to the users list
@@ -115,7 +115,7 @@ public class UserController {
 			User userSaved = userService.save(user);
 			
 			if (userSaved == null) {
-				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
+				LOG.warn("ResponseStatusException in addNewUser method. User gotten from userService is null");
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to add user to the data base");
 				// throw new ResourceNotFoundException("Failed to add user to the data base");
 			}
