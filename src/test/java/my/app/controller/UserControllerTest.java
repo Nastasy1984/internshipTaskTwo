@@ -132,16 +132,29 @@ public class UserControllerTest {
 	
     @Test (expected = ResponseStatusException.class)
 	public void findUserById_ThrowsResponseStatusException(){
-    	LOG.info("findUserById_ReturnsExistingUser method was invoked");
+    	LOG.info("findUserById_ThrowsResponseStatusException method was invoked");
     	Mockito.when(userService.getById(3)).thenReturn(null);
     	Mockito.when(userService.containsId(3)).thenReturn(false);
     	List<User> actualList = userController.findUserById(3);
     	assertEquals(actualList, null);
     }
 	
+    @Test
+	public void findUserByLastName_ReturnsExistingUser(){
+    	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
+    	Mockito.when(userService.getByLastName("Bb'First-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
+    	List<User> actualList = userController.findUserByLastName("Bb'First-Name");
+    	List<User> expected = new ArrayList<>(Arrays.asList(data.get(1)));
+    	assertEquals(actualList, expected);
+    }
 	
-	
-	
+    @Test (expected = ResponseStatusException.class)
+	public void findUserByLastName_ThrowsResponseStatusException(){
+    	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
+    	Mockito.when(userService.getByLastName("Ccc")).thenReturn(null);
+    	List<User> actualList = userController.findUserByLastName("Ccc");
+    	assertEquals(actualList, null);
+    }
 	
 	
 	
