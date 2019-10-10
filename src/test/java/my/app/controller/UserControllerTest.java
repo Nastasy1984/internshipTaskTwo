@@ -58,14 +58,14 @@ public class UserControllerTest {
 	
 	@Autowired
 	private ObjectMapper mapper;
-	@Autowired
+	/*@Autowired
 	private CloseableHttpClient client;
 	@Autowired
 	private String hostName;
-	private String urlBeginsWith;
+	private String urlBeginsWith;*/
 	private List<User> data;
 	
-	@PostConstruct
+	/*@PostConstruct
     public void postConstruct() {
 		LOG.info("postConstruct method was invoked");
     	LOG.debug("Hostname in postConstruct: {}", hostName);
@@ -77,7 +77,7 @@ public class UserControllerTest {
     public void cleanUp() throws Exception {
 		LOG.info("cleanUp method was invoked");
     	client.close();
-    }
+    }*/
 	
 	@Before
     public void setUp(){		
