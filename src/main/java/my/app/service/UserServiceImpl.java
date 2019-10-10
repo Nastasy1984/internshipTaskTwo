@@ -62,15 +62,6 @@ public class UserServiceImpl implements UserService {
 		LOG.debug("update method returns null");
 		return null;
 	}
-	
-	
-	@Override
-	public void delete(User user) {
-		LOG.info("delete method was invoked");
-		if(user!=null) {
-			userRepository.delete(user);
-		}
-	}
 
 	@Override
 	public void deleteById(Integer id) {

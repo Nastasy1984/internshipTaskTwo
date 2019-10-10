@@ -1,27 +1,138 @@
 package my.app.controller;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import my.app.model.User;
+import static org.junit.Assert.*;
 
+import my.app.UserControllerTestConfiguration;
+import my.app.model.User;
+import my.app.service.UserService;
+
+
+//DONE by https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles/
+@Component
+@ActiveProfiles("test")
+@RunWith(SpringJUnit4ClassRunner.class)
+//ApplicationContext will be loaded from the static inner ContextConfiguration class
+@ContextConfiguration(classes=UserControllerTestConfiguration.class, loader=AnnotationConfigContextLoader.class)
 public class UserControllerTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.UserControllerTest.class.getName());
+	@Autowired
+	//@Mock
+    private UserService userService;
+	
+	//@Autowired
+	@InjectMocks
+    private UserController userController;
+	
+	@Autowired
+	private ObjectMapper mapper;
+	@Autowired
+	private CloseableHttpClient client;
+	@Autowired
+	private String hostName;
+	private String urlBeginsWith;
+	private List<User> data;
+	
+	@PostConstruct
+    public void postConstruct() {
+		LOG.info("postConstruct method was invoked");
+    	LOG.debug("Hostname in postConstruct: {}", hostName);
+        urlBeginsWith = "http://" + hostName + ":8080/SpringRest/api/";
+        LOG.debug("urlBeginsWith set in postConstruct: {}", urlBeginsWith);
+    }
+	
+    @PreDestroy
+    public void cleanUp() throws Exception {
+		LOG.info("cleanUp method was invoked");
+    	client.close();
+    }
+	
+	@Before
+    public void setUp(){		
+		LOG.info("setUp method was invoked");
+		MockitoAnnotations.initMocks(this);
+		data = new ArrayList<>();
+		User aUser = new User ("AaFirstName", "AaLastName");
+		aUser.setId(1);
+		aUser.seteMail("a@a");
+		aUser.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));
+		List<String> aNum = new ArrayList<>(Arrays.asList("11", "12", "13", "14"));
+		aUser.setPhoneNumbers(aNum);
+		data.add(aUser);
+		
+		User bUser = new User ("Bb'First-Name", "Bb'Last-Name");
+		bUser.setId(2);
+		bUser.setCreatedOn(LocalDateTime.of(2005, 5, 5, 5, 5));
+		List<String> bNum = new ArrayList<>(Arrays.asList("21"));
+		bUser.setPhoneNumbers(bNum);
+		data.add(bUser);
+		/*
+		Mockito.when(userServiceMock.getAllAsList()).thenReturn(data);
+		Mockito.when(userServiceMock.getById(1)).thenReturn(aUser);
+		Mockito.when(userServiceMock.getById(3)).thenReturn(null);
+		Mockito.when(userServiceMock.getByLastName(Mockito.eq(bUser.getLastName()))).thenReturn(new ArrayList<>(Arrays.asList(bUser)));
+		Mockito.when(userServiceMock.getByLastName("WrongLastName")).thenReturn(null);
+		Mockito.when(userServiceMock.containsId(3)).thenReturn(false);
+		Mockito.when(userServiceMock.containsId(1)).thenReturn(true);
+		Mockito.doNothing().when(userServiceMock).deleteById(Mockito.any());
+		*/
+    }
+	
+    @Test
+    public void getAllUsers() throws IOException {
+    	LOG.info("getAllUsers method was invoked");
+       	Mockito.when(userService.getAllAsList()).thenReturn(data);
+       	ResponseEntity<List<User>> responseEntity = userController.getUsersList();
+    	assertEquals(responseEntity.getBody(), data);
+    	assertEquals(responseEntity.getStatusCodeValue(), 200);
+    }
+    
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 /*
 	private ObjectMapper mapper;
 	private CloseableHttpClient client;

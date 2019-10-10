@@ -6,7 +6,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,7 @@ public class WebConfig implements WebMvcConfigurer{
 	  
     @Bean
     String hostName() {
+    	LOG.info("hostName method was invoked");
     	//String hostUrlString = hostname;
     	String hostname = env.getProperty("hostname");
     	LOG.info("hostUrl creates hostUrl BEAN: {}", hostname);

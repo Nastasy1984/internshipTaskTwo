@@ -32,7 +32,13 @@
     		<version>2.7.0</version>
 		</dependency>
 	
-	
+	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+    		<groupId>org.mockito</groupId>
+    		<artifactId>mockito-core</artifactId>
+    		<version>3.1.0</version>
+    		<scope>test</scope>
+		</dependency>	
 	
 		<!-- for fields' validation in User -->
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
@@ -56,6 +62,14 @@
 			<version>${hibernate-validator.ver}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		<dependency>
+   		 	<groupId>org.springframework</groupId>
+    		<artifactId>spring-test</artifactId>
+    		<version>${spring.ver}</version>
+    		<scope>test</scope>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
 		<dependency>
 			<groupId>org.springframework</groupId>
