@@ -28,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -109,6 +110,7 @@ public class UserControllerTest {
 		*/
     }
 	
+	//DONE
     @Test
     public void getAllUsers() throws IOException {
     	LOG.info("getAllUsers method was invoked");
@@ -118,10 +120,24 @@ public class UserControllerTest {
     	assertEquals(responseEntity.getStatusCodeValue(), 200);
     }
     
-    
+    @Test
+	public void findUserById_ReturnsExistingUser(){
+    	LOG.info("findUserById_ReturnsExistingUser method was invoked");
+    	Mockito.when(userService.getById(1)).thenReturn(data.get(0));
+    	Mockito.when(userService.containsId(1)).thenReturn(true);
+    	List<User> actualList = userController.findUserById(1);
+    	List<User> expected = new ArrayList<>(Arrays.asList(data.get(0)));
+    	assertEquals(actualList, expected);
+    }
 	
-	
-	
+    @Test (expected = ResponseStatusException.class)
+	public void findUserById_ThrowsResponseStatusException(){
+    	LOG.info("findUserById_ReturnsExistingUser method was invoked");
+    	Mockito.when(userService.getById(3)).thenReturn(null);
+    	Mockito.when(userService.containsId(3)).thenReturn(false);
+    	List<User> actualList = userController.findUserById(3);
+    	assertEquals(actualList, null);
+    }
 	
 	
 	
