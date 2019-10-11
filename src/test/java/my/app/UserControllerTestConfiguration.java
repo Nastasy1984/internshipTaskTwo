@@ -2,9 +2,6 @@ package my.app;
 
 import java.io.StringWriter;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +44,7 @@ public class UserControllerTestConfiguration {
     }
 	
 	@Bean
+	@Scope("prototype")
     public StringWriter writer() {
     	LOG.info("stringWriter method was invoked");
     	return new StringWriter();

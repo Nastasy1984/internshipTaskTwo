@@ -113,6 +113,9 @@ public class UserControllerTestRest {
     	when(userService.getById(1)).thenReturn(data.get(0));
     	when(userService.containsId(1)).thenReturn(true);
     	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(0))));
+    	System.out.println(writer.toString());
+    	System.out.println();
+    	
     	given()
 	      .when()
 	        .get("/api/user/1")
@@ -125,7 +128,6 @@ public class UserControllerTestRest {
     	verify(userService).containsId(1);
     }
     
-   // @Test (expected = ResponseStatusException.class)
     @Test
 	public void findUserById_ThrowsResponseStatusException() throws IOException {
     	LOG.info("findUserById_ReturnsExistingUser method was invoked");
@@ -138,6 +140,25 @@ public class UserControllerTestRest {
 	        .log().ifValidationFails()
 	        .statusCode(NOT_FOUND.value());
     	verify(userService).containsId(5);
+    	verifyNoMoreInteractions(userService);
     }
 
+    @Test
+	public void findUserByLastName_ReturnsExistingUser() throws IOException{
+    	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
+    	when(userService.getByLastName("Bb'First-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
+    	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(1))));
+    	
+    	given().param("lastName", "Bb'First-Name")
+	      .when()
+	        .get("/api/userln", "Bb'First-Name")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(OK.value())
+	        .contentType(JSON)
+	        .body(is(equalTo(writer.toString())));
+    	verify(userService).getByLastName("Bb'First-Name");
+    }
+    
+    
 }
