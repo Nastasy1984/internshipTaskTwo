@@ -1,9 +1,11 @@
 package my.app.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,11 +27,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.CREATED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,7 +73,6 @@ public class UserControllerTestRest {
 	@Autowired
 	StringWriter writer;
 
-	
 	@Before
     public void setUp(){		
 		LOG.info("setUp method was invoked");
@@ -138,7 +141,6 @@ public class UserControllerTestRest {
 	        .log().ifValidationFails()
 	        .statusCode(NOT_FOUND.value());
     	verify(userService).containsId(5);
-    	verifyNoMoreInteractions(userService);
     }
 
     @Test
@@ -170,6 +172,60 @@ public class UserControllerTestRest {
 	        .log().ifValidationFails()
 	        .statusCode(NOT_FOUND.value());
     	verify(userService).getByLastName("Ccc");
-    	verifyNoMoreInteractions(userService);
+
     }
+    
+    @Test 
+	public void delete_HappyPath(){
+    	LOG.info("delete_HappyPath method was invoked");
+    	when(userService.containsId(2)).thenReturn(true);
+    	doNothing().when(userService).deleteById(any());
+    	
+    	given()
+	      .when()
+	        .delete("/api/user/2")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(OK.value());
+    	verify(userService).containsId(2);
+    	verify(userService).deleteById(2);
+    }
+    
+    @Test
+	public void delete_ThrowsResponseStatusException(){
+    	LOG.info("delete_ThrowsResponseStatusException method was invoked");
+    	when(userService.containsId(4)).thenReturn(true);
+    	doNothing().when(userService).deleteById(any());
+    	
+    	given()
+	      .when()
+	        .get("/api/user/4")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(NOT_FOUND.value());
+    	verify(userService).containsId(4);
+    }
+    /*
+    @Test 
+	public void addNewUser_HappyPath() throws IOException{
+    	LOG.info("addNewUser_HappyPath method was invoked");
+    	User user = new User("CcFN","CcLN");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
+    	when(userService.save(user)).thenReturn(user);
+    	mapper.writeValue(writer, user);
+    	System.out.println(writer);
+    	RequestBody requestBody = new RequestBody();
+    	
+    	given().param("user", writer.toString())
+	      .when()
+	        .post("/api/add")
+	        .contentType("application/json")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(CREATED.value())
+	        .contentType(JSON)
+	        .body(is(equalTo(writer.toString())));
+    	
+    }*/
 }

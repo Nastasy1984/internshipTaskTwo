@@ -76,8 +76,8 @@ public class UserControllerTest {
        	when(userService.getAllAsList()).thenReturn(data);
        	ResponseEntity<List<User>> responseEntity = userController.getUsersList();
        	verify(userService).getAllAsList();
-    	assertEquals(responseEntity.getBody(), data);
-    	assertEquals(responseEntity.getStatusCodeValue(), 200);
+    	assertEquals(data, responseEntity.getBody());
+    	assertEquals(200, responseEntity.getStatusCodeValue());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class UserControllerTest {
     	when(userService.containsId(1)).thenReturn(true);
     	List<User> actualList = userController.findUserById(1);
     	List<User> expected = new ArrayList<>(Arrays.asList(data.get(0)));
-    	assertEquals(actualList, expected);
+    	assertEquals(expected, actualList);
     }
 
     @Test (expected = ResponseStatusException.class)
@@ -106,7 +106,7 @@ public class UserControllerTest {
     	List<User> actualList = userController.findUserByLastName("Bb'First-Name");
     	List<User> expected = new ArrayList<>(Arrays.asList(data.get(1)));
     	verify(userService).getByLastName("Bb'First-Name");
-    	assertEquals(actualList, expected);
+    	assertEquals(expected, actualList);
     }
 	
     @Test (expected = ResponseStatusException.class)
@@ -115,7 +115,7 @@ public class UserControllerTest {
     	when(userService.getByLastName("Ccc")).thenReturn(null);
     	List<User> actualList = userController.findUserByLastName("Ccc");
     	verify(userService).getByLastName("Ccc");
-    	assertEquals(actualList, null);
+    	assertEquals(null, actualList);
     }
 		
     @Test 
@@ -126,7 +126,6 @@ public class UserControllerTest {
     	userController.delete(1);
     	verify(userService).containsId(1);
     	verify(userService).deleteById(1);
-    	assertEquals(0, 0);
     }
   
     @Test (expected = ResponseStatusException.class)
@@ -145,8 +144,8 @@ public class UserControllerTest {
     	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
     	when(userService.save(user)).thenReturn(user);
     	ResponseEntity<User> responseEntity = userController.addNewUser(user);
-    	assertEquals(responseEntity.getStatusCodeValue(), 200);
-    	assertEquals(responseEntity.getBody(), user);	
+    	assertEquals(201, responseEntity.getStatusCodeValue());
+    	assertEquals(user, responseEntity.getBody());	
     }
     
     @Test 
@@ -155,8 +154,8 @@ public class UserControllerTest {
     	User user = new User("CcFN","123");
     	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
     	ResponseEntity<User> responseEntity = userController.addNewUser(user);
-    	assertEquals(responseEntity.getStatusCodeValue(), 400);
-    	assertEquals(responseEntity.getBody(), null);	
+    	assertEquals(400, responseEntity.getStatusCodeValue());
+    	assertEquals(null, responseEntity.getBody());	
     }
     
     @Test 
@@ -167,8 +166,8 @@ public class UserControllerTest {
     	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(false);
     	ResponseEntity<User> responseEntity = userController.addNewUser(user);
  	    verify(userService, times(0)).save(any());
-    	assertEquals(responseEntity.getStatusCodeValue(), 400);
-    	assertEquals(responseEntity.getBody(), null);	
+    	assertEquals(400, responseEntity.getStatusCodeValue());
+    	assertEquals(null, responseEntity.getBody());	
     }
     
     @Test (expected = ResponseStatusException.class)
@@ -194,8 +193,8 @@ public class UserControllerTest {
     	when(userService.checkNumbers(user.getPhoneNumbers(), user.getId())).thenReturn(true);
     	when(userService.update(user)).thenReturn(user);
     	ResponseEntity<User> responseEntity = userController.updateUser(user.getId(), user);
-    	assertEquals(responseEntity.getStatusCodeValue(), 200);
-    	assertEquals(responseEntity.getBody(), user);
+    	assertEquals(200, responseEntity.getStatusCodeValue());
+    	assertEquals(user, responseEntity.getBody());
     }
 
     @Test 
@@ -207,8 +206,8 @@ public class UserControllerTest {
     	user.seteMail("eMail@Test.com");
     	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));
     	ResponseEntity<User> responseEntity = userController.updateUser(user.getId(), user);
-    	assertEquals(responseEntity.getStatusCodeValue(), 400);
-    	assertEquals(responseEntity.getBody(), null);	
+    	assertEquals(400, responseEntity.getStatusCodeValue());
+    	assertEquals(null, responseEntity.getBody());	
     }
    
     @Test 
@@ -221,8 +220,8 @@ public class UserControllerTest {
     	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));   	
     	when(userService.checkNumbers(user.getPhoneNumbers(), user.getId())).thenReturn(false);
     	ResponseEntity<User> responseEntity = userController.updateUser(user.getId(), user);
-    	assertEquals(responseEntity.getStatusCodeValue(), 400);
-    	assertEquals(responseEntity.getBody(), null);    	
+    	assertEquals(400, responseEntity.getStatusCodeValue());
+    	assertEquals(null, responseEntity.getBody());    	
     }
     
     @Test (expected = ResponseStatusException.class)

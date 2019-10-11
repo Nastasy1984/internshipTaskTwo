@@ -213,7 +213,7 @@ public class PageService {
 					return ResponseEntity.status(respCode).body(null);
 				}
 
-				if (respCode == 200) {
+				if (respCode == 201) {
 					User userAdded = mapper.readValue(response.getEntity().getContent(), User.class);
 					LOG.debug("addUser method got user: {}", userAdded.toString());
 					return ResponseEntity.status(respCode).body(userAdded);

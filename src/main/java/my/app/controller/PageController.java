@@ -172,7 +172,7 @@ public class PageController {
 			return failedAdding(failString, redirectAttributes, userGotten);
 		}
 
-		if (respCode == 200) {
+		if (respCode == 201) {
 			User user = responseEntity.getBody();
 
 			if (user != null) {

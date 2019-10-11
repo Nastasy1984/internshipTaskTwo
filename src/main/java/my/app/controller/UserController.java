@@ -121,7 +121,7 @@ public class UserController {
 			}
 
 			LOG.info("user gotten from userService is: {}", userSaved.toString());
-			return ResponseEntity.status(HttpStatus.OK).body(userSaved);
+			return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
