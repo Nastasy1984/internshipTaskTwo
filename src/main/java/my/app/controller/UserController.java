@@ -144,10 +144,11 @@ public class UserController {
 		}
 		
 		if (userService.checkNumbers(user.getPhoneNumbers(), id)) {
+			LOG.debug("updateUser method: user's numbers are unique");
 			User userUpdated = userService.update(user);
 
 			if (userUpdated == null) {
-				LOG.warn("ResourceNotFoundException in addNewUser method. User gotten from userService is null");
+				LOG.warn("ResourceNotFoundException in updateUser method. User gotten from userService is null");
 				// throw new ResourceNotFoundException("Failed to update user with id " + id);
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to update user with id " + id);
 			}

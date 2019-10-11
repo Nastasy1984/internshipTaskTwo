@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import org.slf4j.Logger;
@@ -89,12 +90,13 @@ public class UserControllerTestRest {
 		bUser.setPhoneNumbers(bNum);
 		data.add(bUser);
 		
+		
 		//The REST Assured test library for Java 
 		//supports unit testing Spring MVC controllers 
 		//using the new spring-mock-mvc module. This module provides a substitute for the 
 		//standard RestAssured API called RestAssuredMockMvc.
 		RestAssuredMockMvc.standaloneSetup(userController);
-
+		Mockito.clearInvocations(userService);
     }
 
 	@Test

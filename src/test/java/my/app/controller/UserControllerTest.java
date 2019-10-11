@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.*;
 
@@ -66,6 +67,7 @@ public class UserControllerTest {
 		List<String> bNum = new ArrayList<>(Arrays.asList("21"));
 		bUser.setPhoneNumbers(bNum);
 		data.add(bUser);
+		Mockito.clearInvocations(userService);
     }
 	
     @Test
@@ -220,13 +222,14 @@ public class UserControllerTest {
     	ResponseEntity<User> responseEntity = userController.updateUser(user.getId(), user);
     	assertEquals(400, responseEntity.getStatusCodeValue());
     	assertEquals(null, responseEntity.getBody());    	
+    	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
     }
     
     @Test (expected = ResponseStatusException.class)
 	public void updateUser_ThrowsResponseStatusException(){
     	LOG.info("updateUser_ThrowsResponseStatusException method was invoked");
     	User user = new User("CcFN","CcLn");
-    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("51")));
     	user.setId(1);
     	user.seteMail("eMail@Test.com");
     	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));   	
@@ -236,4 +239,5 @@ public class UserControllerTest {
     	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
     	verify(userService, times(1)).update(any());
     }
+   
 }

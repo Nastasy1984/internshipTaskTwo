@@ -1,6 +1,8 @@
 package my.app.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -16,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,8 +93,10 @@ public class UserControllerTestMockMVC {
 		mockMvc = MockMvcBuilders
 		        .standaloneSetup(userController)
 		        .build();
+		//Mockito.reset(userService);
+		Mockito.clearInvocations(userService);
     }
-	
+
     @Test
 	public void getAllUsers() throws Exception{
     	LOG.info("getAllUsers method was invoked");
@@ -128,7 +133,7 @@ public class UserControllerTestMockMVC {
     }
 	
     @Test
-	public void findUserById_ThrowsResponseStatusException() throws Exception {
+	public void findUserById_Returns404() throws Exception {
     	LOG.info("findUserById_ReturnsExistingUser method was invoked");
     	when(userService.getById(5)).thenReturn(data.get(0));
     	when(userService.containsId(5)).thenReturn(false);
@@ -137,11 +142,41 @@ public class UserControllerTestMockMVC {
                 .andExpect(status().isNotFound());
 
     	verify(userService).containsId(5);
-    	verifyNoMoreInteractions(userService);
     }
 	
+    @Test
+	public void findByLastName_ReturnsExistingUser() throws Exception {
+    	LOG.info("findUserByLastName_ReturnsExistingUser method was invoked");
+    	when(userService.getByLastName("Bb'First-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
+    	
+    	MvcResult result = mockMvc.perform(get("/api/userln")
+    			.param("lastName", "Bb'First-Name")
+    )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE ))
+                .andReturn();
+
+    	String content = result.getResponse().getContentAsString();
+    	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(1))));
+    	verify(userService).getByLastName("Bb'First-Name");
+    	assertEquals(writer.toString(), content);
+    }
+       
+    @Test
+	public void findByLastName_Returns404() throws Exception {
+    	LOG.info("findByLastName_Returns404 method was invoked");
+    	when(userService.getByLastName("Cc")).thenReturn(null);
+    	
+    	mockMvc.perform(get("/api/userln")
+    			.param("lastName", "Cc")
+    )
+                .andExpect(status().isNotFound());
+    	verify(userService).getByLastName("Cc");
+    }
+    
+    
     @Test 
-	public void addNewUser_HappyPath() throws JsonProcessingException, Exception{
+	public void addNewUser_HappyPath() throws Exception{
     	LOG.info("addNewUser_HappyPath method was invoked");
     	User user = new User("CcFN","CcLN");
     	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
@@ -160,7 +195,138 @@ public class UserControllerTestMockMVC {
     	StringWriter writer = new StringWriter();
     	mapper.writeValue(writer, user);
     	assertEquals(writer.toString(), content);
-    	verify(userService).save(user);
+    	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
     }
+    
+    @Test 
+	public void addNewUser_InvalidLastName() throws Exception{
+    	LOG.info("addNewUser_InvalidLastName method was invoked");
+    	User user = new User("CcFN","123");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("41")));
+   	
+    	mockMvc.perform(post("/api/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isBadRequest());
+    }
+ 
+    @Test 
+	public void addNewUser_NotUniqueNumbers() throws Exception{
+    	LOG.info("addNewUser_NotUniqueNumbers method was invoked");
+    	User user = new User("CcFN","CcLN");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(false);
+    	
+    	mockMvc.perform(post("/api/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isBadRequest());
+    	
+    	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
+    }
+    
+    @Test 
+	public void addNewUser_Returns404() throws Exception{
+    	LOG.info("addNewUser_Returns404 method was invoked");
+    	User user = new User("C","C");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("1")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
+    	when(userService.save(user)).thenReturn(null);
+    	
+    	mockMvc.perform(post("/api/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isNotFound());
+    	
+    	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
+    	verify(userService).save(user);
+	}
+   
+    @Test 
+	public void updateUser_HappyPath() throws Exception{
+    	LOG.info("updateUser_HappyPath method was invoked");
+    	User user = new User("CcFN","CcLn");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	user.setId(1);
+    	user.seteMail("eMail@Test.com");
+    	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), user.getId())).thenReturn(true);
+    	when(userService.update(user)).thenReturn(user);
+   	
+    	MvcResult result = mockMvc.perform(put("/api/user/{id}" , 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE ))
+                .andReturn();
+                
+    	String content = result.getResponse().getContentAsString();
+    	StringWriter writer = new StringWriter();
+    	mapper.writeValue(writer, user);
+    	assertEquals(writer.toString(), content);
+    	verify(userService).checkNumbers(user.getPhoneNumbers(), user.getId());
+    }
+   
+    @Test 
+	public void updateUser_InvalidLastName() throws Exception{
+    	LOG.info("updateUser_InvalidLastName method was invoked");
+    	User user = new User("CcFN","/8");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	user.setId(1);
+    	user.seteMail("eMail@Test.com");
+    	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));
+   	
+    	mockMvc.perform(put("/api/user/{id}" , 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test 
+	public void updateUser_NotUniqueNumbers() throws Exception{
+    	LOG.info("HERE 1 updateUser_NotUniqueNumbers method was invoked");
+    	User user = new User("CcFN","CcLn");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	user.setId(1);
+    	user.seteMail("eMail@Test.com");
+    	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));   	
+    	when(userService.checkNumbers(user.getPhoneNumbers(), user.getId())).thenReturn(false);
+    	
+    	mockMvc.perform(put("/api/user/{id}" , 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isBadRequest());
+    	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
+    }
+
+    @Test 
+	public void updateUser_Returns404() throws Exception{
+    	LOG.info("HERE 2 updateUser_Returns404 method was invoked");
+    	User user = new User("CcFN","CcLn");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("11")));
+    	user.setId(1);
+    	user.seteMail("eMail@Test.com");
+    	user.setCreatedOn(LocalDateTime.of(2010, 10, 10, 10, 10));  
+    	    	
+    	when(userService.checkNumbers(user.getPhoneNumbers(), user.getId())).thenReturn(true);
+    	when(userService.update(user)).thenReturn(null);
+    	
+    	mockMvc.perform(put("/api/user/{id}" , 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isNotFound());
+    	
+    	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
+    	verify(userService).update(user);
+	}
+    
+    
     
 }
