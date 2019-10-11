@@ -113,8 +113,6 @@ public class UserControllerTestRest {
     	when(userService.getById(1)).thenReturn(data.get(0));
     	when(userService.containsId(1)).thenReturn(true);
     	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(0))));
-    	System.out.println(writer.toString());
-    	System.out.println();
     	
     	given()
 	      .when()
@@ -151,7 +149,7 @@ public class UserControllerTestRest {
     	
     	given().param("lastName", "Bb'First-Name")
 	      .when()
-	        .get("/api/userln", "Bb'First-Name")
+	        .get("/api/userln")
 	      .then()
 	        .log().ifValidationFails()
 	        .statusCode(OK.value())
@@ -160,5 +158,18 @@ public class UserControllerTestRest {
     	verify(userService).getByLastName("Bb'First-Name");
     }
     
-    
+    @Test
+	public void findUserByLastName_ThrowsResponseStatusException() throws IOException{
+    	LOG.info("findUserByLastName_ThrowsResponseStatusException method was invoked");
+    	when(userService.getByLastName("Ccc")).thenReturn(null);
+    	
+    	given().param("lastName", "Ccc")
+	      .when()
+	        .get("/api/userln")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(NOT_FOUND.value());
+    	verify(userService).getByLastName("Ccc");
+    	verifyNoMoreInteractions(userService);
+    }
 }
