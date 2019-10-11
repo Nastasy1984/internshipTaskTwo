@@ -65,11 +65,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         	.and() 
         	.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll()
         	.and()
-        	.httpBasic()//TODO delete чтобы не отправлять логин пароль с каждым запросом
+        	.httpBasic()
         	.and()
         	.csrf() 
         	.disable(); 
-        	
         ;
     }
 	
