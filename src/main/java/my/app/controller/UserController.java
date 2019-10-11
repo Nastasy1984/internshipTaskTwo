@@ -155,6 +155,7 @@ public class UserController {
 			LOG.info("user gotten from userService is: {}", userUpdated.toString());
 			return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
 		}
+		LOG.debug("updateUser method: numbers {} are not unique", user.getPhoneNumbers());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	}
 

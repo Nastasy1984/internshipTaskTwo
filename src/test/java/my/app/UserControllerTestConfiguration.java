@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import my.app.service.UserService;
 
 ////DONE by https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles/
@@ -33,5 +35,11 @@ public class UserControllerTestConfiguration {
     public UserService userService() {
     	LOG.info("userService method was invoked");
         return Mockito.mock(UserService.class);
+    }
+	
+	@Bean
+    public ObjectMapper objectMapper() {
+    	LOG.info("objectMapper method was invoked");
+    	return new ObjectMapper();
     }
 }
