@@ -2,6 +2,7 @@ package my.app.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -339,6 +340,27 @@ public class UserControllerTestMockMVC {
     	verifyNoMoreInteractions(userService);
 	}
     
+    @Test
+	public void delete_HappyPath() throws Exception{
+    	LOG.info("delete_HappyPath method was invoked");
+    	when(userService.containsId(1)).thenReturn(true);
+    	doNothing().when(userService).deleteById(any());
+    	mockMvc.perform(delete("/api/user/{id}" , 1))
+                .andExpect(status().isOk());
+    	verify(userService).containsId(1);
+    	verify(userService).deleteById(1);
+    	verifyNoMoreInteractions(userService);
+    }
+    
+    @Test
+	public void delete_Returns404() throws Exception{
+    	LOG.info("delete_Returns404 method was invoked");
+    	when(userService.containsId(1)).thenReturn(false);
+    	mockMvc.perform(delete("/api/user/{id}" , 1))
+                .andExpect(status().isNotFound());
+    	verify(userService).containsId(1);
+    	verifyNoMoreInteractions(userService);
+    }
     
     
 }
