@@ -71,7 +71,7 @@ public class UserControllerTest {
     }
 	
     @Test
-    public void getAllUsers() throws IOException {
+    public void getAllUsers() {
     	LOG.info("getAllUsers method was invoked");
        	when(userService.getAllAsList()).thenReturn(data);
        	ResponseEntity<List<User>> responseEntity = userController.getUsersList();

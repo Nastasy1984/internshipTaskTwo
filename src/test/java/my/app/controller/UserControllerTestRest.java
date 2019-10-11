@@ -2,11 +2,14 @@ package my.app.controller;
 
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.imageio.IIOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +37,7 @@ import my.app.service.UserService;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import static io.restassured.http.ContentType.JSON;
@@ -60,6 +64,9 @@ public class UserControllerTestRest {
 	
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Autowired
+	StringWriter writer;
 
 	
 	@Before
@@ -84,9 +91,9 @@ public class UserControllerTestRest {
     }
 	
 	@Test
-	public void test_get_all_success() throws Exception {
+	public void getAllUsers() throws IOException{
 		when(userService.getAllAsList()).thenReturn(data);
-		StringWriter writer = new StringWriter();
+		writer = new StringWriter();
 		mapper.writeValue(writer, data);
 		given()
 	      .when()
@@ -99,4 +106,20 @@ public class UserControllerTestRest {
 	    verify(userService).getAllAsList();
 	    verifyNoMoreInteractions(userService);
 	}
+		
+    @Test
+	public void findUserById_ReturnsExistingUser() throws IOException{
+    	LOG.info("findUserById_ReturnsExistingUser method was invoked");
+    	when(userService.getById(1)).thenReturn(data.get(0));
+    	when(userService.containsId(1)).thenReturn(true);
+    	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(0))));
+    	given()
+	      .when()
+	        .get("/api/user/1")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(OK.value())
+	        .contentType(JSON)
+	        .body(is(equalTo(writer.toString())));
+    }
 }

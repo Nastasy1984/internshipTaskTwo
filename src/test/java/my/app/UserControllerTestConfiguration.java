@@ -1,5 +1,7 @@
 package my.app;
 
+import java.io.StringWriter;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -41,5 +43,11 @@ public class UserControllerTestConfiguration {
     public ObjectMapper objectMapper() {
     	LOG.info("objectMapper method was invoked");
     	return new ObjectMapper();
+    }
+	
+	@Bean
+    public StringWriter writer() {
+    	LOG.info("stringWriter method was invoked");
+    	return new StringWriter();
     }
 }
