@@ -129,6 +129,7 @@ public class UserControllerTestMockMVC {
     	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(0))));
     	verify(userService).getById(1);
     	verify(userService).containsId(1);
+    	verifyNoMoreInteractions(userService);
     	assertEquals(writer.toString(), content);
     }
 	
@@ -142,6 +143,7 @@ public class UserControllerTestMockMVC {
                 .andExpect(status().isNotFound());
 
     	verify(userService).containsId(5);
+    	verifyNoMoreInteractions(userService);
     }
 	
     @Test
@@ -159,6 +161,7 @@ public class UserControllerTestMockMVC {
     	String content = result.getResponse().getContentAsString();
     	mapper.writeValue(writer, new ArrayList<>(Arrays.asList(data.get(1))));
     	verify(userService).getByLastName("Bb'First-Name");
+    	verifyNoMoreInteractions(userService);
     	assertEquals(writer.toString(), content);
     }
        
@@ -172,8 +175,8 @@ public class UserControllerTestMockMVC {
     )
                 .andExpect(status().isNotFound());
     	verify(userService).getByLastName("Cc");
+    	verifyNoMoreInteractions(userService);
     }
-    
     
     @Test 
 	public void addNewUser_HappyPath() throws Exception{
@@ -196,6 +199,8 @@ public class UserControllerTestMockMVC {
     	mapper.writeValue(writer, user);
     	assertEquals(writer.toString(), content);
     	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
+    	verify(userService).save(user);
+    	verifyNoMoreInteractions(userService);
     }
     
     @Test 
@@ -209,6 +214,7 @@ public class UserControllerTestMockMVC {
                 .content(mapper.writeValueAsBytes(user))
                 )
                 .andExpect(status().isBadRequest());
+    	verifyNoMoreInteractions(userService);
     }
  
     @Test 
@@ -223,8 +229,8 @@ public class UserControllerTestMockMVC {
                 .content(mapper.writeValueAsBytes(user))
                 )
                 .andExpect(status().isBadRequest());
-    	
     	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
+    	verifyNoMoreInteractions(userService);
     }
     
     @Test 
@@ -243,6 +249,7 @@ public class UserControllerTestMockMVC {
     	
     	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
     	verify(userService).save(user);
+    	verifyNoMoreInteractions(userService);
 	}
    
     @Test 
@@ -269,6 +276,8 @@ public class UserControllerTestMockMVC {
     	mapper.writeValue(writer, user);
     	assertEquals(writer.toString(), content);
     	verify(userService).checkNumbers(user.getPhoneNumbers(), user.getId());
+    	verify(userService).update(user);
+    	verifyNoMoreInteractions(userService);
     }
    
     @Test 
@@ -285,6 +294,7 @@ public class UserControllerTestMockMVC {
                 .content(mapper.writeValueAsBytes(user))
                 )
                 .andExpect(status().isBadRequest());
+    	verifyNoMoreInteractions(userService);
     }
 
     @Test 
@@ -303,6 +313,7 @@ public class UserControllerTestMockMVC {
                 )
                 .andExpect(status().isBadRequest());
     	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
+    	verifyNoMoreInteractions(userService);
     }
 
     @Test 
@@ -325,6 +336,7 @@ public class UserControllerTestMockMVC {
     	
     	verify(userService, times(1)).checkNumbers(user.getPhoneNumbers(), user.getId());
     	verify(userService).update(user);
+    	verifyNoMoreInteractions(userService);
 	}
     
     
