@@ -93,12 +93,10 @@ public class UserControllerTest {
     @Test (expected = ResponseStatusException.class)
 	public void findUserById_ThrowsResponseStatusException(){
     	LOG.info("findUserById_ThrowsResponseStatusException method was invoked");
-    	when(userService.getById(3)).thenReturn(null);
     	when(userService.containsId(3)).thenReturn(false);
-    	List<User> actualList = userController.findUserById(3);
-    	verify(userService).getById(3);
+    	userController.findUserById(3);
     	verify(userService).containsId(3);
-    	assertEquals(actualList, null);
+    	verifyNoMoreInteractions(userService);
     }
 	   
     @Test

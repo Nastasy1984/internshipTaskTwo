@@ -25,9 +25,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,7 +39,6 @@ import my.app.service.UserService;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import static io.restassured.http.ContentType.JSON;
@@ -104,7 +105,6 @@ public class UserControllerTestRest {
 	        .contentType(JSON)
 	        .body(is(equalTo(writer.toString())));
 	    verify(userService).getAllAsList();
-	    verifyNoMoreInteractions(userService);
 	}
 		
     @Test
@@ -121,5 +121,23 @@ public class UserControllerTestRest {
 	        .statusCode(OK.value())
 	        .contentType(JSON)
 	        .body(is(equalTo(writer.toString())));
+    	verify(userService).getById(1);
+    	verify(userService).containsId(1);
     }
+    
+   // @Test (expected = ResponseStatusException.class)
+    @Test
+	public void findUserById_ThrowsResponseStatusException() throws IOException {
+    	LOG.info("findUserById_ReturnsExistingUser method was invoked");
+    	when(userService.getById(5)).thenReturn(data.get(0));
+    	when(userService.containsId(5)).thenReturn(false);
+    	given()
+	      .when()
+	        .get("/api/user/5")
+	      .then()
+	        .log().ifValidationFails()
+	        .statusCode(NOT_FOUND.value());
+    	verify(userService).containsId(5);
+    }
+
 }
