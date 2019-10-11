@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import my.app.UserControllerTestConfiguration;
@@ -88,7 +90,6 @@ public class UserControllerTestMockMVC {
 		mockMvc = MockMvcBuilders
 		        .standaloneSetup(userController)
 		        .build();
-
     }
 	
     @Test
@@ -139,4 +140,27 @@ public class UserControllerTestMockMVC {
     	verifyNoMoreInteractions(userService);
     }
 	
+    @Test 
+	public void addNewUser_HappyPath() throws JsonProcessingException, Exception{
+    	LOG.info("addNewUser_HappyPath method was invoked");
+    	User user = new User("CcFN","CcLN");
+    	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
+    	when(userService.save(user)).thenReturn(user);
+   	
+    	MvcResult result = mockMvc.perform(post("/api/add")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsBytes(user))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE ))
+                .andReturn();
+                
+    	String content = result.getResponse().getContentAsString();
+    	StringWriter writer = new StringWriter();
+    	mapper.writeValue(writer, user);
+    	assertEquals(writer.toString(), content);
+    	verify(userService).save(user);
+    }
+    
 }
