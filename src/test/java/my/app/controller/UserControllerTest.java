@@ -32,8 +32,6 @@ import my.app.model.User;
 import my.app.service.UserService;
 
 
-/*Here I test UserController just for write return value. To test UC for right type and response code look at UserControllerTestRest class*/
-
 //DONE by https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles/
 @Component
 @ActiveProfiles("test")

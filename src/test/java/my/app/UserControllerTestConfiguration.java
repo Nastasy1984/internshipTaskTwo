@@ -49,4 +49,6 @@ public class UserControllerTestConfiguration {
     	LOG.info("stringWriter method was invoked");
     	return new StringWriter();
     }
+	
+
 }
