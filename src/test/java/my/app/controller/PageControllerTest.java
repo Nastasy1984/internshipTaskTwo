@@ -153,10 +153,10 @@ public class PageControllerTest {
 		when(pageService.getUserById(1)).thenReturn(new ArrayList<>(Arrays.asList(data.get(0))));
 		
 		MvcResult result = mockMvc.perform(get("/find-user/{id}", 1))
-  		.andExpect(status().isOk())
-  		.andExpect(MockMvcResultMatchers.view().name("searchResult"))
-  		.andExpect(MockMvcResultMatchers.model().attributeExists("users"))
-  		.andReturn();
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("searchResult"))
+			.andExpect(MockMvcResultMatchers.model().attributeExists("users"))
+			.andReturn();
 		
 		List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("users");
 		assertEquals(new ArrayList<User>(Arrays.asList(data.get(0))), userList);
@@ -171,15 +171,51 @@ public class PageControllerTest {
 		when(pageService.getUserById(5)).thenReturn(null);
 		
 		mockMvc.perform(get("/find-user/{id}", 5))
-  		.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
-  	   .andExpect(MockMvcResultMatchers.flash().attributeCount(1))
-  	   .andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user 5"));
+  			.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
+			.andExpect(status().isFound())
+  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user 5"));
 
 		verify(pageService).getUserById(5);
       	verifyNoMoreInteractions(pageService);
     }
+	
+
+	@Test
+    public void findUserByLastName_failedSearch() throws Exception {
+		LOG.info("findUserById_failedSearch method was invoked");
+		when(pageService.getUserByLastName("Cc'Last-Name")).thenReturn(null);
+		
+		mockMvc.perform(get("/find-user/{lastName}", "Cc'Last-Name"))
+  			.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
+			.andExpect(status().isFound())
+  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user Cc'Last-Name"));
+
+		verify(pageService).getUserByLastName("Cc'Last-Name");
+      	verifyNoMoreInteractions(pageService);
+    }
+	
+    @SuppressWarnings("unchecked")
+	@Test
+    public void findUserByLastName_HappyPath() throws Exception {
+		LOG.info("findUserByLastName_HappyPath method was invoked");
+		when(pageService.getUserByLastName("Bb'Last-Name")).thenReturn(new ArrayList<>(Arrays.asList(data.get(1))));
+		
+		MvcResult result = mockMvc.perform(get("/find-user/{lastName}", "Bb'Last-Name"))
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("searchResult"))
+			.andExpect(MockMvcResultMatchers.model().attributeExists("users"))
+			.andReturn();
+
+		List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("users");
+		assertEquals(new ArrayList<User>(Arrays.asList(data.get(1))), userList);
+		
+		verify(pageService).getUserByLastName("Bb'Last-Name");
+		verifyNoMoreInteractions(pageService);
+    }
     
     /*
-	
+		
 	*/
 }
