@@ -329,8 +329,8 @@ public class PageControllerTest {
 	}
 	
 	@Test
-    public void addNewUser_FailedAddingBecauseNumbersAreNotUnique_BadRequest() throws Exception {
-    	LOG.info("addNewUser_FailedAddingBecauseNumbersAreNotUnique_BadRequest");
+    public void addNewUser_FailedBecauseNumbersAreNotUnique_BadRequest() throws Exception {
+    	LOG.info("addNewUser_FailedBecauseNumbersAreNotUnique_BadRequest");
     	
     	//creating user for adding
     	List<String> numbers = Arrays.asList("123", "456", "789");
@@ -381,80 +381,120 @@ public class PageControllerTest {
     	verify(pageService).addUser(user);
 		verifyNoMoreInteractions(pageService);
 	}
-	
-    /*
-				@PostMapping(value = "/add-new-user")
-	public String addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
-			@RequestParam(value = "lastName", required = true) String lastName,
-			@RequestParam(value = "eMail", required = false) String eMail,
-			@RequestParam(value = "number", required = true) List<String> numbers,
-			RedirectAttributes redirectAttributes) {
-		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}",
-				firstName, lastName, eMail, numbers.toString());
 
-		// All reasons of BAD REQUEST status except not unique phone numbers we are checking here
-		// Therefore the only possible reason of BAD REQUEST status is not unique numbers
+	@Test
+    public void updateUser_HappyPath() throws Exception {
+    	LOG.info("updateUser_HappyPath method was invoked");
+    	//creating user for adding
+    	List<String> numbers = Arrays.asList("123");
+    	User user = new User ("CcFn", "CcLn");
+    	user.setPhoneNumbers(numbers);
+    	user.setId(3);
+    	when(pageService.updateUser(user)).thenReturn(ResponseEntity.status(200).body(user));
 
-		User userGotten = new User (firstName, lastName);
-		userGotten.setPhoneNumbers(numbers);
-		// checking eMail
-		if (!StringUtils.isBlank(eMail)) {
-			boolean isEmailValid = true;
-
-			try {
-				InternetAddress emailAddr = new InternetAddress(eMail);
-				emailAddr.validate();
-			} 
-			catch (AddressException ex) {
-				isEmailValid = false;
-			}
-
-			if (!isEmailValid) {
-				String failString = "Invalid E-mail";
-				return failedAdding(failString, redirectAttributes, userGotten);
-			}
-		}
-		userGotten.seteMail(eMail);
-
-		// checking numbers
-		numbers.removeIf(""::equals);
-		
-		if (numbers.isEmpty()) {
-			String failString = "User must have at least one phone number";
-			return failedAdding(failString, redirectAttributes, userGotten);
-		}
-
-		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
-		int respCode = responseEntity.getStatusCodeValue();
-
-		if (respCode == 400) {
-			LOG.warn("addNewUser method: The user's phone numbers are not unique");
-			String failString = "The user's phone numbers are not unique";
-			return failedAdding(failString, redirectAttributes, userGotten);
-		}
-
-		if (respCode == 201) {
-			User user = responseEntity.getBody();
-
-			if (user != null) {
-				String successString = "User " + user.getFirstName() + " " + user.getLastName()
-						+ " was added successfully";
-				LOG.info("addNewUser method: User: {} was added successfully", user.toString());
-				// redirecting to the list with all users
-				LOG.info("addNewUser method: Redirecting to the user.jsp");
-				redirectAttributes.addFlashAttribute("successString", successString);
-				return "redirect:/show-all-users";
-			}
-		}
-		return failedAdding("Failed adding. Please, try again", redirectAttributes, userGotten);
+    	mockMvc.perform(post("/update-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", "123")
+    			.param("id", user.getId().toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "User " + user.getFirstName() + " " + user.getLastName()
+				+ " was updated successfully"));
+    	
+    	verify(pageService).updateUser(user);
+		verifyNoMoreInteractions(pageService);
 	}
 	
-	private String failedAdding(String failString, RedirectAttributes redirectAttributes, User user) {
-		LOG.warn("failedAdding method was invoked because of: {}", failString);
-		LOG.warn("failedAdding method: Redirecting to the addNewUser.jsp page");
-		redirectAttributes.addFlashAttribute("failString", failString);
-		redirectAttributes.addFlashAttribute("user", user);
-		return "redirect:/add-new-user";
+	
+	@Test
+    public void updateUser_InvalidEmail() throws Exception {
+    	LOG.info("updateUser_InvalidEmail method was invoked");
+    	//creating user for adding
+    	User user = new User ("CcFn", "CcLn");
+    	user.setId(3);
+
+    	mockMvc.perform(post("/update-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("eMail", "Cc")
+    			.param("number", "123")
+    			.param("id", user.getId().toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/update/" + user.getId()))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Invalid E-mail"));
+    	
+		verifyNoMoreInteractions(pageService);
 	}
-	*/
+	
+	@Test
+    public void updateUser_FailedBecauseNumbersAreEmpty() throws Exception {
+    	LOG.info("updateUser_FailedBecauseNumbersAreEmpty method was invoked");
+    	//creating user for adding
+    	User user = new User ("CcFn", "CcLn");
+    	user.setId(3);
+
+    	mockMvc.perform(post("/update-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", "")
+    			.param("id", user.getId().toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/update/" + user.getId()))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "User must have at least one phone number"));
+    	
+		verifyNoMoreInteractions(pageService);
+	}
+	
+	@Test
+    public void updateUser_FailedBecauseNumbersAreNotUnique_BadRequest() throws Exception {
+    	LOG.info("updateUser_failedBecauseNumbersAreNotUnique_BadRequest method was invoked");
+    	//creating user for adding
+    	User user = new User ("CcFn", "CcLn");
+    	user.setId(3);
+    	when(pageService.updateUser(user)).thenReturn(ResponseEntity.status(400).body(null));
+    	mockMvc.perform(post("/update-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", "123")
+    			.param("id", user.getId().toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/update/" + user.getId()))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "The user's phone numbers are not unique"));
+    	
+    	verify(pageService).updateUser(user);
+		verifyNoMoreInteractions(pageService);
+	}
+	
+	@Test
+    public void updateUser_FailedAddingBecauseOfGetting404Error() throws Exception {
+    	LOG.info("updateUser_FailedAddingBecauseOfGetting404Error method was invoked");
+    	//creating user for adding
+    	User user = new User ("CcFn", "CcLn");
+    	user.setId(3);
+    	when(pageService.updateUser(user)).thenReturn(ResponseEntity.status(404).body(null));
+    	mockMvc.perform(post("/update-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", "123")
+    			.param("id", user.getId().toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/update/" + user.getId()))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed update. Please, try again with user " + user.getId()));
+    	
+    	verify(pageService).updateUser(user);
+		verifyNoMoreInteractions(pageService);
+	}
+	
+	
 }

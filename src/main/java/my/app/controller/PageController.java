@@ -213,10 +213,10 @@ public class PageController {
 	@PostMapping(value = "/update-user")
 	//@ResponseStatus(HttpStatus.CREATED)
 	public String updateUser(@RequestParam(value = "id") Integer id,
-			@RequestParam(value = "firstName", required = false) String firstName,
-			@RequestParam(value = "lastName", required = false) String lastName,
+			@RequestParam(value = "firstName", required = true) String firstName,
+			@RequestParam(value = "lastName", required = true) String lastName,
 			@RequestParam(value = "eMail", required = false) String eMail,
-			@RequestParam (value = "number", required = false) List<String> numbers, 
+			@RequestParam (value = "number", required = true) List<String> numbers, 
 			RedirectAttributes redirectAttributes) {
 		LOG.info("updateUser method was invoked with parameters id: {}, firstName: {}, lastName: {}, eMail: {}, numbers: {}", 
 				id, firstName, lastName, eMail, numbers.toString());
@@ -273,7 +273,7 @@ public class PageController {
 			return "redirect:/show-all-users";
 		}
 		
-		return failedUpdate("Failed update. Please, try again with user", id, redirectAttributes);
+		return failedUpdate("Failed update. Please, try again with user " + id, id, redirectAttributes);
 	}
 	
 	
