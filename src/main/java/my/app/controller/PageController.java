@@ -163,9 +163,6 @@ public class PageController {
 		userGotten.setPhoneNumbers(numbers);
 
 		// saving the user by pageService
-		//User userGotten = new User(firstName, lastName);
-		//userGotten.seteMail(eMail);
-		//userGotten.setPhoneNumbers(numbers);
 		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
 
@@ -250,8 +247,14 @@ public class PageController {
 			return failedUpdate(failString, id, redirectAttributes);
 		}
 		
+		User userGotten = new User (firstName, lastName);
+		userGotten.seteMail(eMail);
+		userGotten.setId(id);
+		userGotten.setPhoneNumbers(numbers);
+				
 		// updating by pageService
-		ResponseEntity <User> responseEntity = pageService.updateUser(id, firstName, lastName, eMail, numbers);
+		//ResponseEntity <User> responseEntity = pageService.updateUser(id, firstName, lastName, eMail, numbers);
+		ResponseEntity <User> responseEntity = pageService.updateUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
 		
 		if (respCode == 400) {

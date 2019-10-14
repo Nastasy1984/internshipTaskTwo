@@ -252,13 +252,9 @@ public class PageService {
 		return 0;
 	}
 	
-	public ResponseEntity<User> updateUser(Integer id, String firstName, String lastName, String eMail, List<String> numbers) {
+	public ResponseEntity<User> updateUser(User userGotten) {
 		LOG.info("updateUser method was invoked");
-		String url = urlBeginsWith + "user/" + id;
-		User userGotten = new User (firstName, lastName);
-		userGotten.setId(id);
-		userGotten.seteMail(eMail);
-		userGotten.setPhoneNumbers(numbers);
+		String url = urlBeginsWith + "user/" + userGotten.getId();
 		StringWriter writer = new StringWriter();
 		
 		try {
