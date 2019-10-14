@@ -318,7 +318,7 @@ public class PageController {
 		List<User> users = pageService.getUsersList();
 
 		if (users != null) {
-			modelAndView.addObject("usersList", pageService.getUsersList());
+			modelAndView.addObject("usersList", users);
 			formateDates(modelAndView);
 			modelAndView.setViewName("user");
 			return modelAndView;
