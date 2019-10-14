@@ -108,7 +108,6 @@ public class UserControllerTestMockMVC {
                 .andReturn();
     	
     	String content = result.getResponse().getContentAsString();
-		writer = new StringWriter();
 		mapper.writeValue(writer, data);
 		assertEquals(writer.toString(), content);
 	    verify(userService).getAllAsList();
@@ -195,7 +194,6 @@ public class UserControllerTestMockMVC {
                 .andReturn();
                 
     	String content = result.getResponse().getContentAsString();
-    	StringWriter writer = new StringWriter();
     	mapper.writeValue(writer, user);
     	assertEquals(writer.toString(), content);
     	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
@@ -272,7 +270,6 @@ public class UserControllerTestMockMVC {
                 .andReturn();
                 
     	String content = result.getResponse().getContentAsString();
-    	StringWriter writer = new StringWriter();
     	mapper.writeValue(writer, user);
     	assertEquals(writer.toString(), content);
     	verify(userService).checkNumbers(user.getPhoneNumbers(), user.getId());

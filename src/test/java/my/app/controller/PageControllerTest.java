@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,34 +16,52 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import my.app.UserControllerTestConfiguration;
 import my.app.model.User;
 import my.app.service.PageService;
 
-
+@Component
+@ActiveProfiles("test")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes=UserControllerTestConfiguration.class, loader=AnnotationConfigContextLoader.class)
 public class PageControllerTest {
     private static final Logger LOG = LoggerFactory.getLogger(my.app.controller.PageControllerTest.class.getName());
     
 	@Mock
     private PageService pageService;
+	
 	@InjectMocks
     private PageController pageController;
 	private MockMvc mockMvc;
 	private List<User> data;
+	
+	@Autowired
+	private ObjectMapper mapper;
+	
+	@Autowired
+	StringWriter writer;
 	
 	@Before
     public void setUp(){		
@@ -88,17 +107,21 @@ public class PageControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("index"));
     }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void showUsersList_HappyPath() throws Exception {
     	LOG.info("showUsersList method was invoked");
     	when(pageService.getUsersList()).thenReturn(data);
     	
-      	mockMvc.perform(get("/show-all-users"))
+    	MvcResult result = mockMvc.perform(get("/show-all-users"))
       		.andExpect(status().isOk())
       		.andExpect(MockMvcResultMatchers.view().name("user"))
       		.andExpect(MockMvcResultMatchers.model().attributeExists("usersList"))
-      		.andExpect(MockMvcResultMatchers.model().attributeExists("formatter"));
-      	 verify(pageService).getUsersList();
+      		.andExpect(MockMvcResultMatchers.model().attributeExists("formatter")).andReturn();
+
+    	List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("usersList");
+    	assertEquals(data, userList);
+		verify(pageService).getUsersList();
       	verifyNoMoreInteractions(pageService);
     }
     
