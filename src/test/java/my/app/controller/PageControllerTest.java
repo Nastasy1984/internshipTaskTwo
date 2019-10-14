@@ -4,12 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -17,8 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-
+import javax.enterprise.inject.Any;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.OngoingStubbing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +60,9 @@ public class PageControllerTest {
 	
 	@InjectMocks
     private PageController pageController;
+	
 	private MockMvc mockMvc;
 	private List<User> data;
-	
-	@Autowired
-	private ObjectMapper mapper;
-	
-	@Autowired
-	StringWriter writer;
 	
 	@Before
     public void setUp(){		
@@ -142,7 +136,6 @@ public class PageControllerTest {
     	mockMvc.perform(get("/find-user"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("findUser"));
-    	
     }
     
     @SuppressWarnings("unchecked")
@@ -194,7 +187,6 @@ public class PageControllerTest {
 		assertEquals(new ArrayList<User>(Arrays.asList(data.get(1))), userList);
 		verify(pageService).getUserByLastName("Bb'Last-Name");
 		verifyNoMoreInteractions(pageService);
-
     }
 	
 	@Test
@@ -251,12 +243,12 @@ public class PageControllerTest {
     public void addNewUser_HappyPath() throws Exception {
     	LOG.info("addNewUser_HappyPath method was invoked");
     	//creating user for adding
-    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	List<String> numbers = Arrays.asList("123");
     	User user = new User ("CcFn", "CcLn");
     	user.setPhoneNumbers(numbers);
-    	mapper.writeValue(writer, numbers);
+    	user.seteMail("C@c");
     	
-    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(201).body(user));
+    	when(pageService.addUser(any(User.class))).thenReturn(ResponseEntity.status(201).body(user));
 
         //MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         //params.addAll("number", numbers);
@@ -267,8 +259,8 @@ public class PageControllerTest {
     	mockMvc.perform(post("/add-new-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
-    			.param("eMail", "C@c")
-    			.param("number", writer.toString())
+    			.param("eMail", user.geteMail())
+    			.param("number", "123")
     	        //.params(params)
     			)
                 .andExpect(status().isFound())
@@ -286,17 +278,16 @@ public class PageControllerTest {
     	LOG.info("addNewUser_InvalidEmail method was invoked");
     	
     	//creating user for adding
-    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	List<String> numbers = Arrays.asList("123");
     	User user = new User ("CcFn", "CcLn");
     	user.setPhoneNumbers(numbers);
     	user.seteMail("Cc");
-    	mapper.writeValue(writer, numbers);
 
     	mockMvc.perform(post("/add-new-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
     			.param("eMail", user.geteMail())
-    			.param("number", writer.toString())
+    			.param("number", "123")
     			)
                 .andExpect(status().isFound())
     			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
@@ -306,7 +297,7 @@ public class PageControllerTest {
     	
 		verifyNoMoreInteractions(pageService);
 	}
-	
+
 	@Test
     public void addNewUser_FailedBecauseNumbersAreEmpty() throws Exception {
     	LOG.info("addNewUser_FailedBecauseNumbersAreEmpty method was invoked");
@@ -327,23 +318,22 @@ public class PageControllerTest {
     	
 		verifyNoMoreInteractions(pageService);
 	}
-	
+
 	@Test
     public void addNewUser_FailedBecauseNumbersAreNotUnique_BadRequest() throws Exception {
     	LOG.info("addNewUser_FailedBecauseNumbersAreNotUnique_BadRequest");
     	
     	//creating user for adding
-    	List<String> numbers = Arrays.asList("123", "456", "789");
     	User user = new User ("CcFn", "CcLn");
+    	List<String> numbers = Arrays.asList("123");
     	user.setPhoneNumbers(numbers);
-    	mapper.writeValue(writer, numbers);
     	
-    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(400).body(null));
+    	when(pageService.addUser(any(User.class))).thenReturn(ResponseEntity.status(400).body(null));
     	
     	mockMvc.perform(post("/add-new-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
-    			.param("number", writer.toString())
+    			.param("number", "123")
     			)
                 .andExpect(status().isFound())
     			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
@@ -360,17 +350,16 @@ public class PageControllerTest {
     	LOG.info("addNewUser_FailedAddingBecauseOfGetting404Error");
     	
     	//creating user for adding
-    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	List<String> numbers = Arrays.asList("123");
     	User user = new User ("CcFn", "CcLn");
     	user.setPhoneNumbers(numbers);
-    	mapper.writeValue(writer, numbers);
     	
-    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(404).body(null));
+    	when(pageService.addUser(any(User.class))).thenReturn(ResponseEntity.status(404).body(null));
     	
     	mockMvc.perform(post("/add-new-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
-    			.param("number", writer.toString())
+    			.param("number", "123")
     			)
                 .andExpect(status().isFound())
     			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
@@ -458,7 +447,9 @@ public class PageControllerTest {
     	//creating user for adding
     	User user = new User ("CcFn", "CcLn");
     	user.setId(3);
-    	when(pageService.updateUser(user)).thenReturn(ResponseEntity.status(400).body(null));
+    	List<String> numbers = Arrays.asList("123");
+    	user.setPhoneNumbers(numbers);
+    	when(pageService.updateUser(any(User.class))).thenReturn(ResponseEntity.status(400).body(null));
     	mockMvc.perform(post("/update-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
@@ -480,7 +471,9 @@ public class PageControllerTest {
     	//creating user for adding
     	User user = new User ("CcFn", "CcLn");
     	user.setId(3);
-    	when(pageService.updateUser(user)).thenReturn(ResponseEntity.status(404).body(null));
+    	List<String> numbers = Arrays.asList("123");
+    	user.setPhoneNumbers(numbers);
+    	when(pageService.updateUser(any(User.class))).thenReturn(ResponseEntity.status(404).body(null));
     	mockMvc.perform(post("/update-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
@@ -495,6 +488,5 @@ public class PageControllerTest {
     	verify(pageService).updateUser(user);
 		verifyNoMoreInteractions(pageService);
 	}
-	
-	
+
 }

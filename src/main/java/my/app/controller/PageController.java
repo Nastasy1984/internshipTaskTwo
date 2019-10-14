@@ -7,7 +7,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.internal.constraintvalidators.bv.money.MinValidatorForMonetaryAmount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.String;
@@ -161,7 +160,7 @@ public class PageController {
 				return failedAdding(failString, redirectAttributes, userGotten);
 			}
 		}
-
+		LOG.debug("addNewUser method: userGotten: {}", userGotten);
 		// saving the user by pageService
 		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
