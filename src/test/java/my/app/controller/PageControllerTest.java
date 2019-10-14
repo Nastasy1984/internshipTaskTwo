@@ -309,7 +309,7 @@ public class PageControllerTest {
 	
 	@Test
     public void addNewUser_FailedBecauseNumbersAreEmpty() throws Exception {
-    	LOG.info("addNewUser_FirstNameEmpty method was invoked");
+    	LOG.info("addNewUser_FailedBecauseNumbersAreEmpty method was invoked");
     	
     	//creating user for adding
     	User user = new User ("CcFn", "CcLn");
@@ -317,7 +317,6 @@ public class PageControllerTest {
     	mockMvc.perform(post("/add-new-user")
     			.param("firstName", user.getFirstName())
     			.param("lastName", user.getLastName())
-    			.param("eMail", user.geteMail())
     			.param("number", "")
     			)
                 .andExpect(status().isFound())
@@ -329,7 +328,32 @@ public class PageControllerTest {
 		verifyNoMoreInteractions(pageService);
 	}
 	
-	
+	@Test
+    public void addNewUser_FailedAddingBecauseNumbersAreNotUnique_BadRequest() throws Exception {
+    	LOG.info("addNewUser_FailedAddingBecauseNumbersAreNotUnique_BadRequest");
+    	
+    	//creating user for adding
+    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	User user = new User ("CcFn", "CcLn");
+    	user.setPhoneNumbers(numbers);
+    	mapper.writeValue(writer, numbers);
+    	
+    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(400).body(null));
+    	
+    	mockMvc.perform(post("/add-new-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", writer.toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(2))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "The user's phone numbers are not unique"))
+    			.andExpect(MockMvcResultMatchers.flash().attribute("user", user));
+    	
+    	verify(pageService).addUser(user);
+		verifyNoMoreInteractions(pageService);
+	}
 	
 	
     /*
