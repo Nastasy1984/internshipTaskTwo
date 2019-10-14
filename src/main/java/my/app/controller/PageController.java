@@ -7,12 +7,13 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.internal.constraintvalidators.bv.money.MinValidatorForMonetaryAmount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -325,6 +326,7 @@ public class PageController {
 		}
 
 		modelAndView.setViewName("404");
+		modelAndView.setStatus(HttpStatus.NOT_FOUND);
 		return modelAndView;
 	}
 }

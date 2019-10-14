@@ -2,6 +2,7 @@ package my.app.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -95,8 +96,22 @@ public class PageControllerTest {
       	mockMvc.perform(get("/show-all-users"))
       		.andExpect(status().isOk())
       		.andExpect(MockMvcResultMatchers.view().name("user"))
-      		.andExpect(MockMvcResultMatchers.model().attributeExists("usersList"));
+      		.andExpect(MockMvcResultMatchers.model().attributeExists("usersList"))
+      		.andExpect(MockMvcResultMatchers.model().attributeExists("formatter"));
       	 verify(pageService).getUsersList();
+      	verifyNoMoreInteractions(pageService);
+    }
+    
+    @Test
+    public void showUsersList_Returns404() throws Exception {
+    	LOG.info("showUsersList method was invoked");
+    	when(pageService.getUsersList()).thenReturn(null);
+    	
+      	mockMvc.perform(get("/show-all-users"))
+      		.andExpect(status().isNotFound())
+      		.andExpect(MockMvcResultMatchers.view().name("404"));
+      	verify(pageService).getUsersList();
+      	verifyNoMoreInteractions(pageService);
     }
     
     /*
