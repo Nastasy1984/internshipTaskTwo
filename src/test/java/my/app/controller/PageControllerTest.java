@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +36,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -117,7 +125,8 @@ public class PageControllerTest {
       		.andExpect(status().isOk())
       		.andExpect(MockMvcResultMatchers.view().name("user"))
       		.andExpect(MockMvcResultMatchers.model().attributeExists("usersList"))
-      		.andExpect(MockMvcResultMatchers.model().attributeExists("formatter")).andReturn();
+      		.andExpect(MockMvcResultMatchers.model().attributeExists("formatter"))
+      		.andReturn();
 
     	List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("usersList");
     	assertEquals(data, userList);
@@ -137,22 +146,42 @@ public class PageControllerTest {
       	verifyNoMoreInteractions(pageService);
     }
     
+    @SuppressWarnings("unchecked")
+	@Test
+    public void findUserById_HappyPath() throws Exception {
+		LOG.info("findUserById_HappyPath method was invoked");
+		when(pageService.getUserById(1)).thenReturn(new ArrayList<>(Arrays.asList(data.get(0))));
+		
+		MvcResult result = mockMvc.perform(get("/find-user/{id}", 1))
+  		.andExpect(status().isOk())
+  		.andExpect(MockMvcResultMatchers.view().name("searchResult"))
+  		.andExpect(MockMvcResultMatchers.model().attributeExists("users"))
+  		.andReturn();
+		
+		List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("users");
+		assertEquals(new ArrayList<User>(Arrays.asList(data.get(0))), userList);
+		verify(pageService).getUserById(1);
+      	verifyNoMoreInteractions(pageService);
+    }
+    
+    
     /*
-    @GetMapping("/show-all-users")
-	public ModelAndView showUsersList() {
-		LOG.info("showUsersList method was invoked");
+	// searching for user by id
+	@GetMapping("/find-user/{id:\\d+}")
+	public ModelAndView findUserById(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+		LOG.info("findUserById method was invoked with path variable id: {}", id);
 		ModelAndView modelAndView = new ModelAndView();
-
-		List<User> users = pageService.getUsersList();
-
-		if (users != null) {
-			modelAndView.addObject("usersList", pageService.getUsersList());
-			formateDates(modelAndView);
-			modelAndView.setViewName("user");
-			return modelAndView;
+		List<User> users = pageService.getUserById(id);
+		
+		if (users == null) {
+			return failedSearch(id.toString(), redirectAttributes);
 		}
-
-		modelAndView.setViewName("404");
+		
+		LOG.debug("findUserById method got user: {}", users.toString());
+		modelAndView.addObject("users", users);
+		formateDates(modelAndView);
+		modelAndView.setViewName("searchResult");
 		return modelAndView;
-	}*/
+	}
+	*/
 }
