@@ -355,6 +355,32 @@ public class PageControllerTest {
 		verifyNoMoreInteractions(pageService);
 	}
 	
+	@Test
+    public void addNewUser_FailedAddingBecauseOfGetting404Error() throws Exception {
+    	LOG.info("addNewUser_FailedAddingBecauseOfGetting404Error");
+    	
+    	//creating user for adding
+    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	User user = new User ("CcFn", "CcLn");
+    	user.setPhoneNumbers(numbers);
+    	mapper.writeValue(writer, numbers);
+    	
+    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(404).body(null));
+    	
+    	mockMvc.perform(post("/add-new-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("number", writer.toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(2))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed adding. Please, try again"))
+    			.andExpect(MockMvcResultMatchers.flash().attribute("user", user));
+    	
+    	verify(pageService).addUser(user);
+		verifyNoMoreInteractions(pageService);
+	}
 	
     /*
 				@PostMapping(value = "/add-new-user")
