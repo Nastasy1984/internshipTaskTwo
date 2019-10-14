@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -95,17 +96,7 @@ public class PageControllerTest {
 		data.add(bUser);
 		Mockito.clearInvocations(pageService);
     }
-	
-    @Test
-    public void findUserPage() throws Exception {
-    	LOG.info("findUserPage method was invoked");
-    	MockitoAnnotations.initMocks(this);
-    	mockMvc.perform(get("/find-user"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("findUser"));
-    	
-    }
-    
+	 
     @Test
     public void getWelcomePage() throws Exception {
     	LOG.info("getWelcomePage method was invoked");
@@ -146,6 +137,16 @@ public class PageControllerTest {
       	verifyNoMoreInteractions(pageService);
     }
     
+    @Test
+    public void findUserPage() throws Exception {
+    	LOG.info("findUserPage method was invoked");
+    	MockitoAnnotations.initMocks(this);
+    	mockMvc.perform(get("/find-user"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("findUser"));
+    	
+    }
+    
     @SuppressWarnings("unchecked")
 	@Test
     public void findUserById_HappyPath() throws Exception {
@@ -180,22 +181,6 @@ public class PageControllerTest {
       	verifyNoMoreInteractions(pageService);
     }
 	
-
-	@Test
-    public void findUserByLastName_failedSearch() throws Exception {
-		LOG.info("findUserById_failedSearch method was invoked");
-		when(pageService.getUserByLastName("Cc'Last-Name")).thenReturn(null);
-		
-		mockMvc.perform(get("/find-user/{lastName}", "Cc'Last-Name"))
-  			.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
-			.andExpect(status().isFound())
-  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
-  			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user Cc'Last-Name"));
-
-		verify(pageService).getUserByLastName("Cc'Last-Name");
-      	verifyNoMoreInteractions(pageService);
-    }
-	
     @SuppressWarnings("unchecked")
 	@Test
     public void findUserByLastName_HappyPath() throws Exception {
@@ -210,10 +195,50 @@ public class PageControllerTest {
 
 		List<User> userList = (List<User>) result.getModelAndView().getModelMap().get("users");
 		assertEquals(new ArrayList<User>(Arrays.asList(data.get(1))), userList);
-		
 		verify(pageService).getUserByLastName("Bb'Last-Name");
 		verifyNoMoreInteractions(pageService);
     }
+	
+	@Test
+    public void findUserByLastName_failedSearch() throws Exception {
+		LOG.info("findUserById_failedSearch method was invoked");
+		when(pageService.getUserByLastName("Cc'Last-Name")).thenReturn(null);
+		
+		mockMvc.perform(get("/find-user/{lastName}", "Cc'Last-Name"))
+  			.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
+			.andExpect(status().isFound())
+  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user Cc'Last-Name"));
+
+		verify(pageService).getUserByLastName("Cc'Last-Name");
+      	verifyNoMoreInteractions(pageService);
+    }
+
+	@Test
+    public void deleteUser_HappyPath() throws Exception {
+		LOG.info("deleteUser_HappyPath method was invoked");
+		
+		when(pageService.deleteUser(2)).thenReturn(200);
+		
+    	mockMvc.perform(get("/delete/{id}", 2))
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
+			.andExpect(status().isFound())
+  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "User with id 2 was deleted successfully"));;
+	}
+    
+	@Test
+    public void deleteUser_FailedDeleting() throws Exception {
+		LOG.info("deleteUser_HappyPath method was invoked");
+		
+		when(pageService.deleteUser(5)).thenReturn(404);
+		
+    	mockMvc.perform(get("/delete/{id}", 5))
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
+			.andExpect(status().isFound())
+  			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "Failed to delete user with id 5"));;
+	}
     
     /*
 		

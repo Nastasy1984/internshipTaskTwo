@@ -341,8 +341,10 @@ public class UserControllerTestMockMVC {
     	LOG.info("delete_HappyPath method was invoked");
     	when(userService.containsId(1)).thenReturn(true);
     	doNothing().when(userService).deleteById(any());
+    	
     	mockMvc.perform(delete("/api/user/{id}" , 1))
                 .andExpect(status().isOk());
+    	
     	verify(userService).containsId(1);
     	verify(userService).deleteById(1);
     	verifyNoMoreInteractions(userService);

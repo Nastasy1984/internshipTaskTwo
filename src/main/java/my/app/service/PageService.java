@@ -239,7 +239,6 @@ public class PageService {
 			int respCode = response.getStatusLine().getStatusCode();
 			LOG.debug("deleteUser method got response code: {}", respCode);
 			return respCode;
-			
 		} 
 		catch (ClientProtocolException e) {
 			LOG.error("deleteUser method caught: {}", e.getClass().getName());
