@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -16,10 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.lang3.StringUtils;
+
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,14 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -101,7 +94,7 @@ public class PageControllerTest {
 		data.add(bUser);
 		Mockito.clearInvocations(pageService);
     }
-	 
+
     @Test
     public void getWelcomePage() throws Exception {
     	LOG.info("getWelcomePage method was invoked");
@@ -170,7 +163,6 @@ public class PageControllerTest {
       	verifyNoMoreInteractions(pageService);
     }
     
-    
 	@Test
     public void findUserById_failedSearch() throws Exception {
 		LOG.info("findUserById_failedSearch method was invoked");
@@ -202,6 +194,7 @@ public class PageControllerTest {
 		assertEquals(new ArrayList<User>(Arrays.asList(data.get(1))), userList);
 		verify(pageService).getUserByLastName("Bb'Last-Name");
 		verifyNoMoreInteractions(pageService);
+
     }
 	
 	@Test
@@ -229,9 +222,9 @@ public class PageControllerTest {
 			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
 			.andExpect(status().isFound())
   			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
-  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "User with id 2 was deleted successfully"));;
+  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "User with id "+ 2 +" was deleted successfully"));;
 	}
-    
+   
 	@Test
     public void deleteUser_FailedDeleting() throws Exception {
 		LOG.info("deleteUser_HappyPath method was invoked");
@@ -242,7 +235,7 @@ public class PageControllerTest {
 			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
 			.andExpect(status().isFound())
   			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
-  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "Failed to delete user with id 5"));;
+  			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "Failed to delete user with id " + 5));;
 	}
 	
 	@Test
@@ -253,16 +246,92 @@ public class PageControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("addNewUser"));
 	}
-	/*
+
 	@Test
     public void addNewUser_HappyPath() throws Exception {
     	LOG.info("addNewUser_HappyPath method was invoked");
+    	//creating user for adding
+    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	User user = new User ("CcFn", "CcLn");
+    	user.setPhoneNumbers(numbers);
+    	mapper.writeValue(writer, numbers);
+    	
+    	when(pageService.addUser(user)).thenReturn(ResponseEntity.status(201).body(user));
 
-    	mockMvc.perform(get("/add-new-user"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("addNewUser"));
+        //MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        //params.addAll("number", numbers);
+        //params.put("eMail", Arrays.asList("C@c"));
+        //params.put("firstName", Arrays.asList("CcFn"));
+        //params.put("lastName", Arrays.asList("CcLn"));
+
+    	mockMvc.perform(post("/add-new-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("eMail", "C@c")
+    			.param("number", writer.toString())
+    	        //.params(params)
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/show-all-users"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "User " + user.getFirstName() + " " + user.getLastName()
+				+ " was added successfully"));
+    	
+    	verify(pageService).addUser(user);
+		verifyNoMoreInteractions(pageService);
 	}
-    */
+
+	@Test
+    public void addNewUser_InvalidEmail() throws Exception {
+    	LOG.info("addNewUser_InvalidEmail method was invoked");
+    	
+    	//creating user for adding
+    	List<String> numbers = Arrays.asList("123", "456", "789");
+    	User user = new User ("CcFn", "CcLn");
+    	user.setPhoneNumbers(numbers);
+    	user.seteMail("Cc");
+    	mapper.writeValue(writer, numbers);
+
+    	mockMvc.perform(post("/add-new-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("eMail", user.geteMail())
+    			.param("number", writer.toString())
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(2))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "Invalid E-mail"))
+    			.andExpect(MockMvcResultMatchers.flash().attribute("user", user));
+    	
+		verifyNoMoreInteractions(pageService);
+	}
+	
+	@Test
+    public void addNewUser_FailedBecauseNumbersAreEmpty() throws Exception {
+    	LOG.info("addNewUser_FirstNameEmpty method was invoked");
+    	
+    	//creating user for adding
+    	User user = new User ("CcFn", "CcLn");
+    	
+    	mockMvc.perform(post("/add-new-user")
+    			.param("firstName", user.getFirstName())
+    			.param("lastName", user.getLastName())
+    			.param("eMail", user.geteMail())
+    			.param("number", "")
+    			)
+                .andExpect(status().isFound())
+    			.andExpect(MockMvcResultMatchers.redirectedUrl("/add-new-user"))
+      			.andExpect(MockMvcResultMatchers.flash().attributeCount(2))
+      			.andExpect(MockMvcResultMatchers.flash().attribute("failString", "User must have at least one phone number"))
+    			.andExpect(MockMvcResultMatchers.flash().attribute("user", user));
+    	
+		verifyNoMoreInteractions(pageService);
+	}
+	
+	
+	
+	
     /*
 				@PostMapping(value = "/add-new-user")
 	public String addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
@@ -305,10 +374,6 @@ public class PageControllerTest {
 			return failedAdding(failString, redirectAttributes, userGotten);
 		}
 
-		// saving the user by pageService
-		//User userGotten = new User(firstName, lastName);
-		//userGotten.seteMail(eMail);
-		//userGotten.setPhoneNumbers(numbers);
 		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
 		int respCode = responseEntity.getStatusCodeValue();
 

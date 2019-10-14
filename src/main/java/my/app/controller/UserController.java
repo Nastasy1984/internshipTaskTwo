@@ -110,7 +110,6 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 		
-		
 		if (userService.checkNumbers(user.getPhoneNumbers(), 0)) {
 			User userSaved = userService.save(user);
 			

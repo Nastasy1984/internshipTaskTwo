@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -176,7 +177,7 @@ public class UserControllerTestMockMVC {
     	verify(userService).getByLastName("Cc");
     	verifyNoMoreInteractions(userService);
     }
-    
+
     @Test 
 	public void addNewUser_HappyPath() throws Exception{
     	LOG.info("addNewUser_HappyPath method was invoked");
@@ -191,6 +192,8 @@ public class UserControllerTestMockMVC {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE ))
+                //just to try (printing to console)
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn();
                 
     	String content = result.getResponse().getContentAsString();
@@ -200,7 +203,7 @@ public class UserControllerTestMockMVC {
     	verify(userService).save(user);
     	verifyNoMoreInteractions(userService);
     }
-    
+
     @Test 
 	public void addNewUser_InvalidLastName() throws Exception{
     	LOG.info("addNewUser_InvalidLastName method was invoked");
@@ -359,6 +362,4 @@ public class UserControllerTestMockMVC {
     	verify(userService).containsId(1);
     	verifyNoMoreInteractions(userService);
     }
-    
-    
 }

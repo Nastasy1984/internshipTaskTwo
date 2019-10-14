@@ -132,7 +132,18 @@ public class PageController {
 		// Therefore the only possible reason of BAD REQUEST status is not unique numbers
 
 		User userGotten = new User (firstName, lastName);
-
+		userGotten.seteMail(eMail);
+		
+		// checking numbers
+		numbers.removeIf(""::equals);
+		
+		if (numbers.isEmpty()) {
+			String failString = "User must have at least one phone number";
+			return failedAdding(failString, redirectAttributes, userGotten);
+		}
+		
+		userGotten.setPhoneNumbers(numbers);
+		
 		// checking eMail
 		if (!StringUtils.isBlank(eMail)) {
 			boolean isEmailValid = true;
@@ -150,17 +161,6 @@ public class PageController {
 				return failedAdding(failString, redirectAttributes, userGotten);
 			}
 		}
-		userGotten.seteMail(eMail);
-
-		// checking numbers
-		numbers.removeIf(""::equals);
-		
-		if (numbers.isEmpty()) {
-			String failString = "User must have at least one phone number";
-			return failedAdding(failString, redirectAttributes, userGotten);
-		}
-		
-		userGotten.setPhoneNumbers(numbers);
 
 		// saving the user by pageService
 		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
