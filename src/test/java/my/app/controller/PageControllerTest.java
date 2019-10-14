@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +44,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -239,8 +244,102 @@ public class PageControllerTest {
   			.andExpect(MockMvcResultMatchers.flash().attributeCount(1))
   			.andExpect(MockMvcResultMatchers.flash().attribute("successString", "Failed to delete user with id 5"));;
 	}
-    
+	
+	@Test
+    public void addNewUserPage_ReturnsAddNewUserPage() throws Exception {
+    	LOG.info("addNewUserPage_ReturnsAddNewUserPage was invoked");
+
+    	mockMvc.perform(get("/add-new-user"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("addNewUser"));
+	}
+	/*
+	@Test
+    public void addNewUser_HappyPath() throws Exception {
+    	LOG.info("addNewUser_HappyPath method was invoked");
+
+    	mockMvc.perform(get("/add-new-user"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("addNewUser"));
+	}
+    */
     /*
+				@PostMapping(value = "/add-new-user")
+	public String addNewUser(@RequestParam(value = "firstName", required = true) String firstName,
+			@RequestParam(value = "lastName", required = true) String lastName,
+			@RequestParam(value = "eMail", required = false) String eMail,
+			@RequestParam(value = "number", required = true) List<String> numbers,
+			RedirectAttributes redirectAttributes) {
+		LOG.info("addNewUser method was invoked with parameters firstName: {}, lastName: {}, eMail: {}, numbers: {}",
+				firstName, lastName, eMail, numbers.toString());
+
+		// All reasons of BAD REQUEST status except not unique phone numbers we are checking here
+		// Therefore the only possible reason of BAD REQUEST status is not unique numbers
+
+		User userGotten = new User (firstName, lastName);
+		userGotten.setPhoneNumbers(numbers);
+		// checking eMail
+		if (!StringUtils.isBlank(eMail)) {
+			boolean isEmailValid = true;
+
+			try {
+				InternetAddress emailAddr = new InternetAddress(eMail);
+				emailAddr.validate();
+			} 
+			catch (AddressException ex) {
+				isEmailValid = false;
+			}
+
+			if (!isEmailValid) {
+				String failString = "Invalid E-mail";
+				return failedAdding(failString, redirectAttributes, userGotten);
+			}
+		}
+		userGotten.seteMail(eMail);
+
+		// checking numbers
+		numbers.removeIf(""::equals);
 		
+		if (numbers.isEmpty()) {
+			String failString = "User must have at least one phone number";
+			return failedAdding(failString, redirectAttributes, userGotten);
+		}
+
+		// saving the user by pageService
+		//User userGotten = new User(firstName, lastName);
+		//userGotten.seteMail(eMail);
+		//userGotten.setPhoneNumbers(numbers);
+		ResponseEntity<User> responseEntity = pageService.addUser(userGotten);
+		int respCode = responseEntity.getStatusCodeValue();
+
+		if (respCode == 400) {
+			LOG.warn("addNewUser method: The user's phone numbers are not unique");
+			String failString = "The user's phone numbers are not unique";
+			return failedAdding(failString, redirectAttributes, userGotten);
+		}
+
+		if (respCode == 201) {
+			User user = responseEntity.getBody();
+
+			if (user != null) {
+				String successString = "User " + user.getFirstName() + " " + user.getLastName()
+						+ " was added successfully";
+				LOG.info("addNewUser method: User: {} was added successfully", user.toString());
+				// redirecting to the list with all users
+				LOG.info("addNewUser method: Redirecting to the user.jsp");
+				redirectAttributes.addFlashAttribute("successString", successString);
+				return "redirect:/show-all-users";
+			}
+		}
+		return failedAdding("Failed adding. Please, try again", redirectAttributes, userGotten);
+	}
+	
+	private String failedAdding(String failString, RedirectAttributes redirectAttributes, User user) {
+		LOG.warn("failedAdding method was invoked because of: {}", failString);
+		LOG.warn("failedAdding method: Redirecting to the addNewUser.jsp page");
+		redirectAttributes.addFlashAttribute("failString", failString);
+		redirectAttributes.addFlashAttribute("user", user);
+		return "redirect:/add-new-user";
+	}
 	*/
 }
