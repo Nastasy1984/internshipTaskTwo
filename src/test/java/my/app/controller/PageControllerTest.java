@@ -165,23 +165,21 @@ public class PageControllerTest {
     }
     
     
+	@Test
+    public void findUserById_failedSearch() throws Exception {
+		LOG.info("findUserById_failedSearch method was invoked");
+		when(pageService.getUserById(5)).thenReturn(null);
+		
+		mockMvc.perform(get("/find-user/{id}", 5))
+  		.andExpect(MockMvcResultMatchers.redirectedUrl("/find-user"))
+  	   .andExpect(MockMvcResultMatchers.flash().attributeCount(1))
+  	   .andExpect(MockMvcResultMatchers.flash().attribute("failString", "Failed to find user 5"));
+
+		verify(pageService).getUserById(5);
+      	verifyNoMoreInteractions(pageService);
+    }
+    
     /*
-	// searching for user by id
-	@GetMapping("/find-user/{id:\\d+}")
-	public ModelAndView findUserById(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-		LOG.info("findUserById method was invoked with path variable id: {}", id);
-		ModelAndView modelAndView = new ModelAndView();
-		List<User> users = pageService.getUserById(id);
-		
-		if (users == null) {
-			return failedSearch(id.toString(), redirectAttributes);
-		}
-		
-		LOG.debug("findUserById method got user: {}", users.toString());
-		modelAndView.addObject("users", users);
-		formateDates(modelAndView);
-		modelAndView.setViewName("searchResult");
-		return modelAndView;
-	}
+	
 	*/
 }
