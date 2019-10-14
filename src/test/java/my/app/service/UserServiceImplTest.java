@@ -41,7 +41,7 @@ public class UserServiceImplTest {
     public void setUp(){		
 		LOG.info("setUp method was invoked");
 		MockitoAnnotations.initMocks(this);
-
+/*
 		data = new ArrayList<>();
 		User aUser = new User ("AaFirstName", "AaLastName");
 		aUser.setId(1);
@@ -57,6 +57,7 @@ public class UserServiceImplTest {
 		List<String> bNum = new ArrayList<>(Arrays.asList("21"));
 		bUser.setPhoneNumbers(bNum);
 		data.add(bUser);
+		*/
 		Mockito.clearInvocations(userRepository);
     }
 	
@@ -145,7 +146,7 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void update_Fail() {
-		LOG.info("update_Fail");
+		LOG.info("update_Fail method was invoked");
 		User userGotten = new User ("Cc", "Cc");
 		List<String> numsGotten = new ArrayList<>(Arrays.asList("11", "11"));
 		userGotten.setPhoneNumbers(numsGotten);
@@ -164,9 +165,9 @@ public class UserServiceImplTest {
       	verifyNoMoreInteractions(userRepository);
 	}
 	
-		@Test
+	@Test
 	public void deleteById_HappyPath() {
-		LOG.info("deleteById_HappyPath");
+		LOG.info("deleteById_HappyPath method was invoked");
 		User user = new User ("Cc", "Cc");
 		
 		doNothing().when(userRepository).delete(any(User.class));
@@ -178,4 +179,23 @@ public class UserServiceImplTest {
 		verify(userRepository).getById(1);
       	verifyNoMoreInteractions(userRepository);
 	}
+	
+	@Test
+	public void deleteById_IdIsNull() {
+		LOG.info("deleteById_IdIsNull method was invoked");
+	
+		doNothing().when(userRepository).delete(any(User.class));
+		
+		userServiceImpl.deleteById(null);
+		verifyNoMoreInteractions(userRepository);
+	}
+	
+	public void containsId_ReturnsTrue() {
+		LOG.info("containsId_ReturnsTrue method was invoked");
+		when(userRepository.containsId(1)).thenReturn(true);
+		assertEquals(userServiceImpl.containsId(1), true); 
+		verify(userRepository).containsId(1);
+		verifyNoMoreInteractions(userRepository);
+	}
+	
 }
