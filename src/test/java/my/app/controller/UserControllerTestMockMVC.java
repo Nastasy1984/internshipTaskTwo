@@ -21,6 +21,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,9 +185,16 @@ public class UserControllerTestMockMVC {
     	LOG.info("addNewUser_HappyPath method was invoked");
     	User user = new User("CcFN","CcLN");
     	user.setPhoneNumbers(new ArrayList<>(Arrays.asList("31")));
+    	
     	when(userService.checkNumbers(user.getPhoneNumbers(), 0)).thenReturn(true);
-    	when(userService.save(user)).thenReturn(user);
-   	
+    	//when(userService.save(user)).thenReturn(user);
+    	when(userService.save(user)).thenAnswer(new Answer <User>() {
+    		public User answer (InvocationOnMock invocation) throws Throwable{
+    			data.add(user);
+    			return user;
+    		}
+    	});
+    	    			
     	MvcResult result = mockMvc.perform(post("/api/add")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsBytes(user))
@@ -194,10 +204,13 @@ public class UserControllerTestMockMVC {
                 //just to try (printing to console)
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
-                
+              
     	String content = result.getResponse().getContentAsString();
     	mapper.writeValue(writer, user);
+    	
     	assertEquals(writer.toString(), content);
+    	assertEquals (3, data.size ());
+    	
     	verify(userService).checkNumbers(user.getPhoneNumbers(), 0);
     	verify(userService).save(user);
     	verifyNoMoreInteractions(userService);
