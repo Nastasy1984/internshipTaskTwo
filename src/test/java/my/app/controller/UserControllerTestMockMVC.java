@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +201,7 @@ public class UserControllerTestMockMVC {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE ))
                 //just to try (printing to console)
-                .andDo(MockMvcResultHandlers.print())
+                //.andDo(MockMvcResultHandlers.print())
                 .andReturn();
               
     	String content = result.getResponse().getContentAsString();
