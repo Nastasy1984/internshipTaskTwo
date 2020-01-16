@@ -17,7 +17,7 @@
 		<jersey.ver>2.23.1</jersey.ver>
 		<jackson.ver>2.9.9</jackson.ver>
 		<logback.ver>1.2.3</logback.ver>
-		<hibernate-validator.ver>6.0.17.Final</hibernate-validator.ver>
+		<hibernate-validator.ver>6.1.1.Final</hibernate-validator.ver>
 		<!-- creating app without web.xml file -->
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 	</properties>
