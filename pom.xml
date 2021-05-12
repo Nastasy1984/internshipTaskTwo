@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.ver>5.2.0.RELEASE</spring.ver>
+		<spring.ver>5.2.10.RELEASE</spring.ver>
 		<jersey.ver>2.23.1</jersey.ver>
 		<jackson.ver>2.9.9</jackson.ver>
 		<logback.ver>1.2.3</logback.ver>
